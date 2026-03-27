@@ -7,19 +7,19 @@
   <meta name="description" content="Tejing Wang's personal website" />
   <style>
     :root {
-      --bg: #f6f8fc;
+      --bg: #fafafa;
       --surface: #ffffff;
-      --surface-soft: #f8fafc;
-      --line: #e5e7eb;
-      --text: #0f172a;
-      --text-soft: #475569;
-      --accent: #4f46e5;
-      --accent-soft: #eef2ff;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-      --radius-lg: 24px;
-      --radius-md: 18px;
-      --radius-sm: 14px;
-      --max-width: 980px;
+      --surface-soft: #fcfcfc;
+      --line: #e7e7e7;
+      --text: #111111;
+      --text-soft: #666666;
+      --accent: #1f4ed8;
+      --accent-soft: #f5f8ff;
+      --shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --max-width: 920px;
     }
 
     * {
@@ -34,9 +34,7 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(79, 70, 229, 0.06), transparent 24%),
-        linear-gradient(180deg, #fbfcff 0%, var(--bg) 100%);
+      background: var(--bg);
       line-height: 1.7;
     }
 
@@ -103,22 +101,23 @@
 
     .hero-card {
       display: grid;
-      grid-template-columns: 148px 1fr;
-      gap: 28px;
+      grid-template-columns: 120px 1fr;
+      gap: 24px;
       align-items: center;
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      border-radius: 28px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 24px;
       box-shadow: var(--shadow);
-      padding: 30px;
+      padding: 28px;
     }
 
     .avatar-wrap {
-      width: 148px;
-      height: 148px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      padding: 4px;
-      background: linear-gradient(135deg, #6366f1, #a5b4fc);
+      padding: 3px;
+      background: #f2f2f2;
+      border: 1px solid var(--line);
     }
 
     .avatar {
@@ -171,9 +170,9 @@
     }
 
     .btn-primary {
-      background: var(--accent);
+      background: var(--text);
       color: white;
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.18);
+      box-shadow: none;
     }
 
     .btn-primary:hover {
@@ -270,11 +269,11 @@
       align-items: center;
       padding: 7px 12px;
       border-radius: 999px;
-      background: var(--accent-soft);
-      color: #3730a3;
+      background: #f7f7f7;
+      color: #333333;
       font-size: 0.88rem;
       font-weight: 600;
-      border: 1px solid #c7d2fe;
+      border: 1px solid var(--line);
     }
 
     .timeline {
@@ -321,9 +320,9 @@
     .badge {
       padding: 5px 10px;
       border-radius: 999px;
-      background: #eef2ff;
-      color: #4338ca;
-      border: 1px solid #c7d2fe;
+      background: #f7f7f7;
+      color: #333333;
+      border: 1px solid var(--line);
       font-size: 0.78rem;
       font-weight: 700;
       white-space: nowrap;
@@ -405,6 +404,7 @@
       <nav class="nav-links">
         <a href="#about">About</a>
         <a href="#education">Education</a>
+        <a href="#experience">Experience</a>
         <a href="#projects">Projects</a>
         <a href="#publications">Publications</a>
         <a href="#contact">Contact</a>
@@ -421,14 +421,14 @@
 
         <div class="hero-text">
           <h1>Tejing Wang</h1>
-          <p class="subtitle">Computer Science Student · AI · Digital Twin</p>
+          <p class="subtitle">Computer Science · Artificial Intelligence · Digital Twin</p>
           <p class="intro">
-            I am interested in artificial intelligence, digital twin, knowledge representation,
-            and research-oriented system building. I enjoy combining theory, implementation,
-            and interdisciplinary ideas into clear and meaningful work.
+            I am an undergraduate student interested in artificial intelligence, digital twin,
+            knowledge representation, and interpretable intelligent systems. My work focuses on
+            building clear, research-oriented systems that connect theory with implementation.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#publications">View Publications</a>
+            <a class="btn btn-primary" href="#publications">Publications</a>
             <a class="btn btn-secondary" href="https://github.com/dank666" target="_blank">GitHub</a>
           </div>
         </div>
@@ -477,17 +477,35 @@
             <span>Shaanxi Normal University</span>
             <span>Expected 2027</span>
           </div>
-          <h3>Undergraduate in Computer Science (Artificial Intelligence Track)</h3>
-          <p>GPA: 3.32 / 5.0 · Rank: 8 / 32</p>
+          <h3>B.Eng. in Artificial Intelligence</h3>
+          <p>School of Artificial Intelligence and Computer Science · Xi'an, China</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="section-header">
+        <h2 class="section-title">Experience</h2>
+        <p class="section-desc">Research experience and academic training.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-meta">
+            <span>Xidian University</span>
+            <span>Mar 2026 – Present</span>
+          </div>
+          <h3>Undergraduate Research Assistant</h3>
+          <p>Internship · Xi'an, Shaanxi, China · Remote</p>
         </div>
 
         <div class="timeline-item">
           <div class="timeline-meta">
-            <span>Xidian University</span>
-            <span>Planned</span>
+            <span>Shaanxi Normal University</span>
+            <span>Jun 2025 – Present</span>
           </div>
-          <h3>Master of Computer Science</h3>
-          <p>Focus: Artificial Intelligence · Digital Twin</p>
+          <h3>Undergraduate Research Assistant</h3>
+          <p>Internship · Xi'an, Shaanxi, China · On-site</p>
         </div>
       </div>
     </section>
@@ -537,28 +555,24 @@
     <section class="section" id="publications">
       <div class="section-header">
         <h2 class="section-title">Publications</h2>
-        <p class="section-desc">Papers, manuscripts, and ongoing academic work.</p>
+        <p class="section-desc">Papers, manuscripts, and related research materials.</p>
       </div>
 
       <div class="list">
         <div class="publication-item">
           <div class="publication-title">
-            Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography MCQ Answering
+            Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering
           </div>
           <div class="publication-meta">
-            <strong>Tejing Wang</strong>, Yongzheng Li, Jianjun Qi, Ting Qian, Fei Hao · Submitted to Applied Soft Computing
+            <strong>Tejing Wang</strong>, Yongzheng Li, Jianjun Qi, Ting Qian, Fei Hao · Submitted to <em>Applied Soft Computing</em>
           </div>
           <div class="publication-desc">
-            An interpretable framework combining LLMs, three-way concept analysis, and composite decision attributes.
+            An interpretable framework combining LLMs, three-way concept analysis, and composite decision attributes for geography MCQ answering.
           </div>
-        </div>
-
-        <div class="publication-item">
-          <div class="publication-title">More Papers Coming Soon</div>
-          <div class="publication-meta">Ongoing Research</div>
-          <div class="publication-desc">
-            This section can later include journal papers, conference submissions, preprints,
-            software copyrights, and thesis-related outputs.
+          <div class="hero-actions" style="margin-top:14px;">
+            <a class="btn btn-secondary" href="#">Paper</a>
+            <a class="btn btn-secondary" href="#">Code</a>
+            <a class="btn btn-secondary" href="#">Dataset</a>
           </div>
         </div>
       </div>
@@ -567,7 +581,7 @@
     <section class="section" id="contact">
       <div class="section-header">
         <h2 class="section-title">Contact</h2>
-        <p class="section-desc">For academic communication, collaboration, or project discussion.</p>
+        <p class="section-desc">Academic communication and collaboration.</p>
       </div>
 
       <div class="panel">
@@ -580,11 +594,6 @@
           <div class="contact-item">
             <div class="contact-label">GitHub</div>
             <div class="contact-value"><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-label">Website</div>
-            <div class="contact-value"><a href="https://dank666.github.io" target="_blank">dank666.github.io</a></div>
           </div>
         </div>
       </div>
