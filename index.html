@@ -1,98 +1,545 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tejing Wang | Personal Website</title>
+  <meta name="description" content="Tejing Wang's personal website" />
   <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: rgba(255, 255, 255, 0.06);
+      --card: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text: #e5e7eb;
+      --muted: #a5b4fc;
+      --subtext: #cbd5e1;
+      --accent: #7c93ff;
+      --accent-2: #6ee7f9;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --radius: 24px;
+      --max-width: 1100px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      background: #f5f7fb;
-      color: #1f2937;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+        Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124, 147, 255, 0.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(110, 231, 249, 0.18), transparent 28%),
+        linear-gradient(135deg, #0b1020 0%, #11182d 55%, #0f172a 100%);
+      min-height: 100vh;
+      line-height: 1.7;
     }
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-    .hero, .section {
-      background: white;
-      border-radius: 18px;
-      padding: 28px;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-    }
-    h1, h2 {
-      margin-top: 0;
-    }
-    .subtitle {
-      color: #6b7280;
-      font-size: 18px;
-    }
-    ul {
-      padding-left: 20px;
-    }
+
     a {
-      color: #2563eb;
+      color: inherit;
       text-decoration: none;
     }
-    a:hover {
-      text-decoration: underline;
+
+    .container {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
     }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(11, 16, 32, 0.55);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-inner {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #dbeafe;
+      font-size: 0.95rem;
+      transition: 0.25s ease;
+      opacity: 0.9;
+    }
+
+    .nav-links a:hover {
+      color: white;
+      opacity: 1;
+    }
+
+    .hero {
+      padding: 88px 0 40px;
+    }
+
+    .hero-card {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 28px;
+      align-items: stretch;
+      background: var(--bg-soft);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+      backdrop-filter: blur(16px);
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.2rem, 6vw, 4.4rem);
+      line-height: 1.06;
+      letter-spacing: -1.5px;
+    }
+
+    .hero-left .subtitle {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      font-weight: 600;
+    }
+
+    .hero-left .intro {
+      margin: 0 0 26px;
+      font-size: 1.05rem;
+      color: var(--subtext);
+      max-width: 60ch;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 600;
+      transition: 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #08111f;
+      box-shadow: 0 12px 30px rgba(124, 147, 255, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #e5e7eb;
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mini-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+    }
+
+    .mini-card h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: white;
+    }
+
+    .mini-card p,
+    .mini-card li {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    .mini-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .section {
+      padding: 26px 0;
+    }
+
+    .section-title {
+      font-size: 1.7rem;
+      margin: 0 0 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-subtitle {
+      margin: 0 0 26px;
+      color: #cbd5e1;
+      max-width: 70ch;
+    }
+
+    .grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      transition: 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(124, 147, 255, 0.35);
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 1.12rem;
+      color: white;
+    }
+
+    .card p {
+      margin: 0;
+      color: #cbd5e1;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(124, 147, 255, 0.12);
+      border: 1px solid rgba(124, 147, 255, 0.22);
+      color: #dbeafe;
+      font-size: 0.88rem;
+    }
+
+    .project-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .project-badge {
+      white-space: nowrap;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      color: #dbeafe;
+      background: rgba(110, 231, 249, 0.12);
+      border: 1px solid rgba(110, 231, 249, 0.22);
+    }
+
+    .contact-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .contact-item span:first-child {
+      color: #cbd5e1;
+    }
+
+    .contact-item span:last-child a {
+      color: white;
+      font-weight: 600;
+    }
+
     .footer {
+      padding: 40px 0 60px;
+      color: #94a3b8;
       text-align: center;
-      color: #6b7280;
-      margin-top: 20px;
-      font-size: 14px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero-card,
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 60px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .hero-card {
+        padding: 22px;
+      }
+
+      .card,
+      .mini-card {
+        padding: 18px;
+      }
+
+      .hero-left h1 {
+        font-size: 2.2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero">
-      <h1>Tejing Wang</h1>
-      <p class="subtitle">Computer Science Student | AI | Digital Twin</p>
-      <p>
-        Welcome to my personal website. I am interested in artificial intelligence, digital twin, and research-oriented projects.
+  <header class="navbar">
+    <div class="nav-inner">
+      <div class="logo">Tejing Wang</div>
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#research">Research</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-left">
+          <h1>Tejing Wang</h1>
+          <p class="subtitle">Computer Science Student · AI · Digital Twin · Research</p>
+          <p class="intro">
+            Welcome to my personal website. I am interested in artificial intelligence,
+            digital twin, and research-oriented projects. I enjoy combining theory,
+            engineering, and creative ideas to build meaningful work.
+          </p>
+
+          <div class="button-group">
+            <a class="btn btn-primary" href="#projects">View My Projects</a>
+            <a class="btn btn-secondary" href="https://github.com/dank666" target="_blank">GitHub</a>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="mini-card">
+            <h3>Current Focus</h3>
+            <p>Artificial Intelligence, Digital Twin, Knowledge Systems, and Research Projects.</p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Keywords</h3>
+            <ul>
+              <li>Computer Science</li>
+              <li>AI & Intelligent Systems</li>
+              <li>Digital Twin</li>
+              <li>Interdisciplinary Research</li>
+            </ul>
+          </div>
+
+          <div class="mini-card">
+            <h3>Email</h3>
+            <p>wtejing@gmail.com</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <h2 class="section-title">About Me</h2>
+      <p class="section-subtitle">
+        I am a computer science student with strong interest in AI, systems, and interdisciplinary
+        research. I enjoy building projects, reading papers, and exploring ideas that connect
+        algorithms with real-world applications.
       </p>
-    </div>
 
-    <div class="section">
-      <h2>About Me</h2>
-      <p>
-        I am a computer science student with strong interest in AI, systems,
-        and interdisciplinary research. I enjoy building projects and exploring
-        innovative ideas that combine theory and real-world applications.
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Background</h3>
+          <p>
+            My interests span artificial intelligence, digital twin, and research-oriented software
+            development. I hope to keep growing as a researcher and engineer through challenging projects.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Skills & Interests</h3>
+          <div class="tag-list">
+            <span class="tag">Python</span>
+            <span class="tag">Machine Learning</span>
+            <span class="tag">Digital Twin</span>
+            <span class="tag">Research</span>
+            <span class="tag">GitHub</span>
+            <span class="tag">Linux</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <h2 class="section-title">Projects</h2>
+      <p class="section-subtitle">
+        Here are some of the projects I want to present. Later, you can replace these placeholder
+        texts with your real project descriptions, GitHub links, and demos.
       </p>
-    </div>
 
-    <div class="section">
-      <h2>Projects</h2>
-      <ul>
-        <li>Project A — 简要介绍你的项目</li>
-        <li>Project B — 简要介绍你的项目</li>
-        <li>Project C — 简要介绍你的项目</li>
-      </ul>
-    </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="project-title">
+            <h3>Project A</h3>
+            <span class="project-badge">Featured</span>
+          </div>
+          <p>
+            A project about intelligent systems, knowledge representation, or software engineering.
+            Add one or two sentences here to describe what you built and why it matters.
+          </p>
+        </div>
 
-    <div class="section">
-      <h2>Research</h2>
-      <p>
-        Here you can introduce your research interests, papers, competitions,
-        or academic achievements.
+        <div class="card">
+          <div class="project-title">
+            <h3>Project B</h3>
+            <span class="project-badge">Research</span>
+          </div>
+          <p>
+            This can be one of your research-related works, competition projects, or an academic system
+            you developed for experiments and evaluation.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="project-title">
+            <h3>Project C</h3>
+            <span class="project-badge">In Progress</span>
+          </div>
+          <p>
+            You can also place a future project here, such as a digital twin platform, an AI assistant,
+            or a visually impressive portfolio project.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="research">
+      <h2 class="section-title">Research</h2>
+      <p class="section-subtitle">
+        This section is suitable for your papers, competitions, academic interests, and future directions.
       </p>
-    </div>
 
-    <div class="section">
-      <h2>Contact</h2>
-      <p>Email: wtejing@gmail.com</p>
-      <p>GitHub: <a href="https://github.com/dank666" target="_blank">github.com/dank666</a></p>
-    </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Research Interests</h3>
+          <p>
+            Artificial Intelligence, Digital Twin, Intelligent Question Answering, Knowledge Representation,
+            and interdisciplinary computational research.
+          </p>
+        </div>
 
-    <div class="footer">
-      © 2026 Tejing Wang
-    </div>
-  </div>
+        <div class="card">
+          <h3>Academic Activities</h3>
+          <p>
+            You can list your publications, awards, research projects, open-source contributions,
+            or any academic achievements here.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <h2 class="section-title">Contact</h2>
+      <p class="section-subtitle">
+        Feel free to reach out for academic communication, collaboration, or project discussion.
+      </p>
+
+      <div class="card">
+        <div class="contact-list">
+          <div class="contact-item">
+            <span>Email</span>
+            <span><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></span>
+          </div>
+
+          <div class="contact-item">
+            <span>GitHub</span>
+            <span><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></span>
+          </div>
+
+          <div class="contact-item">
+            <span>Website</span>
+            <span><a href="#">yourusername.github.io</a></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      © 2026 Tejing Wang · Built with GitHub Pages
+    </footer>
+  </main>
 </body>
 </html>
