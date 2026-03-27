@@ -7,24 +7,19 @@
   <meta name="description" content="Tejing Wang's personal website" />
   <style>
     :root {
-      --bg: #f7f9fc;
-      --bg-gradient-1: #eef4ff;
-      --bg-gradient-2: #fdfcff;
-      --card: rgba(255, 255, 255, 0.9);
-      --card-strong: #ffffff;
-      --card-border: rgba(148, 163, 184, 0.18);
+      --bg: #f6f8fc;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --line: #e5e7eb;
       --text: #0f172a;
-      --title: #0b1220;
-      --muted: #4f46e5;
-      --subtext: #475569;
-      --accent: #5b7cff;
-      --accent-2: #7dd3fc;
-      --tag-bg: #eef2ff;
-      --tag-border: #c7d2fe;
-      --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
-      --shadow-hover: 0 18px 45px rgba(59, 130, 246, 0.12);
-      --radius: 24px;
-      --max-width: 1120px;
+      --text-soft: #475569;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --max-width: 980px;
     }
 
     * {
@@ -37,14 +32,11 @@
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
-        Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(125, 211, 252, 0.20), transparent 28%),
-        radial-gradient(circle at top right, rgba(99, 102, 241, 0.10), transparent 26%),
-        linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg) 55%, var(--bg-gradient-2) 100%);
-      min-height: 100vh;
+        radial-gradient(circle at top left, rgba(79, 70, 229, 0.06), transparent 24%),
+        linear-gradient(180deg, #fbfcff 0%, var(--bg) 100%);
       line-height: 1.7;
     }
 
@@ -54,8 +46,8 @@
     }
 
     img {
-      max-width: 100%;
       display: block;
+      max-width: 100%;
     }
 
     .container {
@@ -66,26 +58,26 @@
     .navbar {
       position: sticky;
       top: 0;
-      z-index: 100;
-      backdrop-filter: blur(14px);
-      background: rgba(255, 255, 255, 0.76);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
     }
 
     .nav-inner {
       width: min(var(--max-width), calc(100% - 32px));
       margin: 0 auto;
+      padding: 14px 0;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 16px 0;
+      justify-content: space-between;
+      gap: 20px;
     }
 
     .logo {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 800;
-      letter-spacing: 0.4px;
-      color: var(--title);
+      letter-spacing: 0.2px;
     }
 
     .nav-links {
@@ -95,117 +87,38 @@
     }
 
     .nav-links a {
-      color: #334155;
-      font-size: 0.95rem;
+      color: var(--text-soft);
+      font-size: 0.94rem;
       font-weight: 500;
-      transition: 0.25s ease;
+      transition: color 0.2s ease;
     }
 
     .nav-links a:hover {
-      color: var(--muted);
+      color: var(--accent);
     }
 
     .hero {
-      padding: 88px 0 40px;
+      padding: 72px 0 32px;
     }
 
     .hero-card {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 148px 1fr;
       gap: 28px;
-      align-items: stretch;
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 32px;
-      box-shadow: var(--shadow);
-      padding: 34px;
-      backdrop-filter: blur(12px);
-    }
-
-    .hero-left h1 {
-      margin: 0 0 14px;
-      font-size: clamp(2.2rem, 6vw, 4.1rem);
-      line-height: 1.06;
-      letter-spacing: -1.4px;
-      color: var(--title);
-    }
-
-    .hero-left .subtitle {
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 1.08rem;
-      font-weight: 700;
-    }
-
-    .hero-left .intro {
-      margin: 0 0 26px;
-      font-size: 1.05rem;
-      color: var(--subtext);
-      max-width: 62ch;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      transition: 0.25s ease;
-      border: 1px solid transparent;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      box-shadow: 0 10px 24px rgba(91, 124, 255, 0.22);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 30px rgba(91, 124, 255, 0.24);
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--title);
-      border-color: rgba(148, 163, 184, 0.22);
-    }
-
-    .btn-secondary:hover {
-      transform: translateY(-2px);
-      background: #f8fafc;
-    }
-
-    .hero-right {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .profile-card {
-      background: rgba(255, 255, 255, 0.94);
-      border: 1px solid var(--card-border);
-      border-radius: 26px;
-      padding: 22px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      border-radius: 28px;
       box-shadow: var(--shadow);
-      text-align: center;
+      padding: 30px;
     }
 
     .avatar-wrap {
-      width: 220px;
-      height: 220px;
-      margin: 0 auto 18px;
+      width: 148px;
+      height: 148px;
       border-radius: 50%;
-      padding: 6px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow: 0 12px 30px rgba(91, 124, 255, 0.18);
+      padding: 4px;
+      background: linear-gradient(135deg, #6366f1, #a5b4fc);
     }
 
     .avatar {
@@ -216,64 +129,105 @@
       background: #e2e8f0;
     }
 
-    .profile-card h3 {
-      margin: 0 0 8px;
-      color: var(--title);
-      font-size: 1.2rem;
-    }
-
-    .profile-card p {
+    .hero-text h1 {
       margin: 0;
-      color: var(--subtext);
-      font-size: 0.96rem;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.08;
+      letter-spacing: -1px;
     }
 
-    .mini-card {
-      background: rgba(255, 255, 255, 0.94);
-      border: 1px solid var(--card-border);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .mini-card h3 {
-      margin: 0 0 10px;
+    .hero-text .subtitle {
+      margin: 10px 0 0;
+      color: var(--accent);
+      font-weight: 700;
       font-size: 1rem;
-      color: var(--title);
     }
 
-    .mini-card p,
-    .mini-card li {
-      margin: 0;
-      color: var(--subtext);
+    .hero-text .intro {
+      margin: 16px 0 0;
+      max-width: 64ch;
+      color: var(--text-soft);
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 999px;
+      font-weight: 700;
       font-size: 0.95rem;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
     }
 
-    .mini-card ul {
-      margin: 0;
-      padding-left: 18px;
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.18);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-soft);
     }
 
     .section {
-      padding: 26px 0;
+      padding: 18px 0;
+    }
+
+    .section-header {
+      margin-bottom: 14px;
     }
 
     .section-title {
-      font-size: 1.8rem;
-      margin: 0 0 18px;
-      letter-spacing: -0.5px;
-      color: var(--title);
+      margin: 0;
+      font-size: 1.45rem;
+      letter-spacing: -0.4px;
     }
 
-    .section-subtitle {
-      margin: 0 0 26px;
-      color: var(--subtext);
-      max-width: 72ch;
+    .section-desc {
+      margin: 8px 0 0;
+      color: var(--text-soft);
+      max-width: 68ch;
+    }
+
+    .panel,
+    .card,
+    .timeline-item,
+    .publication-item,
+    .contact-item {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 24px;
     }
 
     .grid {
       display: grid;
-      gap: 22px;
+      gap: 16px;
     }
 
     .grid-2 {
@@ -285,182 +239,161 @@
     }
 
     .card {
-      background: var(--card-strong);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow);
-      transition: 0.25s ease;
+      padding: 20px;
     }
 
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--shadow-hover);
-      border-color: rgba(91, 124, 255, 0.25);
+    .card h3,
+    .timeline-item h3,
+    .publication-title {
+      margin: 0 0 8px;
+      font-size: 1.02rem;
     }
 
-    .card h3 {
-      margin: 0 0 12px;
-      font-size: 1.12rem;
-      color: var(--title);
-    }
-
-    .card p {
+    .card p,
+    .timeline-item p,
+    .publication-meta,
+    .publication-desc,
+    .contact-value {
       margin: 0;
-      color: var(--subtext);
+      color: var(--text-soft);
+      font-size: 0.96rem;
     }
 
     .tag-list {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 16px;
     }
 
     .tag {
-      padding: 8px 12px;
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
       border-radius: 999px;
-      background: var(--tag-bg);
-      border: 1px solid var(--tag-border);
+      background: var(--accent-soft);
       color: #3730a3;
       font-size: 0.88rem;
       font-weight: 600;
+      border: 1px solid #c7d2fe;
     }
 
-    .project-title {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-
-    .project-badge {
-      white-space: nowrap;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      color: #1d4ed8;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      font-weight: 700;
-    }
-
-    .publication-list {
-      display: grid;
-      gap: 18px;
-    }
-
-      .publication-item {
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-      box-shadow: none;
-      border-radius: 0;
-      background: transparent;
-    }
-    
-    .publication-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    
-    .publication-meta {
-      font-size: 0.9rem;
-      color: #64748b;
-      margin-bottom: 4px;
-    }
-    
-    .publication-desc {
-      font-size: 0.9rem;
-      color: #475569;
-    }
-
-    .publication-item:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .contact-list {
+    .timeline {
       display: grid;
       gap: 14px;
     }
 
-    .contact-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: #f8fbff;
-      border: 1px solid rgba(148, 163, 184, 0.16);
+    .timeline-item {
+      padding: 20px;
     }
 
-    .contact-item span:first-child {
-      color: var(--subtext);
+    .timeline-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .publication-item {
+      padding: 18px 20px;
+    }
+
+    .publication-meta {
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+    }
+
+    .project-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .contact-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .contact-item {
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .contact-label {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .contact-value a {
+      color: var(--accent);
       font-weight: 600;
     }
 
-    .contact-item span:last-child a {
-      color: var(--title);
-      font-weight: 700;
-    }
-
     .footer {
-      padding: 40px 0 60px;
-      color: #64748b;
+      padding: 36px 0 56px;
       text-align: center;
-      font-size: 0.95rem;
+      color: #64748b;
+      font-size: 0.92rem;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 860px) {
       .hero-card,
       .grid-2,
-      .grid-3 {
+      .grid-3,
+      .contact-item {
         grid-template-columns: 1fr;
       }
 
-      .hero {
-        padding-top: 60px;
+      .hero-card {
+        text-align: left;
       }
 
       .avatar-wrap {
-        width: 180px;
-        height: 180px;
+        width: 128px;
+        height: 128px;
       }
     }
 
     @media (max-width: 640px) {
       .nav-inner {
-        align-items: flex-start;
         flex-direction: column;
-        gap: 12px;
+        align-items: flex-start;
       }
 
-      .hero-card {
-        padding: 22px;
+      .hero {
+        padding-top: 54px;
       }
 
+      .hero-card,
+      .panel,
       .card,
-      .mini-card,
-      .profile-card,
-      .publication-item {
-        padding: 18px;
-      }
-
-      .hero-left h1 {
-        font-size: 2.2rem;
-      }
-
+      .timeline-item,
+      .publication-item,
       .contact-item {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .avatar-wrap {
-        width: 150px;
-        height: 150px;
+        padding: 18px;
       }
     }
   </style>
@@ -471,9 +404,9 @@
       <div class="logo">Tejing Wang</div>
       <nav class="nav-links">
         <a href="#about">About</a>
+        <a href="#education">Education</a>
         <a href="#projects">Projects</a>
         <a href="#publications">Publications</a>
-        <a href="#research">Research</a>
         <a href="#contact">Contact</a>
       </nav>
     </div>
@@ -482,162 +415,132 @@
   <main class="container">
     <section class="hero">
       <div class="hero-card">
-        <div class="hero-left">
-          <h1>Tejing Wang</h1>
-          <p class="subtitle">Computer Science Student · AI · Digital Twin · Research</p>
-          <p class="intro">
-            Welcome to my personal website. I am interested in artificial intelligence,
-            digital twin, knowledge systems, and research-oriented projects. I enjoy
-            combining theory, engineering, and creative ideas to build meaningful work.
-          </p>
+        <div class="avatar-wrap">
+          <img class="avatar" src="IMG_3311.jpeg" alt="Portrait of Tejing Wang" />
+        </div>
 
-          <div class="button-group">
+        <div class="hero-text">
+          <h1>Tejing Wang</h1>
+          <p class="subtitle">Computer Science Student · AI · Digital Twin</p>
+          <p class="intro">
+            I am interested in artificial intelligence, digital twin, knowledge representation,
+            and research-oriented system building. I enjoy combining theory, implementation,
+            and interdisciplinary ideas into clear and meaningful work.
+          </p>
+          <div class="hero-actions">
             <a class="btn btn-primary" href="#publications">View Publications</a>
             <a class="btn btn-secondary" href="https://github.com/dank666" target="_blank">GitHub</a>
           </div>
         </div>
-
-        <div class="hero-right">
-          <div class="profile-card">
-            <div class="avatar-wrap">
-              <img class="avatar" src="IMG_3311.jpeg" alt="Portrait of Tejing Wang" />
-            </div>
-            <h3>Tejing Wang</h3>
-            <p>Computer Science Student<br />Interested in AI, Digital Twin, and Interdisciplinary Research</p>
-          </div>
-
-          <div class="mini-card">
-            <h3>Current Focus</h3>
-            <p>Artificial Intelligence, Digital Twin, Knowledge Representation, and Research Projects.</p>
-          </div>
-        </div>
       </div>
     </section>
 
-        <section class="section" id="about">
-          <h2 class="section-title">About Me</h2>
-          <p class="section-subtitle">
-            I am a computer science student with strong interest in AI, systems, digital twin,
-            and interdisciplinary computational research. I enjoy building projects, reading papers,
-            and exploring ideas that connect algorithms with real-world applications.
-          </p>
-    
-          <div class="grid grid-2">
-            <div class="card">
-              <h3>Background</h3>
-              <p>
-                My interests span artificial intelligence, digital twin, intelligent question answering,
-                and research-oriented software development. I hope to keep growing as a researcher and
-                engineer through challenging projects and academic exploration.
-              </p>
-            </div>
-    
-            <div class="card">
-              <h3>Skills & Interests</h3>
-              <div class="tag-list">
-                <span class="tag">Python</span>
-                <span class="tag">Machine Learning</span>
-                <span class="tag">Digital Twin</span>
-                <span class="tag">Knowledge Systems</span>
-                <span class="tag">Research</span>
-                <span class="tag">Linux</span>
-              </div>
-            </div>
-          </div>
-        </section>
-    
-        <section class="section" id="education">
-      <h2 class="section-title">Education</h2>
-    
-      <div class="card">
-        <h3>Shaanxi Normal University</h3>
-        <p>Undergraduate in Computer Science (Artificial Intelligence Track)</p>
-        <p>GPA: 3.32 / 5.0 · Rank: 8 / 32</p>
-        <p>Expected Graduation: 2027</p>
+    <section class="section" id="about">
+      <div class="section-header">
+        <h2 class="section-title">About</h2>
+        <p class="section-desc">
+          A concise overview of my academic background, interests, and technical focus.
+        </p>
       </div>
-    
-      <div class="card" style="margin-top:16px;">
-        <h3>Xidian University</h3>
-        <p>Master of Computer Science (Planned)</p>
-        <p>Focus: Artificial Intelligence · Digital Twin</p>
-      </div>
-    </section>
 
-        <section class="section" id="awards">
-      <h2 class="section-title">Awards</h2>
-    
       <div class="grid grid-2">
         <div class="card">
-          <h3>🥇 China Robot & AI Competition</h3>
-          <p>National First Prize</p>
+          <h3>Profile</h3>
+          <p>
+            I am a computer science student with interests in AI, digital twin, interpretable
+            intelligent systems, and research-driven software projects.
+          </p>
         </div>
-    
+
         <div class="card">
-          <h3>🥇 Provincial Competition</h3>
-          <p>Shaanxi First Prize</p>
+          <h3>Skills & Interests</h3>
+          <div class="tag-list">
+            <span class="tag">Python</span>
+            <span class="tag">Machine Learning</span>
+            <span class="tag">Digital Twin</span>
+            <span class="tag">Knowledge Representation</span>
+            <span class="tag">Linux</span>
+            <span class="tag">Research</span>
+          </div>
         </div>
-    
-        <div class="card">
-          <h3>📄 Software Copyright</h3>
-          <p>Face Recognition Attendance System V1.0</p>
+      </div>
+    </section>
+
+    <section class="section" id="education">
+      <div class="section-header">
+        <h2 class="section-title">Education</h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-meta">
+            <span>Shaanxi Normal University</span>
+            <span>Expected 2027</span>
+          </div>
+          <h3>Undergraduate in Computer Science (Artificial Intelligence Track)</h3>
+          <p>GPA: 3.32 / 5.0 · Rank: 8 / 32</p>
         </div>
-    
-        <div class="card">
-          <h3>🎓 Certifications</h3>
-          <p>CET-4 · Mandarin Level 2-A</p>
+
+        <div class="timeline-item">
+          <div class="timeline-meta">
+            <span>Xidian University</span>
+            <span>Planned</span>
+          </div>
+          <h3>Master of Computer Science</h3>
+          <p>Focus: Artificial Intelligence · Digital Twin</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="projects">
-      <h2 class="section-title">Projects</h2>
-      <p class="section-subtitle">
-        Selected projects and ongoing work. You can continue replacing or expanding these cards later.
-      </p>
+      <div class="section-header">
+        <h2 class="section-title">Projects</h2>
+        <p class="section-desc">Selected work and research-oriented projects.</p>
+      </div>
 
       <div class="grid grid-3">
         <div class="card">
-          <div class="project-title">
+          <div class="project-top">
             <h3>Geography MCQ QA System</h3>
-            <span class="project-badge">Featured</span>
+            <span class="badge">Featured</span>
           </div>
           <p>
-            An interpretable geography multiple-choice question answering framework based on
-            large language models and three-way concept analysis.
+            An interpretable question-answering framework that combines large language models
+            with three-way concept analysis.
           </p>
         </div>
 
         <div class="card">
-          <div class="project-title">
-            <h3>Research-Oriented Knowledge System</h3>
-            <span class="project-badge">Research</span>
+          <div class="project-top">
+            <h3>Knowledge-Based Research System</h3>
+            <span class="badge">Research</span>
           </div>
           <p>
-            A project exploring symbolic reasoning, knowledge representation, and structured
-            decision support for complex educational scenarios.
+            A system exploring symbolic reasoning, structured knowledge representation,
+            and decision support for educational tasks.
           </p>
         </div>
 
         <div class="card">
-          <div class="project-title">
-            <h3>Future Digital Twin Platform</h3>
-            <span class="project-badge">In Progress</span>
+          <div class="project-top">
+            <h3>Digital Twin Platform</h3>
+            <span class="badge">In Progress</span>
           </div>
           <p>
-            A future-oriented project direction centered on digital twin research, intelligent
-            modeling, and interdisciplinary computational systems.
+            A long-term project direction focused on intelligent modeling, simulation,
+            and interdisciplinary digital twin applications.
           </p>
         </div>
       </div>
     </section>
 
     <section class="section" id="publications">
-      <h2 class="section-title">Publications</h2>
-      <p class="section-subtitle">
-        A list of papers, preprints, or research manuscripts. You can keep adding new entries here later.
-      </p>
+      <div class="section-header">
+        <h2 class="section-title">Publications</h2>
+        <p class="section-desc">Papers, manuscripts, and ongoing academic work.</p>
+      </div>
 
-      <div class="publication-list">
+      <div class="list">
         <div class="publication-item">
           <div class="publication-title">
             Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography MCQ Answering
@@ -646,72 +549,42 @@
             <strong>Tejing Wang</strong>, Yongzheng Li, Jianjun Qi, Ting Qian, Fei Hao · Submitted to Applied Soft Computing
           </div>
           <div class="publication-desc">
-            Interpretable framework combining LLMs with three-way concept analysis and composite decision attributes.
+            An interpretable framework combining LLMs, three-way concept analysis, and composite decision attributes.
           </div>
-        </div>
         </div>
 
         <div class="publication-item">
-          <div class="publication-title">
-            More Papers Coming Soon
-          </div>
-          <div class="publication-meta">
-            Ongoing Research
-          </div>
+          <div class="publication-title">More Papers Coming Soon</div>
+          <div class="publication-meta">Ongoing Research</div>
           <div class="publication-desc">
             This section can later include journal papers, conference submissions, preprints,
-            software copyrights, competition-related research outputs, and thesis work.
+            software copyrights, and thesis-related outputs.
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="research">
-      <h2 class="section-title">Research</h2>
-      <p class="section-subtitle">
-        This section highlights my current interests and academic directions.
-      </p>
-
-      <div class="grid grid-2">
-        <div class="card">
-          <h3>Research Interests</h3>
-          <p>
-            Artificial Intelligence, Digital Twin, Intelligent Question Answering,
-            Knowledge Representation, Formal Concept Analysis, and interdisciplinary computational research.
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>Academic Activities</h3>
-          <p>
-            I am interested in building interpretable intelligent systems, participating in research projects,
-            and exploring future directions at the intersection of theory and practical applications.
-          </p>
         </div>
       </div>
     </section>
 
     <section class="section" id="contact">
-      <h2 class="section-title">Contact</h2>
-      <p class="section-subtitle">
-        Feel free to reach out for academic communication, collaboration, or project discussion.
-      </p>
+      <div class="section-header">
+        <h2 class="section-title">Contact</h2>
+        <p class="section-desc">For academic communication, collaboration, or project discussion.</p>
+      </div>
 
-      <div class="card">
+      <div class="panel">
         <div class="contact-list">
           <div class="contact-item">
-            <span>Email</span>
-            <span><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></span>
+            <div class="contact-label">Email</div>
+            <div class="contact-value"><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></div>
           </div>
 
           <div class="contact-item">
-            <span>GitHub</span>
-            <span><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></span>
+            <div class="contact-label">GitHub</div>
+            <div class="contact-value"><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></div>
           </div>
 
           <div class="contact-item">
-            <span>Website</span>
-            <span><a href="https://dank666.github.io" target="_blank">dank666.github.io</a></span>
+            <div class="contact-label">Website</div>
+            <div class="contact-value"><a href="https://dank666.github.io" target="_blank">dank666.github.io</a></div>
           </div>
         </div>
       </div>
