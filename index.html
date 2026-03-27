@@ -351,36 +351,34 @@
       gap: 18px;
     }
 
-    .publication-item {
-      background: #ffffff;
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 20px 22px;
-      box-shadow: var(--shadow);
-      transition: 0.25s ease;
+      .publication-item {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: none;
+      border-radius: 0;
+      background: transparent;
+    }
+    
+    .publication-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .publication-meta {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    
+    .publication-desc {
+      font-size: 0.9rem;
+      color: #475569;
     }
 
     .publication-item:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-hover);
-    }
-
-    .publication-title {
-      font-size: 1.08rem;
-      font-weight: 800;
-      color: var(--title);
-      margin-bottom: 8px;
-    }
-
-    .publication-meta {
-      color: #475569;
-      font-size: 0.95rem;
-      margin-bottom: 10px;
-    }
-
-    .publication-desc {
-      color: var(--subtext);
-      font-size: 0.96rem;
     }
 
     .contact-list {
@@ -516,34 +514,77 @@
       </div>
     </section>
 
-    <section class="section" id="about">
-      <h2 class="section-title">About Me</h2>
-      <p class="section-subtitle">
-        I am a computer science student with strong interest in AI, systems, digital twin,
-        and interdisciplinary computational research. I enjoy building projects, reading papers,
-        and exploring ideas that connect algorithms with real-world applications.
-      </p>
+        <section class="section" id="about">
+          <h2 class="section-title">About Me</h2>
+          <p class="section-subtitle">
+            I am a computer science student with strong interest in AI, systems, digital twin,
+            and interdisciplinary computational research. I enjoy building projects, reading papers,
+            and exploring ideas that connect algorithms with real-world applications.
+          </p>
+    
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>Background</h3>
+              <p>
+                My interests span artificial intelligence, digital twin, intelligent question answering,
+                and research-oriented software development. I hope to keep growing as a researcher and
+                engineer through challenging projects and academic exploration.
+              </p>
+            </div>
+    
+            <div class="card">
+              <h3>Skills & Interests</h3>
+              <div class="tag-list">
+                <span class="tag">Python</span>
+                <span class="tag">Machine Learning</span>
+                <span class="tag">Digital Twin</span>
+                <span class="tag">Knowledge Systems</span>
+                <span class="tag">Research</span>
+                <span class="tag">Linux</span>
+              </div>
+            </div>
+          </div>
+        </section>
+    
+        <section class="section" id="education">
+      <h2 class="section-title">Education</h2>
+    
+      <div class="card">
+        <h3>Shaanxi Normal University</h3>
+        <p>Undergraduate in Computer Science (Artificial Intelligence Track)</p>
+        <p>GPA: 3.32 / 5.0 · Rank: 8 / 32</p>
+        <p>Expected Graduation: 2027</p>
+      </div>
+    
+      <div class="card" style="margin-top:16px;">
+        <h3>Xidian University</h3>
+        <p>Master of Computer Science (Planned)</p>
+        <p>Focus: Artificial Intelligence · Digital Twin</p>
+      </div>
+    </section>
 
+        <section class="section" id="awards">
+      <h2 class="section-title">Awards</h2>
+    
       <div class="grid grid-2">
         <div class="card">
-          <h3>Background</h3>
-          <p>
-            My interests span artificial intelligence, digital twin, intelligent question answering,
-            and research-oriented software development. I hope to keep growing as a researcher and
-            engineer through challenging projects and academic exploration.
-          </p>
+          <h3>🥇 China Robot & AI Competition</h3>
+          <p>National First Prize</p>
         </div>
-
+    
         <div class="card">
-          <h3>Skills & Interests</h3>
-          <div class="tag-list">
-            <span class="tag">Python</span>
-            <span class="tag">Machine Learning</span>
-            <span class="tag">Digital Twin</span>
-            <span class="tag">Knowledge Systems</span>
-            <span class="tag">Research</span>
-            <span class="tag">Linux</span>
-          </div>
+          <h3>🥇 Provincial Competition</h3>
+          <p>Shaanxi First Prize</p>
+        </div>
+    
+        <div class="card">
+          <h3>📄 Software Copyright</h3>
+          <p>Face Recognition Attendance System V1.0</p>
+        </div>
+    
+        <div class="card">
+          <h3>🎓 Certifications</h3>
+          <p>CET-4 · Mandarin Level 2-A</p>
         </div>
       </div>
     </section>
@@ -599,15 +640,15 @@
       <div class="publication-list">
         <div class="publication-item">
           <div class="publication-title">
-            Leveraging Large Language Model and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering
+            Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography MCQ Answering
           </div>
           <div class="publication-meta">
-            Tejing Wang, Yongzheng Li, Jianjun Qi, Ting Qian, Fei Hao
+            <strong>Tejing Wang</strong>, Yongzheng Li, Jianjun Qi, Ting Qian, Fei Hao · Submitted to Applied Soft Computing
           </div>
           <div class="publication-desc">
-            This work explores an interpretable framework for automated geography multiple-choice question answering,
-            combining large language models with three-way concept analysis and composite decision attributes.
+            Interpretable framework combining LLMs with three-way concept analysis and composite decision attributes.
           </div>
+        </div>
         </div>
 
         <div class="publication-item">
