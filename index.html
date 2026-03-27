@@ -10,7 +10,7 @@
       --bg: #f7f9fc;
       --bg-gradient-1: #eef4ff;
       --bg-gradient-2: #fdfcff;
-      --card: rgba(255, 255, 255, 0.88);
+      --card: rgba(255, 255, 255, 0.9);
       --card-strong: #ffffff;
       --card-border: rgba(148, 163, 184, 0.18);
       --text: #0f172a;
@@ -19,13 +19,12 @@
       --subtext: #475569;
       --accent: #5b7cff;
       --accent-2: #7dd3fc;
-      --accent-soft: #eef2ff;
       --tag-bg: #eef2ff;
       --tag-border: #c7d2fe;
       --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
       --shadow-hover: 0 18px 45px rgba(59, 130, 246, 0.12);
       --radius: 24px;
-      --max-width: 1100px;
+      --max-width: 1120px;
     }
 
     * {
@@ -54,6 +53,11 @@
       text-decoration: none;
     }
 
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
     .container {
       width: min(var(--max-width), calc(100% - 32px));
       margin: 0 auto;
@@ -64,7 +68,7 @@
       top: 0;
       z-index: 100;
       backdrop-filter: blur(14px);
-      background: rgba(255, 255, 255, 0.72);
+      background: rgba(255, 255, 255, 0.76);
       border-bottom: 1px solid rgba(148, 163, 184, 0.14);
     }
 
@@ -107,7 +111,7 @@
 
     .hero-card {
       display: grid;
-      grid-template-columns: 1.35fr 0.9fr;
+      grid-template-columns: 1.2fr 0.8fr;
       gap: 28px;
       align-items: stretch;
       background: var(--card);
@@ -120,14 +124,14 @@
 
     .hero-left h1 {
       margin: 0 0 14px;
-      font-size: clamp(2.2rem, 6vw, 4.2rem);
+      font-size: clamp(2.2rem, 6vw, 4.1rem);
       line-height: 1.06;
       letter-spacing: -1.4px;
       color: var(--title);
     }
 
     .hero-left .subtitle {
-      margin: 0 0 22px;
+      margin: 0 0 18px;
       color: var(--muted);
       font-size: 1.08rem;
       font-weight: 700;
@@ -137,7 +141,7 @@
       margin: 0 0 26px;
       font-size: 1.05rem;
       color: var(--subtext);
-      max-width: 60ch;
+      max-width: 62ch;
     }
 
     .button-group {
@@ -185,8 +189,47 @@
       gap: 16px;
     }
 
+    .profile-card {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--card-border);
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .avatar-wrap {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      padding: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 30px rgba(91, 124, 255, 0.18);
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      background: #e2e8f0;
+    }
+
+    .profile-card h3 {
+      margin: 0 0 8px;
+      color: var(--title);
+      font-size: 1.2rem;
+    }
+
+    .profile-card p {
+      margin: 0;
+      color: var(--subtext);
+      font-size: 0.96rem;
+    }
+
     .mini-card {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       border: 1px solid var(--card-border);
       border-radius: 22px;
       padding: 20px;
@@ -216,7 +259,7 @@
     }
 
     .section-title {
-      font-size: 1.7rem;
+      font-size: 1.8rem;
       margin: 0 0 18px;
       letter-spacing: -0.5px;
       color: var(--title);
@@ -225,7 +268,7 @@
     .section-subtitle {
       margin: 0 0 26px;
       color: var(--subtext);
-      max-width: 70ch;
+      max-width: 72ch;
     }
 
     .grid {
@@ -303,6 +346,43 @@
       font-weight: 700;
     }
 
+    .publication-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .publication-item {
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+      transition: 0.25s ease;
+    }
+
+    .publication-item:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .publication-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--title);
+      margin-bottom: 8px;
+    }
+
+    .publication-meta {
+      color: #475569;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .publication-desc {
+      color: var(--subtext);
+      font-size: 0.96rem;
+    }
+
     .contact-list {
       display: grid;
       gap: 14px;
@@ -346,6 +426,11 @@
       .hero {
         padding-top: 60px;
       }
+
+      .avatar-wrap {
+        width: 180px;
+        height: 180px;
+      }
     }
 
     @media (max-width: 640px) {
@@ -360,12 +445,24 @@
       }
 
       .card,
-      .mini-card {
+      .mini-card,
+      .profile-card,
+      .publication-item {
         padding: 18px;
       }
 
       .hero-left h1 {
         font-size: 2.2rem;
+      }
+
+      .contact-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .avatar-wrap {
+        width: 150px;
+        height: 150px;
       }
     }
   </style>
@@ -377,6 +474,7 @@
       <nav class="nav-links">
         <a href="#about">About</a>
         <a href="#projects">Projects</a>
+        <a href="#publications">Publications</a>
         <a href="#research">Research</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -391,35 +489,28 @@
           <p class="subtitle">Computer Science Student · AI · Digital Twin · Research</p>
           <p class="intro">
             Welcome to my personal website. I am interested in artificial intelligence,
-            digital twin, and research-oriented projects. I enjoy combining theory,
-            engineering, and creative ideas to build meaningful work.
+            digital twin, knowledge systems, and research-oriented projects. I enjoy
+            combining theory, engineering, and creative ideas to build meaningful work.
           </p>
 
           <div class="button-group">
-            <a class="btn btn-primary" href="#projects">View My Projects</a>
+            <a class="btn btn-primary" href="#publications">View Publications</a>
             <a class="btn btn-secondary" href="https://github.com/dank666" target="_blank">GitHub</a>
           </div>
         </div>
 
         <div class="hero-right">
+          <div class="profile-card">
+            <div class="avatar-wrap">
+              <img class="avatar" src="IMG_3311.jpeg" alt="Portrait of Tejing Wang" />
+            </div>
+            <h3>Tejing Wang</h3>
+            <p>Computer Science Student<br />Interested in AI, Digital Twin, and Interdisciplinary Research</p>
+          </div>
+
           <div class="mini-card">
             <h3>Current Focus</h3>
-            <p>Artificial Intelligence, Digital Twin, Knowledge Systems, and Research Projects.</p>
-          </div>
-
-          <div class="mini-card">
-            <h3>Keywords</h3>
-            <ul>
-              <li>Computer Science</li>
-              <li>AI & Intelligent Systems</li>
-              <li>Digital Twin</li>
-              <li>Interdisciplinary Research</li>
-            </ul>
-          </div>
-
-          <div class="mini-card">
-            <h3>Email</h3>
-            <p>wtejing@gmail.com</p>
+            <p>Artificial Intelligence, Digital Twin, Knowledge Representation, and Research Projects.</p>
           </div>
         </div>
       </div>
@@ -428,17 +519,18 @@
     <section class="section" id="about">
       <h2 class="section-title">About Me</h2>
       <p class="section-subtitle">
-        I am a computer science student with strong interest in AI, systems, and interdisciplinary
-        research. I enjoy building projects, reading papers, and exploring ideas that connect
-        algorithms with real-world applications.
+        I am a computer science student with strong interest in AI, systems, digital twin,
+        and interdisciplinary computational research. I enjoy building projects, reading papers,
+        and exploring ideas that connect algorithms with real-world applications.
       </p>
 
       <div class="grid grid-2">
         <div class="card">
           <h3>Background</h3>
           <p>
-            My interests span artificial intelligence, digital twin, and research-oriented software
-            development. I hope to keep growing as a researcher and engineer through challenging projects.
+            My interests span artificial intelligence, digital twin, intelligent question answering,
+            and research-oriented software development. I hope to keep growing as a researcher and
+            engineer through challenging projects and academic exploration.
           </p>
         </div>
 
@@ -448,8 +540,8 @@
             <span class="tag">Python</span>
             <span class="tag">Machine Learning</span>
             <span class="tag">Digital Twin</span>
+            <span class="tag">Knowledge Systems</span>
             <span class="tag">Research</span>
-            <span class="tag">GitHub</span>
             <span class="tag">Linux</span>
           </div>
         </div>
@@ -459,42 +551,76 @@
     <section class="section" id="projects">
       <h2 class="section-title">Projects</h2>
       <p class="section-subtitle">
-        Here are some of the projects I want to present. Later, you can replace these placeholder
-        texts with your real project descriptions, GitHub links, and demos.
+        Selected projects and ongoing work. You can continue replacing or expanding these cards later.
       </p>
 
       <div class="grid grid-3">
         <div class="card">
           <div class="project-title">
-            <h3>Project A</h3>
+            <h3>Geography MCQ QA System</h3>
             <span class="project-badge">Featured</span>
           </div>
           <p>
-            A project about intelligent systems, knowledge representation, or software engineering.
-            Add one or two sentences here to describe what you built and why it matters.
+            An interpretable geography multiple-choice question answering framework based on
+            large language models and three-way concept analysis.
           </p>
         </div>
 
         <div class="card">
           <div class="project-title">
-            <h3>Project B</h3>
+            <h3>Research-Oriented Knowledge System</h3>
             <span class="project-badge">Research</span>
           </div>
           <p>
-            This can be one of your research-related works, competition projects, or an academic system
-            you developed for experiments and evaluation.
+            A project exploring symbolic reasoning, knowledge representation, and structured
+            decision support for complex educational scenarios.
           </p>
         </div>
 
         <div class="card">
           <div class="project-title">
-            <h3>Project C</h3>
+            <h3>Future Digital Twin Platform</h3>
             <span class="project-badge">In Progress</span>
           </div>
           <p>
-            You can also place a future project here, such as a digital twin platform, an AI assistant,
-            or a visually impressive portfolio project.
+            A future-oriented project direction centered on digital twin research, intelligent
+            modeling, and interdisciplinary computational systems.
           </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="publications">
+      <h2 class="section-title">Publications</h2>
+      <p class="section-subtitle">
+        A list of papers, preprints, or research manuscripts. You can keep adding new entries here later.
+      </p>
+
+      <div class="publication-list">
+        <div class="publication-item">
+          <div class="publication-title">
+            Leveraging Large Language Model and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering
+          </div>
+          <div class="publication-meta">
+            Tejing Wang, Yongzheng Li, Jianjun Qi, Ting Qian, Fei Hao
+          </div>
+          <div class="publication-desc">
+            This work explores an interpretable framework for automated geography multiple-choice question answering,
+            combining large language models with three-way concept analysis and composite decision attributes.
+          </div>
+        </div>
+
+        <div class="publication-item">
+          <div class="publication-title">
+            More Papers Coming Soon
+          </div>
+          <div class="publication-meta">
+            Ongoing Research
+          </div>
+          <div class="publication-desc">
+            This section can later include journal papers, conference submissions, preprints,
+            software copyrights, competition-related research outputs, and thesis work.
+          </div>
         </div>
       </div>
     </section>
@@ -502,23 +628,23 @@
     <section class="section" id="research">
       <h2 class="section-title">Research</h2>
       <p class="section-subtitle">
-        This section is suitable for your papers, competitions, academic interests, and future directions.
+        This section highlights my current interests and academic directions.
       </p>
 
       <div class="grid grid-2">
         <div class="card">
           <h3>Research Interests</h3>
           <p>
-            Artificial Intelligence, Digital Twin, Intelligent Question Answering, Knowledge Representation,
-            and interdisciplinary computational research.
+            Artificial Intelligence, Digital Twin, Intelligent Question Answering,
+            Knowledge Representation, Formal Concept Analysis, and interdisciplinary computational research.
           </p>
         </div>
 
         <div class="card">
           <h3>Academic Activities</h3>
           <p>
-            You can list your publications, awards, research projects, open-source contributions,
-            or any academic achievements here.
+            I am interested in building interpretable intelligent systems, participating in research projects,
+            and exploring future directions at the intersection of theory and practical applications.
           </p>
         </div>
       </div>
