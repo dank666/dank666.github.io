@@ -7,19 +7,11 @@
   <meta name="description" content="Tejing Wang's personal website" />
   <style>
     :root {
-      --bg: #fafafa;
-      --surface: #ffffff;
-      --surface-soft: #fcfcfc;
-      --line: #e7e7e7;
+      --bg: #ffffff;
       --text: #111111;
-      --text-soft: #666666;
-      --accent: #1f4ed8;
-      --accent-soft: #f5f8ff;
-      --shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      --radius-sm: 12px;
-      --max-width: 920px;
+      --muted: #666666;
+      --line: #e8e8e8;
+      --max-width: 760px;
     }
 
     * {
@@ -33,9 +25,9 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-      color: var(--text);
       background: var(--bg);
-      line-height: 1.7;
+      color: var(--text);
+      line-height: 1.75;
     }
 
     a {
@@ -49,75 +41,63 @@
     }
 
     .container {
-      width: min(var(--max-width), calc(100% - 32px));
+      width: min(var(--max-width), calc(100% - 40px));
       margin: 0 auto;
     }
 
     .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+      border-bottom: 1px solid var(--line);
+      background: #fff;
     }
 
     .nav-inner {
-      width: min(var(--max-width), calc(100% - 32px));
+      width: min(var(--max-width), calc(100% - 40px));
       margin: 0 auto;
-      padding: 14px 0;
+      padding: 18px 0;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      align-items: center;
+      gap: 16px;
     }
 
     .logo {
       font-size: 1rem;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 0.2px;
     }
 
     .nav-links {
       display: flex;
-      gap: 18px;
+      gap: 16px;
       flex-wrap: wrap;
     }
 
     .nav-links a {
-      color: var(--text-soft);
-      font-size: 0.94rem;
-      font-weight: 500;
-      transition: color 0.2s ease;
+      font-size: 0.95rem;
+      color: var(--muted);
     }
 
     .nav-links a:hover {
-      color: var(--accent);
+      color: var(--text);
     }
 
     .hero {
-      padding: 72px 0 32px;
+      padding: 56px 0 28px;
     }
 
     .hero-card {
       display: grid;
-      grid-template-columns: 120px 1fr;
-      gap: 24px;
+      grid-template-columns: 84px 1fr;
+      gap: 20px;
       align-items: center;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-      padding: 28px;
     }
 
     .avatar-wrap {
-      width: 120px;
-      height: 120px;
+      width: 84px;
+      height: 84px;
       border-radius: 50%;
-      padding: 3px;
-      background: #f2f2f2;
-      border: 1px solid var(--line);
+      overflow: hidden;
+      background: #f4f4f4;
     }
 
     .avatar {
@@ -125,72 +105,51 @@
       height: 100%;
       object-fit: cover;
       border-radius: 50%;
-      background: #e2e8f0;
     }
 
     .hero-text h1 {
       margin: 0;
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      line-height: 1.08;
-      letter-spacing: -1px;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
     }
 
     .hero-text .subtitle {
-      margin: 10px 0 0;
-      color: var(--accent);
-      font-weight: 700;
+      margin: 8px 0 0;
+      color: var(--muted);
       font-size: 1rem;
     }
 
     .hero-text .intro {
-      margin: 16px 0 0;
-      max-width: 64ch;
-      color: var(--text-soft);
+      margin: 14px 0 0;
+      color: var(--muted);
+      max-width: 60ch;
       font-size: 1rem;
     }
 
     .hero-actions {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       flex-wrap: wrap;
-      margin-top: 22px;
+      margin-top: 14px;
     }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 0 16px;
-      border-radius: 999px;
-      font-weight: 700;
+    .hero-actions a {
       font-size: 0.95rem;
-      border: 1px solid transparent;
-      transition: all 0.2s ease;
+      color: var(--muted);
     }
 
-    .btn-primary {
-      background: var(--text);
-      color: white;
-      box-shadow: none;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: white;
-      border-color: var(--line);
+    .hero-actions a:hover {
       color: var(--text);
     }
 
-    .btn-secondary:hover {
-      background: var(--surface-soft);
+    .section {
+      padding: 24px 0;
     }
 
-    .section {
-      padding: 18px 0;
+    .section + .section {
+      border-top: 1px solid var(--line);
     }
 
     .section-header {
@@ -199,14 +158,28 @@
 
     .section-title {
       margin: 0;
-      font-size: 1.45rem;
-      letter-spacing: -0.4px;
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: 0;
     }
 
     .section-desc {
-      margin: 8px 0 0;
-      color: var(--text-soft);
-      max-width: 68ch;
+      display: none;
+    }
+
+    .grid,
+    .grid-2,
+    .grid-3,
+    .timeline,
+    .list,
+    .contact-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2,
+    .grid-3 {
+      grid-template-columns: 1fr;
     }
 
     .panel,
@@ -214,75 +187,73 @@
     .timeline-item,
     .publication-item,
     .contact-item {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow);
-    }
-
-    .panel {
-      padding: 24px;
-    }
-
-    .grid {
-      display: grid;
-      gap: 16px;
-    }
-
-    .grid-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .grid-3 {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .card {
-      padding: 20px;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .card h3,
     .timeline-item h3,
-    .publication-title {
-      margin: 0 0 8px;
-      font-size: 1.02rem;
+    .publication-title,
+    .contact-label {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
     }
 
     .card p,
     .timeline-item p,
+    .contact-value,
     .publication-meta,
-    .publication-desc,
-    .contact-value {
-      margin: 0;
-      color: var(--text-soft);
+    .publication-desc {
+      margin: 4px 0 0;
+      color: var(--muted);
       font-size: 0.96rem;
     }
 
     .tag-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
+      margin-top: 8px;
     }
 
     .tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #f7f7f7;
-      color: #333333;
-      font-size: 0.88rem;
-      font-weight: 600;
-      border: 1px solid var(--line);
+      padding: 0;
+      border: 0;
+      background: transparent;
+      border-radius: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+      font-weight: 400;
     }
 
-    .timeline {
-      display: grid;
-      gap: 14px;
+    .tag::after {
+      content: "·";
+      margin-left: 8px;
     }
 
-    .timeline-item {
-      padding: 20px;
+    .tag:last-child::after {
+      content: "";
+      margin: 0;
+    }
+
+    .timeline-item,
+    .publication-item,
+    .contact-item,
+    .card {
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .timeline-item:last-child,
+    .publication-item:last-child,
+    .contact-item:last-child,
+    .card:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
     }
 
     .timeline-meta {
@@ -290,109 +261,62 @@
       justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
-      margin-bottom: 6px;
-      color: #64748b;
-      font-size: 0.9rem;
-    }
-
-    .list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .publication-item {
-      padding: 18px 20px;
-    }
-
-    .publication-meta {
-      margin-bottom: 6px;
+      margin-bottom: 4px;
+      color: var(--muted);
       font-size: 0.92rem;
     }
 
     .project-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 8px;
+      display: block;
+      margin-bottom: 0;
     }
 
     .badge {
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: #f7f7f7;
-      color: #333333;
-      border: 1px solid var(--line);
-      font-size: 0.78rem;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .contact-list {
-      display: grid;
-      gap: 12px;
+      display: none;
     }
 
     .contact-item {
-      padding: 16px 18px;
       display: grid;
-      grid-template-columns: 120px 1fr;
+      grid-template-columns: 80px 1fr;
       gap: 12px;
-      align-items: center;
-    }
-
-    .contact-label {
-      font-weight: 700;
-      color: var(--text);
+      align-items: start;
     }
 
     .contact-value a {
-      color: var(--accent);
-      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .contact-value a:hover {
+      color: var(--text);
     }
 
     .footer {
-      padding: 36px 0 56px;
-      text-align: center;
-      color: #64748b;
+      padding: 28px 0 48px;
+      color: var(--muted);
       font-size: 0.92rem;
     }
 
-    @media (max-width: 860px) {
+    @media (max-width: 640px) {
+      .nav-inner,
       .hero-card,
-      .grid-2,
-      .grid-3,
       .contact-item {
         grid-template-columns: 1fr;
       }
 
-      .hero-card {
-        text-align: left;
-      }
-
-      .avatar-wrap {
-        width: 128px;
-        height: 128px;
-      }
-    }
-
-    @media (max-width: 640px) {
       .nav-inner {
-        flex-direction: column;
-        align-items: flex-start;
+        display: block;
+      }
+
+      .nav-links {
+        margin-top: 10px;
       }
 
       .hero {
-        padding-top: 54px;
+        padding-top: 40px;
       }
 
-      .hero-card,
-      .panel,
-      .card,
-      .timeline-item,
-      .publication-item,
-      .contact-item {
-        padding: 18px;
+      .hero-card {
+        display: grid;
       }
     }
   </style>
@@ -438,30 +362,18 @@
     <section class="section" id="about">
       <div class="section-header">
         <h2 class="section-title">About</h2>
-        <p class="section-desc">
-          A concise overview of my academic background, interests, and technical focus.
-        </p>
       </div>
 
-      <div class="grid grid-2">
+      <div class="list">
         <div class="card">
-          <h3>Profile</h3>
           <p>
-            I am a computer science student with interests in AI, digital twin, interpretable
-            intelligent systems, and research-driven software projects.
+            I am an undergraduate student in artificial intelligence at Shaanxi Normal University.
+            My interests include artificial intelligence, digital twin, knowledge representation,
+            and interpretable intelligent systems.
           </p>
         </div>
-
         <div class="card">
-          <h3>Skills & Interests</h3>
-          <div class="tag-list">
-            <span class="tag">Python</span>
-            <span class="tag">Machine Learning</span>
-            <span class="tag">Digital Twin</span>
-            <span class="tag">Knowledge Representation</span>
-            <span class="tag">Linux</span>
-            <span class="tag">Research</span>
-          </div>
+          <p>Python · Machine Learning · Digital Twin · Knowledge Representation · Linux · Research</p>
         </div>
       </div>
     </section>
@@ -513,41 +425,20 @@
     <section class="section" id="projects">
       <div class="section-header">
         <h2 class="section-title">Projects</h2>
-        <p class="section-desc">Selected work and research-oriented projects.</p>
       </div>
 
-      <div class="grid grid-3">
+      <div class="list">
         <div class="card">
-          <div class="project-top">
-            <h3>Geography MCQ QA System</h3>
-            <span class="badge">Featured</span>
-          </div>
-          <p>
-            An interpretable question-answering framework that combines large language models
-            with three-way concept analysis.
-          </p>
+          <h3>Geography MCQ QA System</h3>
+          <p>An interpretable question-answering framework combining large language models with three-way concept analysis.</p>
         </div>
-
         <div class="card">
-          <div class="project-top">
-            <h3>Knowledge-Based Research System</h3>
-            <span class="badge">Research</span>
-          </div>
-          <p>
-            A system exploring symbolic reasoning, structured knowledge representation,
-            and decision support for educational tasks.
-          </p>
+          <h3>Knowledge-Based Research System</h3>
+          <p>A system for symbolic reasoning, structured knowledge representation, and decision support for educational tasks.</p>
         </div>
-
         <div class="card">
-          <div class="project-top">
-            <h3>Digital Twin Platform</h3>
-            <span class="badge">In Progress</span>
-          </div>
-          <p>
-            A long-term project direction focused on intelligent modeling, simulation,
-            and interdisciplinary digital twin applications.
-          </p>
+          <h3>Digital Twin Platform</h3>
+          <p>A long-term research direction focused on intelligent modeling, simulation, and digital twin applications.</p>
         </div>
       </div>
     </section>
@@ -555,7 +446,7 @@
     <section class="section" id="publications">
       <div class="section-header">
         <h2 class="section-title">Publications</h2>
-        <p class="section-desc">Papers, manuscripts, and related research materials.</p>
+        <p class="section-desc">Selected research output.</p>
       </div>
 
       <div class="list">
@@ -563,12 +454,6 @@
           <div class="publication-title">
             Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering
           </div>
-          <div class="publication-meta">
-            <strong>Tejing Wang</strong>, Yongzheng Li, Jianjun Qi, Ting Qian, Fei Hao · Submitted to <em>Applied Soft Computing</em>
-          </div>
-          <div class="publication-desc">
-            An interpretable framework combining LLMs, three-way concept analysis, and composite decision attributes for geography MCQ answering.
-
         </div>
       </div>
     </section>
@@ -576,26 +461,22 @@
     <section class="section" id="contact">
       <div class="section-header">
         <h2 class="section-title">Contact</h2>
-        <p class="section-desc">Academic communication and collaboration.</p>
       </div>
 
-      <div class="panel">
-        <div class="contact-list">
-          <div class="contact-item">
-            <div class="contact-label">Email</div>
-            <div class="contact-value"><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></div>
-          </div>
-
-          <div class="contact-item">
-            <div class="contact-label">GitHub</div>
-            <div class="contact-value"><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></div>
-          </div>
+      <div class="contact-list">
+        <div class="contact-item">
+          <div class="contact-label">Email</div>
+          <div class="contact-value"><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-label">GitHub</div>
+          <div class="contact-value"><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></div>
         </div>
       </div>
     </section>
 
     <footer class="footer">
-      © 2026 Tejing Wang · Built with GitHub Pages
+      © 2026 Tejing Wang
     </footer>
   </main>
 </body>
