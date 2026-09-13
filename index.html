@@ -215,6 +215,28 @@
       font-weight: 500;
     }
 
+    .hero-contact {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .hero-contact a {
+      color: var(--muted);
+    }
+
+    .hero-contact a:hover {
+      color: var(--accent);
+    }
+
+    .hero-contact span {
+      color: var(--line);
+    }
+
     .section {
       padding: 26px 0;
     }
@@ -307,6 +329,39 @@
       font-size: 0.9rem;
     }
 
+    .timeline-more {
+      display: contents;
+    }
+
+    .timeline-more[hidden] {
+      display: none;
+    }
+
+    .show-more-btn {
+      margin-top: 6px;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font: inherit;
+      font-size: 0.85rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .show-more-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .show-more-btn[data-state="collapsed"] .label-hide {
+      display: none;
+    }
+
+    .show-more-btn[data-state="expanded"] .label-show {
+      display: none;
+    }
+
     .contact-item {
       display: grid;
       grid-template-columns: 80px 1fr;
@@ -393,9 +448,9 @@
       </div>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
           <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
           <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span></a>
+          <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
           <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
           <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
           <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
@@ -425,39 +480,11 @@
           <h1 class="lang-zh">王特警</h1>
           <p class="subtitle lang-en">Neuro-Symbolic AI · Graph-based Concept Learning · Intelligent Agents</p>
           <p class="subtitle lang-zh">神经符号人工智能 · 图概念学习 · 智能体系统</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="news">
-      <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">News</span><span class="lang-zh">动态</span></h2>
-      </div>
-
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
-          <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
-          <p class="lang-en">Continuing as an academic master's student at Shaanxi Normal University, now advised by Prof. Fei Hao.</p>
-          <p class="lang-zh">确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。</p>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
-          <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
-          <p class="lang-en">Concluded my undergraduate research assistantship at Xidian University with Prof. Zhihan Lyu.</p>
-          <p class="lang-zh">结束了在西安电子科技大学吕智涵教授课题组的本科生科研助理工作。</p>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-meta lang-en"><span>2026</span></div>
-          <div class="timeline-meta lang-zh"><span>2026 年</span></div>
-          <p class="lang-en">Submitted my first-author paper on LLM- and concept-analysis-based geography QA to <em>Applied Soft Computing</em>; currently under review.</p>
-          <p class="lang-zh">以第一作者身份将关于大语言模型与概念分析地理问答的论文投稿至 <em>Applied Soft Computing</em>，目前审稿中。</p>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-meta lang-en"><span>Aug 2026</span></div>
-          <div class="timeline-meta lang-zh"><span>2026 年 8 月</span></div>
-          <p class="lang-en">Finalized the research scope for a survey on neuro-symbolic agentic AI, organized around planning, memory, and safety/verification.</p>
-          <p class="lang-zh">确定了神经符号智能体综述的研究范围，围绕规划、记忆与安全/验证三部分展开。</p>
+          <div class="hero-contact">
+            <a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://github.com/dank666" target="_blank">github.com/dank666</a>
+          </div>
         </div>
       </div>
     </section>
@@ -545,6 +572,46 @@
           </p>
         </div>
       </div>
+    </section>
+
+    <section class="section" id="news">
+      <div class="section-header">
+        <h2 class="section-title"><span class="lang-en">News</span><span class="lang-zh">动态</span></h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
+          <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
+          <p class="lang-en">Continuing as an academic master's student at Shaanxi Normal University, now advised by Prof. Fei Hao.</p>
+          <p class="lang-zh">确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
+          <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
+          <p class="lang-en">Concluded my undergraduate research assistantship at Xidian University with Prof. Zhihan Lyu.</p>
+          <p class="lang-zh">结束了在西安电子科技大学吕智涵教授课题组的本科生科研助理工作。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-meta lang-en"><span>2026</span></div>
+          <div class="timeline-meta lang-zh"><span>2026 年</span></div>
+          <p class="lang-en">Submitted my first-author paper on LLM- and concept-analysis-based geography QA to <em>Applied Soft Computing</em>; currently under review.</p>
+          <p class="lang-zh">以第一作者身份将关于大语言模型与概念分析地理问答的论文投稿至 <em>Applied Soft Computing</em>，目前审稿中。</p>
+        </div>
+        <div class="timeline-more" id="newsMore" hidden>
+          <div class="timeline-item">
+            <div class="timeline-meta lang-en"><span>Aug 2026</span></div>
+            <div class="timeline-meta lang-zh"><span>2026 年 8 月</span></div>
+            <p class="lang-en">Finalized the research scope for a survey on neuro-symbolic agentic AI, organized around planning, memory, and safety/verification.</p>
+            <p class="lang-zh">确定了神经符号智能体综述的研究范围，围绕规划、记忆与安全/验证三部分展开。</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="show-more-btn" id="newsToggle" type="button" aria-expanded="false" aria-controls="newsMore" data-state="collapsed">
+        <span class="label-show"><span class="lang-en">Show earlier updates</span><span class="lang-zh">显示更早的动态</span></span>
+        <span class="label-hide"><span class="lang-en">Hide earlier updates</span><span class="lang-zh">收起</span></span>
+      </button>
     </section>
 
     <section class="section" id="education">
@@ -840,6 +907,21 @@
     backToTop.addEventListener('click', function () {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    var newsToggle = document.getElementById('newsToggle');
+    var newsMore = document.getElementById('newsMore');
+    if (newsToggle && newsMore) {
+      newsToggle.addEventListener('click', function () {
+        var expanded = newsToggle.getAttribute('aria-expanded') === 'true';
+        newsToggle.setAttribute('aria-expanded', String(!expanded));
+        newsToggle.dataset.state = expanded ? 'collapsed' : 'expanded';
+        if (expanded) {
+          newsMore.setAttribute('hidden', '');
+        } else {
+          newsMore.removeAttribute('hidden');
+        }
+      });
+    }
   })();
   </script>
 </body>
