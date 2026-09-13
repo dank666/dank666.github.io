@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+(function () {
+  try {
+    var l = localStorage.getItem('site-lang');
+    if (l !== 'zh' && l !== 'en') l = 'en';
+    document.documentElement.setAttribute('data-lang', l);
+  } catch (e) {
+    document.documentElement.setAttribute('data-lang', 'en');
+  }
+})();
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tejing Wang | Personal Website</title>
@@ -8,9 +19,11 @@
   <style>
     :root {
       --bg: #ffffff;
-      --text: #111111;
-      --muted: #666666;
-      --line: #e8e8e8;
+      --text: #16181c;
+      --muted: #666a70;
+      --line: #e6e4e0;
+      --accent: #24435c;
+      --accent-soft: #ecf1f4;
       --max-width: 760px;
     }
 
@@ -22,6 +35,15 @@
       scroll-behavior: smooth;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      * {
+        transition: none !important;
+      }
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
@@ -31,8 +53,18 @@
     }
 
     a {
-      color: inherit;
+      color: var(--accent);
       text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     img {
@@ -45,15 +77,24 @@
       margin: 0 auto;
     }
 
+    /* language toggle */
+    [data-lang="en"] .lang-zh { display: none; }
+    [data-lang="zh"] .lang-en { display: none; }
+
     .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
       border-bottom: 1px solid var(--line);
-      background: #fff;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
     }
 
     .nav-inner {
       width: min(var(--max-width), calc(100% - 40px));
       margin: 0 auto;
-      padding: 18px 0;
+      padding: 16px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -64,6 +105,14 @@
       font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0.2px;
+      color: var(--text);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
     }
 
     .nav-links {
@@ -73,31 +122,62 @@
     }
 
     .nav-links a {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       color: var(--muted);
     }
 
     .nav-links a:hover {
       color: var(--text);
+      text-decoration: none;
+    }
+
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+      border-left: 1px solid var(--line);
+      padding-left: 16px;
+    }
+
+    .lang-btn {
+      background: none;
+      border: 0;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font: inherit;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .lang-btn[aria-current="true"] {
+      color: var(--text);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .lang-switch span {
+      color: var(--line);
     }
 
     .hero {
-      padding: 56px 0 28px;
+      padding: 60px 0 32px;
     }
 
     .hero-card {
       display: grid;
-      grid-template-columns: 84px 1fr;
-      gap: 20px;
+      grid-template-columns: 88px 1fr;
+      gap: 22px;
       align-items: center;
     }
 
     .avatar-wrap {
-      width: 84px;
-      height: 84px;
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
       overflow: hidden;
       background: #f4f4f4;
+      border: 1px solid var(--line);
     }
 
     .avatar {
@@ -116,36 +196,14 @@
     }
 
     .hero-text .subtitle {
-      margin: 8px 0 0;
-      color: var(--muted);
+      margin: 10px 0 0;
+      color: var(--accent);
       font-size: 1rem;
-    }
-
-    .hero-text .intro {
-      margin: 14px 0 0;
-      color: var(--muted);
-      max-width: 60ch;
-      font-size: 1rem;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .hero-actions a {
-      font-size: 0.95rem;
-      color: var(--muted);
-    }
-
-    .hero-actions a:hover {
-      color: var(--text);
+      font-weight: 500;
     }
 
     .section {
-      padding: 24px 0;
+      padding: 26px 0;
     }
 
     .section + .section {
@@ -153,36 +211,36 @@
     }
 
     .section-header {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .section-title {
+      position: relative;
       margin: 0;
+      padding-left: 14px;
       font-size: 1.08rem;
       font-weight: 700;
       letter-spacing: 0;
     }
 
-    .section-desc {
-      display: none;
+    .section-title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 3px;
+      bottom: 3px;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--accent);
     }
 
-    .grid,
-    .grid-2,
-    .grid-3,
-    .timeline,
     .list,
+    .timeline,
     .contact-list {
       display: grid;
-      gap: 14px;
+      gap: 16px;
     }
 
-    .grid-2,
-    .grid-3 {
-      grid-template-columns: 1fr;
-    }
-
-    .panel,
     .card,
     .timeline-item,
     .publication-item,
@@ -190,8 +248,6 @@
       padding: 0;
       background: transparent;
       border: 0;
-      border-radius: 0;
-      box-shadow: none;
     }
 
     .card h3,
@@ -206,45 +262,17 @@
     .card p,
     .timeline-item p,
     .contact-value,
-    .publication-meta,
-    .publication-desc {
+    .publication-meta {
       margin: 4px 0 0;
       color: var(--muted);
       font-size: 0.96rem;
-    }
-
-    .tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .tag {
-      padding: 0;
-      border: 0;
-      background: transparent;
-      border-radius: 0;
-      color: var(--muted);
-      font-size: 0.96rem;
-      font-weight: 400;
-    }
-
-    .tag::after {
-      content: "·";
-      margin-left: 8px;
-    }
-
-    .tag:last-child::after {
-      content: "";
-      margin: 0;
     }
 
     .timeline-item,
     .publication-item,
     .contact-item,
     .card {
-      padding-bottom: 14px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--line);
     }
 
@@ -263,16 +291,7 @@
       flex-wrap: wrap;
       margin-bottom: 4px;
       color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .project-top {
-      display: block;
-      margin-bottom: 0;
-    }
-
-    .badge {
-      display: none;
+      font-size: 0.9rem;
     }
 
     .contact-item {
@@ -282,32 +301,48 @@
       align-items: start;
     }
 
-    .contact-value a {
-      color: var(--muted);
-    }
-
-    .contact-value a:hover {
-      color: var(--text);
-    }
-
-    .timeline-item a {
-      color: #2563eb;
-      text-decoration: none;
-    }
-
-    .timeline-item a:hover {
-      text-decoration: underline;
-    }
-
     .footer {
-      padding: 28px 0 48px;
+      padding: 32px 0 56px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
+    }
+
+    .back-to-top {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--accent);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 30;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .back-to-top:hover {
+      border-color: var(--accent);
     }
 
     @media (max-width: 640px) {
       .nav-inner,
-      .hero-card,
       .contact-item {
         grid-template-columns: 1fr;
       }
@@ -316,16 +351,17 @@
         display: block;
       }
 
-      .nav-links {
+      .nav-right {
         margin-top: 10px;
+        justify-content: space-between;
       }
 
       .hero {
-        padding-top: 40px;
+        padding-top: 44px;
       }
 
       .hero-card {
-        display: grid;
+        grid-template-columns: 72px 1fr;
       }
     }
   </style>
@@ -333,17 +369,27 @@
 <body>
   <header class="navbar">
     <div class="nav-inner">
-      <div class="logo">Tejing Wang</div>
-      <nav class="nav-links">
-        <a href="#about">About</a>
-        <a href="#education">Education</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#publications">Publications</a>
-        <a href="#skills">Skills</a>
-        <a href="#awards">Awards</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <div class="logo">
+        <span class="lang-en">Tejing Wang</span>
+        <span class="lang-zh">王特警</span>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-links">
+          <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
+          <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
+          <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
+          <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
+          <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></a>
+          <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></a>
+          <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span></a>
+          <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></a>
+        </nav>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn" data-lang="en" type="button">EN</button>
+          <span>/</span>
+          <button class="lang-btn" data-lang="zh" type="button">中</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -355,39 +401,53 @@
         </div>
 
         <div class="hero-text">
-          <h1>Tejing Wang</h1>
-          <p class="subtitle">Neuro-Symbolic AI · Graph-based Concept Learning · Intelligent Agents</p>
+          <h1 class="lang-en">Tejing Wang</h1>
+          <h1 class="lang-zh">王特警</h1>
+          <p class="subtitle lang-en">Neuro-Symbolic AI · Graph-based Concept Learning · Intelligent Agents</p>
+          <p class="subtitle lang-zh">神经符号人工智能 · 图概念学习 · 智能体系统</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="about">
       <div class="section-header">
-        <h2 class="section-title">About</h2>
+        <h2 class="section-title"><span class="lang-en">About</span><span class="lang-zh">关于</span></h2>
       </div>
 
       <div class="list">
         <div class="card">
-          <p>
+          <p class="lang-en">
             I am a student in Artificial Intelligence at Shaanxi Normal University, continuing on to
             an academic master's program there in the School of Artificial Intelligence and Computer
             Science, advised by Prof. Fei Hao.
           </p>
-          <p>
+          <p class="lang-zh">
+            我是陕西师范大学人工智能专业的学生，本科毕业后将继续在本校人工智能与计算机科学学院攻读学术型硕士学位，导师为郝飞教授。
+          </p>
+          <p class="lang-en">
             My research interests center on neuro-symbolic intelligence and graph-based concept
             cognition learning, alongside formal concept analysis, explainable AI, LLM-empowered
             education, digital twins, and embodied intelligence. I'm interested in how structured,
             symbolic knowledge can make large language model systems more interpretable, controllable,
             and cognitively grounded.
           </p>
-          <p>
+          <p class="lang-zh">
+            我的研究兴趣集中在神经符号智能与图概念认知学习，同时也关注形式概念分析、可解释人工智能、大语言模型赋能教育、数字孪生与具身智能。我关心的问题是：结构化的符号知识如何能让大语言模型系统变得更可解释、更可控、更具认知基础。
+          </p>
+          <p class="lang-en">
             My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master's,
             working toward interpretable and trustworthy intelligent systems that bridge symbolic
             reasoning and modern foundation models.
           </p>
-          <p>
+          <p class="lang-zh">
+            我的长期目标是在硕士毕业后赴海外攻读人工智能博士学位，致力于构建连接符号推理与现代基础模型的可解释、可信赖智能系统。
+          </p>
+          <p class="lang-en">
             GPA 3.33/5.0 (84.48/100), ranked 10th of 32 in my cohort. First author on a paper currently
             under review at <em>Applied Soft Computing</em>.
+          </p>
+          <p class="lang-zh">
+            GPA 3.33/5.0（百分制 84.48 分），专业排名 10/32。以第一作者身份在 <em>Applied Soft Computing</em> 期刊投稿一篇论文，目前审稿中。
           </p>
         </div>
       </div>
@@ -395,154 +455,212 @@
 
     <section class="section" id="education">
       <div class="section-header">
-        <h2 class="section-title">Education</h2>
+        <h2 class="section-title"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></h2>
       </div>
 
       <div class="timeline">
 
         <div class="timeline-item">
-          <div class="timeline-meta">
+          <div class="timeline-meta lang-en">
             <span>Shaanxi Normal University</span>
             <span>Expected 2030</span>
           </div>
-          <h3>M.S. in Artificial Intelligence (Academic Master's)</h3>
-          <p>School of Artificial Intelligence and Computer Science · Xi'an, China</p>
-          <p>Advisor: Prof. Fei Hao · Research direction: Graph Learning, Concept Learning, Neuro-Symbolic AI</p>
+          <div class="timeline-meta lang-zh">
+            <span>陕西师范大学</span>
+            <span>预计 2030 年</span>
+          </div>
+          <h3 class="lang-en">M.S. in Artificial Intelligence (Academic Master's)</h3>
+          <h3 class="lang-zh">人工智能学术型硕士</h3>
+          <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi'an, China</p>
+          <p class="lang-zh">人工智能与计算机科学学院 · 中国西安</p>
+          <p class="lang-en">Advisor: Prof. Fei Hao · Research direction: Graph Learning, Concept Learning, Neuro-Symbolic AI</p>
+          <p class="lang-zh">导师：郝飞教授 · 研究方向：图学习、概念学习、神经符号人工智能</p>
         </div>
 
         <div class="timeline-item">
-          <div class="timeline-meta">
+          <div class="timeline-meta lang-en">
             <span>Shaanxi Normal University</span>
             <span>Expected 2027</span>
           </div>
-          <h3>B.Eng. in Artificial Intelligence</h3>
-          <p>School of Artificial Intelligence and Computer Science · Xi'an, China</p>
+          <div class="timeline-meta lang-zh">
+            <span>陕西师范大学</span>
+            <span>预计 2027 年</span>
+          </div>
+          <h3 class="lang-en">B.Eng. in Artificial Intelligence</h3>
+          <h3 class="lang-zh">人工智能工学学士</h3>
+          <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi'an, China</p>
+          <p class="lang-zh">人工智能与计算机科学学院 · 中国西安</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="experience">
       <div class="section-header">
-        <h2 class="section-title">Experience</h2>
-        <p class="section-desc">Research experience and academic training.</p>
+        <h2 class="section-title"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></h2>
       </div>
 
       <div class="timeline">
         <div class="timeline-item">
-          <div class="timeline-meta">
+          <div class="timeline-meta lang-en">
             <span>Shaanxi Normal University</span>
             <span>Jun 2025 – Present</span>
           </div>
-          <p>
+          <div class="timeline-meta lang-zh">
+            <span>陕西师范大学</span>
+            <span>2025 年 6 月至今</span>
+          </div>
+          <p class="lang-en">
             Undergraduate Research Assistant · Supervised by
             <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>
           </p>
-          <p>Research topics: large language models, knowledge-driven intelligent systems, educational AI, and interpretable reasoning.</p>
+          <p class="lang-zh">
+            本科生科研助理 · 导师：
+            <a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>
+          </p>
+          <p class="lang-en">Research topics: large language models, knowledge-driven intelligent systems, educational AI, and interpretable reasoning.</p>
+          <p class="lang-zh">研究方向：大语言模型、知识驱动的智能系统、教育人工智能与可解释推理。</p>
         </div>
 
         <div class="timeline-item">
-          <div class="timeline-meta">
+          <div class="timeline-meta lang-en">
             <span>Xidian University</span>
             <span>Mar 2026 – Present</span>
           </div>
-          <p>
+          <div class="timeline-meta lang-zh">
+            <span>西安电子科技大学</span>
+            <span>2026 年 3 月至今</span>
+          </div>
+          <p class="lang-en">
             Undergraduate Research Assistant · Supervised by
             <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a>
           </p>
-          <p>Digital twin and embodied-cell research: perception, mapping, and interaction mechanisms between physical entities and virtual models, toward embodied units that sense environmental change and express it synchronously in a virtual system.</p>
+          <p class="lang-zh">
+            本科生科研助理 · 导师：
+            <a href="http://lvzhihan.com" target="_blank">吕智涵教授</a>
+          </p>
+          <p class="lang-en">Digital twin and embodied-cell research: perception, mapping, and interaction mechanisms between physical entities and virtual models, toward embodied units that sense environmental change and express it synchronously in a virtual system.</p>
+          <p class="lang-zh">数字孪生与具身细胞方向研究：探索物理实体与虚拟模型之间的感知、映射与交互机制，构建能够感知环境变化并在虚拟系统中同步表达的具身化单元。</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="projects">
       <div class="section-header">
-        <h2 class="section-title">Projects</h2>
+        <h2 class="section-title"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></h2>
       </div>
 
       <div class="list">
         <div class="card">
-          <h3>Geography MCQ QA System</h3>
-          <p>An interpretable question-answering framework combining large language models with three-way concept analysis.</p>
+          <h3 class="lang-en">Geography MCQ QA System</h3>
+          <h3 class="lang-zh">地理多选题自动解答系统</h3>
+          <p class="lang-en">An interpretable question-answering framework combining large language models with three-way concept analysis.</p>
+          <p class="lang-zh">一个融合大语言模型与三支概念分析的可解释问答框架。</p>
         </div>
         <div class="card">
-          <h3>A Survey of Neuro-Symbolic Agents</h3>
-          <p>A survey in preparation on neuro-symbolic agentic AI — how structured knowledge drives interpretable, controllable agents — organized around planning, memory, and safety/verification, with tool-grounding and multi-agent coordination as future-direction notes.</p>
+          <h3 class="lang-en">A Survey of Neuro-Symbolic Agents</h3>
+          <h3 class="lang-zh">神经符号智能体综述</h3>
+          <p class="lang-en">A survey in preparation on neuro-symbolic agentic AI — how structured knowledge drives interpretable, controllable agents — organized around planning, memory, and safety/verification, with tool-grounding and multi-agent coordination as future-direction notes.</p>
+          <p class="lang-zh">一篇正在撰写的综述，聚焦神经符号智能体——结构化知识如何驱动可解释、可控的智能体——围绕规划、记忆与安全/验证三大部分展开，工具调用与多智能体协作作为未来方向简述。</p>
         </div>
         <div class="card">
-          <h3>SynCellTwin</h3>
-          <p>A Unity-based digital twin simulation of <em>Trichoderma atroviride</em> fungi and synthetic cells (GUVs), modeling hyphal network growth, light-field signaling, and cell behavior from a from-scratch simulation pipeline.</p>
+          <h3 class="lang-en">SynCellTwin</h3>
+          <h3 class="lang-zh">SynCellTwin</h3>
+          <p class="lang-en">A Unity-based digital twin simulation of <em>Trichoderma atroviride</em> fungi and synthetic cells (GUVs), modeling hyphal network growth, light-field signaling, and cell behavior from a from-scratch simulation pipeline.</p>
+          <p class="lang-zh">基于 Unity 的丝状真菌（<em>Trichoderma atroviride</em>）与合成细胞（GUV）数字孪生仿真，从零搭建仿真管线，建模菌丝网络生长、光场信号传导与细胞行为。</p>
         </div>
         <div class="card">
-          <h3>NextScience</h3>
-          <p>An AI-powered research platform (<a href="https://nextscience.space" target="_blank">nextscience.space</a>) built for early-career researchers, featuring literature mapping, AI-assisted research notes, and an AI research mentor.</p>
+          <h3 class="lang-en">NextScience</h3>
+          <h3 class="lang-zh">NextScience</h3>
+          <p class="lang-en">An AI-powered research platform (<a href="https://nextscience.space" target="_blank">nextscience.space</a>) built for early-career researchers, featuring literature mapping, AI-assisted research notes, and an AI research mentor.</p>
+          <p class="lang-zh">一个面向早期科研人员的 AI 学术平台（<a href="https://nextscience.space" target="_blank">nextscience.space</a>），集文献图谱、AI 辅助科研笔记与 AI 科研导师功能于一体。</p>
         </div>
         <div class="card">
-          <h3>Embodied Cell Prototype &amp; Structural Design</h3>
-          <p>An ESP32-based art/research installation exploring embodied, environment-reactive behavior: RGBW LEDs driven by photoresistor, force-sensing, and time-of-flight sensor inputs, with 3D structural design and sensor/LED layout modeled in Onshape.</p>
+          <h3 class="lang-en">Embodied Cell Prototype &amp; Structural Design</h3>
+          <h3 class="lang-zh">具身细胞原型与结构设计</h3>
+          <p class="lang-en">An ESP32-based art/research installation exploring embodied, environment-reactive behavior: RGBW LEDs driven by photoresistor, force-sensing, and time-of-flight sensor inputs, with 3D structural design and sensor/LED layout modeled in Onshape.</p>
+          <p class="lang-zh">基于 ESP32 的具身、环境感应交互装置：通过光敏电阻、压力传感器与飞行时间传感器驱动 RGBW LED 灯带，并使用 Onshape 完成三维结构与传感器/灯光布局设计。</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="publications">
       <div class="section-header">
-        <h2 class="section-title">Publications</h2>
-        <p class="section-desc">Selected research output.</p>
+        <h2 class="section-title"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></h2>
       </div>
 
       <div class="list">
         <div class="publication-item">
-          <div class="publication-title">
+          <div class="publication-title lang-en">
             Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering
           </div>
-          <p class="publication-meta">First author · Applied Soft Computing · Under Review</p>
+          <div class="publication-title lang-zh">
+            融合大语言模型与三支概念分析的地理多选题自动解答
+          </div>
+          <p class="publication-meta lang-en">First author · Applied Soft Computing · Under Review</p>
+          <p class="publication-meta lang-zh">第一作者 · Applied Soft Computing · 审稿中</p>
         </div>
         <div class="publication-item">
-          <div class="publication-title">
+          <div class="publication-title lang-en">
             A Survey of Neuro-Symbolic Agents
           </div>
-          <p class="publication-meta">In preparation</p>
+          <div class="publication-title lang-zh">
+            神经符号智能体综述
+          </div>
+          <p class="publication-meta lang-en">In preparation</p>
+          <p class="publication-meta lang-zh">撰写中</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="skills">
       <div class="section-header">
-        <h2 class="section-title">Skills</h2>
+        <h2 class="section-title"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></h2>
       </div>
 
       <div class="list">
         <div class="card">
-          <h3>Programming &amp; Engineering</h3>
-          <p>Python, C++, Linux; full-stack web development (Next.js, FastAPI, Supabase); embedded hardware (ESP32, sensors, LED systems)</p>
+          <h3 class="lang-en">Programming &amp; Engineering</h3>
+          <h3 class="lang-zh">编程与工程</h3>
+          <p class="lang-en">Python, C++, Linux; full-stack web development (Next.js, FastAPI, Supabase); embedded hardware (ESP32, sensors, LED systems)</p>
+          <p class="lang-zh">Python、C++、Linux；全栈 Web 开发（Next.js、FastAPI、Supabase）；嵌入式硬件（ESP32、传感器、LED 系统）</p>
         </div>
         <div class="card">
-          <h3>Artificial Intelligence</h3>
-          <p>Formal concept analysis and three-way concept analysis; machine learning and deep learning; LLM application development and agent systems</p>
+          <h3 class="lang-en">Artificial Intelligence</h3>
+          <h3 class="lang-zh">人工智能</h3>
+          <p class="lang-en">Formal concept analysis and three-way concept analysis; machine learning and deep learning; LLM application development and agent systems</p>
+          <p class="lang-zh">形式概念分析与三支概念分析；机器学习与深度学习；大语言模型应用开发与智能体系统</p>
         </div>
         <div class="card">
-          <h3>LLM-Assisted Workflows</h3>
-          <p>ChatGPT, Claude, Claude Code, Codex — code generation, debugging, and refactoring; academic writing and English-language polishing</p>
+          <h3 class="lang-en">LLM-Assisted Workflows</h3>
+          <h3 class="lang-zh">大模型辅助工作流</h3>
+          <p class="lang-en">ChatGPT, Claude, Claude Code, Codex — code generation, debugging, and refactoring; academic writing and English-language polishing</p>
+          <p class="lang-zh">ChatGPT、Claude、Claude Code、Codex——代码生成、调试与重构；学术写作与英文润色</p>
         </div>
         <div class="card">
-          <h3>Research</h3>
-          <p>Literature review and reproduction; experimental design and comparative analysis; academic writing in Chinese and English; LaTeX</p>
+          <h3 class="lang-en">Research</h3>
+          <h3 class="lang-zh">科研能力</h3>
+          <p class="lang-en">Literature review and reproduction; experimental design and comparative analysis; academic writing in Chinese and English; LaTeX</p>
+          <p class="lang-zh">文献阅读与复现；实验设计与对比分析；中英文科研写作；LaTeX 排版</p>
         </div>
         <div class="card">
-          <h3>Design &amp; Modeling</h3>
-          <p>3D modeling in Onshape; embodied-cell prototype design; digital twin structural design</p>
+          <h3 class="lang-en">Design &amp; Modeling</h3>
+          <h3 class="lang-zh">设计与建模</h3>
+          <p class="lang-en">3D modeling in Onshape; embodied-cell prototype design; digital twin structural design</p>
+          <p class="lang-zh">Onshape 三维建模；具身细胞原型设计；数字孪生结构设计</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="awards">
       <div class="section-header">
-        <h2 class="section-title">Awards &amp; Honors</h2>
+        <h2 class="section-title"><span class="lang-en">Awards &amp; Honors</span><span class="lang-zh">获奖情况</span></h2>
       </div>
 
       <div class="list">
         <div class="card">
-          <h3>Competitions</h3>
-          <p>
+          <h3 class="lang-en">Competitions</h3>
+          <h3 class="lang-zh">竞赛获奖</h3>
+          <p class="lang-en">
             National First Prize, China Robot and Artificial Intelligence Competition (2025)<br>
             National First Prize, Geography Teaching AI Innovation Achievement Competition (2025)<br>
             National Third Prize, Global Campus Artificial Intelligence Algorithm Elite Competition (2025)<br>
@@ -551,12 +669,26 @@
             Second Prize, Information Security and Adversarial Technology Competition, Northwest Region (2025)<br>
             Third Prize, China Collegiate Computing Design Competition, Northwest Region (2024)
           </p>
+          <p class="lang-zh">
+            中国机器人及人工智能大赛 · 国家级一等奖（2025）<br>
+            地理教学人工智能创新成果评比 · 国家级一等奖（2025）<br>
+            全球校园人工智能算法精英大赛 · 国家级三等奖（2025）<br>
+            中国机器人及人工智能大赛（陕西赛区）· 省级一等奖（2025）<br>
+            全球校园人工智能算法精英大赛（陕西赛区）· 省级二等奖（2025）<br>
+            信息安全与对抗技术竞赛（西北赛区）· 二等奖（2025）<br>
+            中国计算机设计大赛（西北地区赛）· 三等奖（2024）
+          </p>
         </div>
         <div class="card">
-          <h3>Software Copyrights</h3>
-          <p>
+          <h3 class="lang-en">Software Copyrights</h3>
+          <h3 class="lang-zh">软件著作权</h3>
+          <p class="lang-en">
             "Weather Teaching Assistant Platform" (Reg. No. 16269380)<br>
             "Deep Learning-Based Face Recognition Classroom Attendance System" (Reg. No. 16202857)
+          </p>
+          <p class="lang-zh">
+            《气象教学助手平台》（登记号：16269380）<br>
+            《基于深度学习的人脸识别课堂签到系统》（登记号：16202857）
           </p>
         </div>
       </div>
@@ -564,12 +696,12 @@
 
     <section class="section" id="contact">
       <div class="section-header">
-        <h2 class="section-title">Contact</h2>
+        <h2 class="section-title"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></h2>
       </div>
 
       <div class="contact-list">
         <div class="contact-item">
-          <div class="contact-label">Email</div>
+          <div class="contact-label"><span class="lang-en">Email</span><span class="lang-zh">邮箱</span></div>
           <div class="contact-value"><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></div>
         </div>
         <div class="contact-item">
@@ -580,8 +712,45 @@
     </section>
 
     <footer class="footer">
-      © 2026 Tejing Wang
+      <span class="lang-en">© 2026 Tejing Wang</span>
+      <span class="lang-zh">© 2026 王特警</span>
     </footer>
   </main>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">↑</button>
+
+  <script>
+  (function () {
+    var STORAGE_KEY = 'site-lang';
+    var btns = document.querySelectorAll('.lang-btn');
+
+    function apply(lang) {
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      btns.forEach(function (b) {
+        b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
+      });
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    }
+
+    var initial = document.documentElement.getAttribute('data-lang') || 'en';
+    apply(initial);
+
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () { apply(b.dataset.lang); });
+    });
+
+    var backToTop = document.getElementById('backToTop');
+    function toggleBackToTop() {
+      if (window.scrollY > 400) backToTop.classList.add('visible');
+      else backToTop.classList.remove('visible');
+    }
+    window.addEventListener('scroll', toggleBackToTop, { passive: true });
+    toggleBackToTop();
+    backToTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+  </script>
 </body>
 </html>
