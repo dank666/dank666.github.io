@@ -238,22 +238,36 @@
     }
 
     .section {
-      padding: 26px 0;
+      position: relative;
+      padding: 52px 0;
+      scroll-margin-top: 76px;
     }
 
     .section + .section {
       border-top: 1px solid var(--line);
     }
 
+    .section:nth-of-type(even)::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 100vw;
+      transform: translateX(-50%);
+      background: var(--accent-soft);
+      z-index: -1;
+    }
+
     .section-header {
-      margin-bottom: 16px;
+      margin-bottom: 22px;
     }
 
     .section-title {
       position: relative;
       margin: 0;
-      padding-left: 14px;
-      font-size: 1.08rem;
+      padding-left: 16px;
+      font-size: 1.18rem;
       font-weight: 700;
       letter-spacing: 0;
     }
@@ -262,9 +276,9 @@
       content: "";
       position: absolute;
       left: 0;
-      top: 3px;
-      bottom: 3px;
-      width: 3px;
+      top: 2px;
+      bottom: 2px;
+      width: 4px;
       border-radius: 2px;
       background: var(--accent);
     }
@@ -273,7 +287,7 @@
     .timeline,
     .contact-list {
       display: grid;
-      gap: 16px;
+      gap: 20px;
     }
 
     .card,
