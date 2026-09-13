@@ -92,7 +92,7 @@
     }
 
     .nav-inner {
-      width: min(var(--max-width), calc(100% - 40px));
+      width: min(1080px, calc(100% - 40px));
       margin: 0 auto;
       padding: 16px 0;
       display: flex;
@@ -106,24 +106,36 @@
       font-weight: 700;
       letter-spacing: 0.2px;
       color: var(--text);
+      flex-shrink: 0;
     }
 
     .nav-right {
       display: flex;
       align-items: center;
       gap: 18px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      min-width: 0;
     }
 
     .nav-links {
       display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 14px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
     }
 
     .nav-links a {
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       color: var(--muted);
+      white-space: nowrap;
     }
 
     .nav-links a:hover {
@@ -138,6 +150,7 @@
       font-size: 0.85rem;
       border-left: 1px solid var(--line);
       padding-left: 16px;
+      flex-shrink: 0;
     }
 
     .lang-btn {
@@ -375,7 +388,9 @@
       </div>
       <div class="nav-right">
         <nav class="nav-links">
+          <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
           <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
+          <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span></a>
           <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
           <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
           <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
@@ -405,6 +420,39 @@
           <h1 class="lang-zh">王特警</h1>
           <p class="subtitle lang-en">Neuro-Symbolic AI · Graph-based Concept Learning · Intelligent Agents</p>
           <p class="subtitle lang-zh">神经符号人工智能 · 图概念学习 · 智能体系统</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="news">
+      <div class="section-header">
+        <h2 class="section-title"><span class="lang-en">News</span><span class="lang-zh">动态</span></h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
+          <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
+          <p class="lang-en">Continuing as an academic master's student at Shaanxi Normal University, now advised by Prof. Fei Hao.</p>
+          <p class="lang-zh">确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
+          <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
+          <p class="lang-en">Concluded my undergraduate research assistantship at Xidian University with Prof. Zhihan Lyu.</p>
+          <p class="lang-zh">结束了在西安电子科技大学吕智涵教授课题组的本科生科研助理工作。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-meta lang-en"><span>2026</span></div>
+          <div class="timeline-meta lang-zh"><span>2026 年</span></div>
+          <p class="lang-en">Submitted my first-author paper on LLM- and concept-analysis-based geography QA to <em>Applied Soft Computing</em>; currently under review.</p>
+          <p class="lang-zh">以第一作者身份将关于大语言模型与概念分析地理问答的论文投稿至 <em>Applied Soft Computing</em>，目前审稿中。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-meta lang-en"><span>Aug 2026</span></div>
+          <div class="timeline-meta lang-zh"><span>2026 年 8 月</span></div>
+          <p class="lang-en">Finalized the research scope for a survey on neuro-symbolic agentic AI, organized around planning, memory, and safety/verification.</p>
+          <p class="lang-zh">确定了神经符号智能体综述的研究范围，围绕规划、记忆与安全/验证三部分展开。</p>
         </div>
       </div>
     </section>
@@ -448,6 +496,47 @@
           </p>
           <p class="lang-zh">
             GPA 3.33/5.0（百分制 84.48 分），专业排名 10/32。以第一作者身份在 <em>Applied Soft Computing</em> 期刊投稿一篇论文，目前审稿中。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="research">
+      <div class="section-header">
+        <h2 class="section-title"><span class="lang-en">Research Statement</span><span class="lang-zh">研究陈述</span></h2>
+      </div>
+
+      <div class="list">
+        <div class="card">
+          <p class="lang-en">
+            My research asks how symbolic, structured knowledge can make large language model systems
+            more interpretable and controllable. In my undergraduate work on automated geography
+            question answering, I combined large language models with three-way concept analysis to
+            turn implicit textbook knowledge into explicit decision rules — an early attempt at
+            grounding a black-box model in something a person can inspect and reason about.
+          </p>
+          <p class="lang-zh">
+            我关心的问题是：结构化的符号知识如何能让大语言模型系统变得更可解释、更可控。在本科阶段的地理自动解题研究中，我把大语言模型与三支概念分析结合起来，把教材中隐含的知识转化为显式的决策规则——这是我第一次尝试让一个"黑箱"模型的推理过程变得可以被人检查和追问。
+          </p>
+          <p class="lang-en">
+            This concern with structure carries into my current work: a survey of neuro-symbolic
+            agentic AI, organized around planning, memory, and safety/verification, and a longer-term
+            interest of mine in graph-based concept cognition learning — using graph structures to
+            represent and reason over concepts, in the same spirit as how three-way concept analysis
+            represents formal contexts. In parallel, my work on digital twins and embodied,
+            sensor-driven systems has given me a hands-on sense of how models trained in isolation
+            behave once they have to track a changing physical or biological environment.
+          </p>
+          <p class="lang-zh">
+            这种对"结构"的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。与此同时，我在数字孪生与传感器驱动的具身系统上的工作，也让我对"一个在孤立环境中训练出来的模型，一旦要跟踪不断变化的物理或生物环境会表现如何"有了更直观的体会。
+          </p>
+          <p class="lang-en">
+            Going forward, I want to bring these threads together in a Ph.D.: building agentic systems
+            whose reasoning is not just performant but legible — where structured knowledge constrains
+            and explains what a model does, rather than being bolted on after the fact.
+          </p>
+          <p class="lang-zh">
+            接下来，我希望在博士阶段把这几条线索汇合起来：构建不仅性能好、而且推理过程可读的智能体系统——让结构化知识去约束和解释模型的行为，而不是事后再补一层解释。
           </p>
         </div>
       </div>
@@ -524,11 +613,11 @@
         <div class="timeline-item">
           <div class="timeline-meta lang-en">
             <span>Xidian University</span>
-            <span>Mar 2026 – Present</span>
+            <span>Mar 2026 – Sep 2026</span>
           </div>
           <div class="timeline-meta lang-zh">
             <span>西安电子科技大学</span>
-            <span>2026 年 3 月至今</span>
+            <span>2026 年 3 月 – 2026 年 9 月</span>
           </div>
           <p class="lang-en">
             Undergraduate Research Assistant · Supervised by
@@ -561,18 +650,6 @@
           <h3 class="lang-zh">神经符号智能体综述</h3>
           <p class="lang-en">A survey in preparation on neuro-symbolic agentic AI — how structured knowledge drives interpretable, controllable agents — organized around planning, memory, and safety/verification, with tool-grounding and multi-agent coordination as future-direction notes.</p>
           <p class="lang-zh">一篇正在撰写的综述，聚焦神经符号智能体——结构化知识如何驱动可解释、可控的智能体——围绕规划、记忆与安全/验证三大部分展开，工具调用与多智能体协作作为未来方向简述。</p>
-        </div>
-        <div class="card">
-          <h3 class="lang-en">SynCellTwin</h3>
-          <h3 class="lang-zh">SynCellTwin</h3>
-          <p class="lang-en">A Unity-based digital twin simulation of <em>Trichoderma atroviride</em> fungi and synthetic cells (GUVs), modeling hyphal network growth, light-field signaling, and cell behavior from a from-scratch simulation pipeline.</p>
-          <p class="lang-zh">基于 Unity 的丝状真菌（<em>Trichoderma atroviride</em>）与合成细胞（GUV）数字孪生仿真，从零搭建仿真管线，建模菌丝网络生长、光场信号传导与细胞行为。</p>
-        </div>
-        <div class="card">
-          <h3 class="lang-en">NextScience</h3>
-          <h3 class="lang-zh">NextScience</h3>
-          <p class="lang-en">An AI-powered research platform (<a href="https://nextscience.space" target="_blank">nextscience.space</a>) built for early-career researchers, featuring literature mapping, AI-assisted research notes, and an AI research mentor.</p>
-          <p class="lang-zh">一个面向早期科研人员的 AI 学术平台（<a href="https://nextscience.space" target="_blank">nextscience.space</a>），集文献图谱、AI 辅助科研笔记与 AI 科研导师功能于一体。</p>
         </div>
         <div class="card">
           <h3 class="lang-en">Embodied Cell Prototype &amp; Structural Design</h3>
@@ -648,6 +725,12 @@
           <p class="lang-en">3D modeling in Onshape; embodied-cell prototype design; digital twin structural design</p>
           <p class="lang-zh">Onshape 三维建模；具身细胞原型设计；数字孪生结构设计</p>
         </div>
+        <div class="card">
+          <h3 class="lang-en">Languages</h3>
+          <h3 class="lang-zh">语言</h3>
+          <p class="lang-en">Mandarin Chinese (native); English — IELTS score to be added</p>
+          <p class="lang-zh">中文（母语）；英语——雅思成绩待补充</p>
+        </div>
       </div>
     </section>
 
@@ -707,6 +790,20 @@
         <div class="contact-item">
           <div class="contact-label">GitHub</div>
           <div class="contact-value"><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-label">Google Scholar</div>
+          <div class="contact-value">
+            <span class="lang-en" style="font-style: italic;">Coming soon — first paper still under review</span>
+            <span class="lang-zh" style="font-style: italic;">待添加——第一篇论文尚在审稿中</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-label">ORCID</div>
+          <div class="contact-value">
+            <span class="lang-en" style="font-style: italic;">Coming soon</span>
+            <span class="lang-zh" style="font-style: italic;">待添加</span>
+          </div>
         </div>
       </div>
     </section>
