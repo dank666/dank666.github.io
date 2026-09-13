@@ -1,2 +1,52 @@
-# dank666.github.io
-[click me into my personal website](https://dank666.github.io)
+# Tejing Wang — Personal Website
+
+Live at **[dank666.github.io](https://dank666.github.io)**
+
+我的个人学术主页，用于展示教育背景、科研经历、项目与论文，主要面向未来的博士申请。
+
+A personal academic homepage for **Tejing Wang (王特警)** — AI student at Shaanxi Normal University, School of Artificial Intelligence and Computer Science. Built to support future PhD applications abroad.
+
+## Features
+
+- **Bilingual (EN / 中文)** — one-click language toggle in the nav bar; the choice is remembered across pages via `localStorage`
+- **Sections** — News, About, Research Statement, Education, Experience, Projects, Publications, Skills, Awards, Contact
+- **Reading Library** (`reading.html`) — a separate, growing library of papers read during research, organized by project and topic, with searchable/filterable notes
+- **Collapsible News feed** — only the most recent updates show by default; older entries expand on demand
+- Sticky nav, back-to-top button, responsive down to mobile, reduced-motion support
+
+## Tech stack
+
+Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step, no dependencies. Chosen deliberately to keep the site easy to hand-edit and cheap to host on GitHub Pages.
+
+## Project structure
+
+```
+.
+├── index.html       # main homepage (all sections)
+├── reading.html      # reading library subpage
+├── IMG_4911.jpeg      # profile photo
+└── README.md
+```
+
+## Updating content
+
+- **General content** (About, Education, Experience, etc.): edit the `lang-en` / `lang-zh` paragraph pairs directly in `index.html`. Every translatable element has both language versions in the markup; the CSS shows/hides them based on the `data-lang` attribute on `<html>`.
+- **Reading Library**: add new papers by appending an entry to the `PAPERS` array near the bottom of `reading.html` — no HTML editing needed. Each entry needs `title_en`/`title_zh`, `authors`, `year`, `project`, `topics`, and `note_en`/`note_zh`.
+- **News**: add new items to the top of the `.timeline` in the News section of `index.html`; move older ones into the `#newsMore` block so they collapse under "Show earlier updates."
+
+## Running locally
+
+No build step required — just open `index.html` in a browser, or serve the folder with any static file server, e.g.:
+
+```bash
+python3 -m http.server
+```
+
+## Deployment
+
+Hosted via **GitHub Pages** from this repository (`dank666.github.io`), which serves `index.html` at the repo root automatically.
+
+## Contact
+
+- Email: [wtejing@gmail.com](mailto:wtejing@gmail.com)
+- GitHub: [@dank666](https://github.com/dank666)
