@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function () {
+  try {
+    var l = localStorage.getItem('site-lang');
+    if (l !== 'zh' && l !== 'en') l = 'en';
+    document.documentElement.setAttribute('data-lang', l);
+  } catch (e) {
+    document.documentElement.setAttribute('data-lang', 'en');
+  }
+})();
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading Library | Tejing Wang</title>
+  <meta name="description" content="Tejing Wang's research reading library — papers read during research, organized by project and topic, with reading notes." />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #16181c;
+      --muted: #666a70;
+      --line: #e6e4e0;
+      --accent: #24435c;
+      --accent-soft: #ecf1f4;
+      --max-width: 820px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .container {
+      width: min(var(--max-width), calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    [data-lang="en"] .lang-zh { display: none; }
+    [data-lang="zh"] .lang-en { display: none; }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .nav-inner {
+      width: min(1080px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .nav-links::-webkit-scrollbar { display: none; }
+
+    .nav-links a {
+      font-size: 0.88rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+      border-left: 1px solid var(--line);
+      padding-left: 16px;
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      background: none;
+      border: 0;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font: inherit;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .lang-btn[aria-current="true"] {
+      color: var(--text);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .lang-switch span { color: var(--line); }
+
+    .page-header {
+      padding: 52px 0 28px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3.4vw, 2.3rem);
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    .page-header .intro {
+      margin: 12px 0 0;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+
+    .page-header .back-link {
+      display: inline-block;
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .controls {
+      padding: 8px 0 28px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 0.95rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .filter-btn[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .result-count {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .paper-list {
+      display: grid;
+      gap: 26px;
+      padding: 28px 0 8px;
+    }
+
+    .paper-item {
+      padding-bottom: 26px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .paper-item:last-child {
+      border-bottom: 0;
+    }
+
+    .paper-title {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 600;
+    }
+
+    .paper-meta {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .paper-tags {
+      margin: 10px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .paper-tag {
+      font-size: 0.78rem;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      cursor: pointer;
+      border: 0;
+      font: inherit;
+    }
+
+    .paper-note {
+      margin: 12px 0 0;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .paper-note-label {
+      font-size: 0.78rem;
+      text-transform: none;
+      color: var(--muted);
+      margin: 12px 0 2px;
+    }
+
+    .empty-state {
+      padding: 40px 0;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .footer {
+      padding: 40px 0 56px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--line);
+      margin-top: 20px;
+    }
+
+    .back-to-top {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--accent);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 30;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .back-to-top:hover { border-color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .nav-inner { display: block; }
+      .nav-right { margin-top: 10px; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="lang-en">Tejing Wang</span>
+        <span class="lang-zh">王特警</span>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-links">
+          <a href="index.html"><span class="lang-en">← Home</span><span class="lang-zh">← 返回主页</span></a>
+        </nav>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn" data-lang="en" type="button">EN</button>
+          <span>/</span>
+          <button class="lang-btn" data-lang="zh" type="button">中</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 class="lang-en">Reading Library</h1>
+      <h1 class="lang-zh">论文库</h1>
+      <p class="intro lang-en">
+        Papers I've read during my research, organized by project and topic, with my own reading notes.
+        This is a working library that I add to as I read — some entries are still placeholders while
+        I fill in full bibliographic details.
+      </p>
+      <p class="intro lang-zh">
+        科研过程中阅读的论文，按项目与主题分类，附上我自己的阅读笔记。这是一个持续更新的资料库，部分条目的完整信息我还在补充中。
+      </p>
+    </div>
+
+    <div class="controls">
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="Search by title, author, or topic…"
+        data-placeholder-en="Search by title, author, or topic…"
+        data-placeholder-zh="按标题、作者或主题搜索…"
+      />
+      <div class="filter-row" id="projectFilters" role="group" aria-label="Filter by project"></div>
+      <div class="result-count" id="resultCount"></div>
+    </div>
+
+    <div class="paper-list" id="paperList"></div>
+    <div class="empty-state lang-en" id="emptyEn" hidden>No papers match your filters.</div>
+    <div class="empty-state lang-zh" id="emptyZh" hidden>没有符合当前筛选条件的论文。</div>
+
+    <footer class="footer">
+      <span class="lang-en">© 2026 Tejing Wang</span>
+      <span class="lang-zh">© 2026 王特警</span>
+    </footer>
+  </main>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">↑</button>
+
+  <script>
+  // ---- Data -------------------------------------------------------------
+  // Each entry: title (title unknown for surname+year-only refs is left as
+  // a placeholder — fill in the real title/venue/link once you have them).
+  var PROJECTS = [
+    { id: 'digital-twin', label_en: 'Digital Twin / Embodied Cells', label_zh: '数字孪生 / 具身细胞' },
+    { id: 'agent-survey', label_en: 'Neuro-Symbolic Agent Survey', label_zh: '神经符号智能体综述' }
+  ];
+
+  var PAPERS = [
+    {
+      title_en: 'Adir et al., 2022 (title to be added)',
+      title_zh: '题目待补充（Adir 等，2022）',
+      authors: 'Adir et al.',
+      year: 2022,
+      venue: '',
+      link: '',
+      project: 'digital-twin',
+      topics: ['synthetic-cells', 'kinetic-model'],
+      note_en: 'Basis for the SynCellTwin kinetic model (bell-curve × Michaelis–Menten × exponential decay); source of the fitted constants used in the CTZController.',
+      note_zh: 'SynCellTwin 动力学模型（钟形曲线 × 米氏方程 × 指数衰减）的来源文献，CTZController 中拟合常数即来自此文。'
+    },
+    {
+      title_en: 'Bennett et al., 2026 (title to be added)',
+      title_zh: '题目待补充（Bennett 等，2026）',
+      authors: 'Bennett et al.',
+      year: 2026,
+      venue: '',
+      link: '',
+      project: 'digital-twin',
+      topics: ['synthetic-cells', 'positive-feedback'],
+      note_en: 'Describes a positive-feedback motif I plan to incorporate into the model as a testable rule variant, rather than a full pivot of the existing approach.',
+      note_zh: '提出了一个正反馈机制，我计划将其作为一个可测试的规则变体纳入模型，而不是对现有方法做整体调整。'
+    },
+    {
+      title_en: 'Alsalloum, 2024 (title to be added)',
+      title_zh: '题目待补充（Alsalloum，2024）',
+      authors: 'Alsalloum',
+      year: 2024,
+      venue: '',
+      link: '',
+      project: 'digital-twin',
+      topics: ['digital-twin-methodology'],
+      note_en: 'Background reading on digital twin methodology, used to position SynCellTwin relative to existing frameworks.',
+      note_zh: '数字孪生方法论背景阅读，用于将 SynCellTwin 与已有框架做对比定位。'
+    },
+    {
+      title_en: 'De Domenico, 2025 (title to be added)',
+      title_zh: '题目待补充（De Domenico，2025）',
+      authors: 'De Domenico',
+      year: 2025,
+      venue: '',
+      link: '',
+      project: 'digital-twin',
+      topics: ['digital-twin-methodology'],
+      note_en: 'Background reading on digital twin methodology, used to position SynCellTwin relative to existing frameworks.',
+      note_zh: '数字孪生方法论背景阅读，用于将 SynCellTwin 与已有框架做对比定位。'
+    },
+    {
+      title_en: 'Arkfeld, 2026 — ReaDDy-Cell (title to be added)',
+      title_zh: '题目待补充（Arkfeld，2026 — ReaDDy-Cell）',
+      authors: 'Arkfeld',
+      year: 2026,
+      venue: '',
+      link: '',
+      project: 'digital-twin',
+      topics: ['digital-twin-methodology', 'simulation'],
+      note_en: 'ReaDDy-Cell — reference reading on cell-scale reaction-diffusion simulation methodology.',
+      note_zh: 'ReaDDy-Cell——关于细胞尺度反应扩散仿真方法的参考阅读。'
+    },
+    {
+      title_en: 'Karr et al., 2012 — Whole-cell model of Mycoplasma genitalium',
+      title_zh: 'Karr 等，2012 — 生殖支原体全细胞模型',
+      authors: 'Karr et al.',
+      year: 2012,
+      venue: '',
+      link: '',
+      project: 'digital-twin',
+      topics: ['whole-cell-model'],
+      note_en: 'Landmark whole-cell computational model; read as a reference point for what a complete mechanistic cell model looks like.',
+      note_zh: '具有里程碑意义的全细胞计算模型，作为"完整机理细胞模型长什么样"的参照阅读。'
+    },
+    {
+      title_en: 'Neuro-symbolic agentic AI: Architectures, integration patterns, applications… (Computer Science Review, 2026)',
+      title_zh: '《Neuro-symbolic agentic AI: Architectures, integration patterns, applications…》（Computer Science Review，2026）',
+      authors: '',
+      year: 2026,
+      venue: 'Computer Science Review',
+      link: '',
+      project: 'agent-survey',
+      topics: ['neuro-symbolic-agents', 'competing-survey'],
+      note_en: 'One of two existing surveys I am differentiating my own neuro-symbolic agent survey from — reviewed to map what is already covered in the literature.',
+      note_zh: '我在写的神经符号智能体综述所要区分的两篇已有综述之一——用于梳理该领域已经被覆盖的内容。'
+    },
+    {
+      title_en: 'Agentic AI systems: A systematic survey… (Neurocomputing, 2026)',
+      title_zh: '《Agentic AI systems: A systematic survey…》（Neurocomputing，2026）',
+      authors: '',
+      year: 2026,
+      venue: 'Neurocomputing',
+      link: '',
+      project: 'agent-survey',
+      topics: ['agentic-ai', 'competing-survey'],
+      note_en: 'The second of two existing surveys I am differentiating my own neuro-symbolic agent survey from.',
+      note_zh: '我在写的神经符号智能体综述所要区分的两篇已有综述中的第二篇。'
+    }
+  ];
+
+  // ---- State --------------------------------------------------------------
+  var state = { project: 'all', topic: null, query: '' };
+
+  // ---- Render ---------------------------------------------------------------
+  function currentLang() {
+    return document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+  }
+
+  function renderProjectFilters() {
+    var wrap = document.getElementById('projectFilters');
+    wrap.innerHTML = '';
+    var all = document.createElement('button');
+    all.className = 'filter-btn';
+    all.type = 'button';
+    all.dataset.project = 'all';
+    wrap.appendChild(all);
+    PROJECTS.forEach(function (p) {
+      var b = document.createElement('button');
+      b.className = 'filter-btn';
+      b.type = 'button';
+      b.dataset.project = p.id;
+      wrap.appendChild(b);
+    });
+    updateProjectFilterLabels();
+    wrap.querySelectorAll('.filter-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.project = b.dataset.project;
+        render();
+      });
+    });
+  }
+
+  function updateProjectFilterLabels() {
+    var lang = currentLang();
+    var wrap = document.getElementById('projectFilters');
+    wrap.querySelectorAll('.filter-btn').forEach(function (b) {
+      if (b.dataset.project === 'all') {
+        b.textContent = lang === 'zh' ? '全部' : 'All';
+      } else {
+        var p = PROJECTS.filter(function (x) { return x.id === b.dataset.project; })[0];
+        b.textContent = lang === 'zh' ? p.label_zh : p.label_en;
+      }
+      b.setAttribute('aria-pressed', String(b.dataset.project === state.project));
+    });
+  }
+
+  function matches(paper) {
+    if (state.project !== 'all' && paper.project !== state.project) return false;
+    if (state.topic && paper.topics.indexOf(state.topic) === -1) return false;
+    if (state.query) {
+      var q = state.query.toLowerCase();
+      var hay = [paper.title_en, paper.title_zh, paper.authors, paper.venue]
+        .concat(paper.topics)
+        .join(' ')
+        .toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+
+  function renderList() {
+    var lang = currentLang();
+    var list = document.getElementById('paperList');
+    var filtered = PAPERS.filter(matches).sort(function (a, b) { return b.year - a.year; });
+    list.innerHTML = '';
+
+    document.getElementById('emptyEn').hidden = filtered.length !== 0;
+    document.getElementById('emptyZh').hidden = filtered.length !== 0;
+
+    var countEl = document.getElementById('resultCount');
+    countEl.textContent = lang === 'zh'
+      ? filtered.length + ' 篇论文'
+      : filtered.length + (filtered.length === 1 ? ' paper' : ' papers');
+
+    filtered.forEach(function (paper) {
+      var item = document.createElement('div');
+      item.className = 'paper-item';
+
+      var title = document.createElement('p');
+      title.className = 'paper-title';
+      var titleText = lang === 'zh' ? paper.title_zh : paper.title_en;
+      if (paper.link) {
+        var a = document.createElement('a');
+        a.href = paper.link;
+        a.target = '_blank';
+        a.textContent = titleText;
+        title.appendChild(a);
+      } else {
+        title.textContent = titleText;
+      }
+      item.appendChild(title);
+
+      var metaParts = [];
+      if (paper.authors) metaParts.push(paper.authors);
+      metaParts.push(paper.year);
+      if (paper.venue) metaParts.push(paper.venue);
+      var proj = PROJECTS.filter(function (p) { return p.id === paper.project; })[0];
+      if (proj) metaParts.push(lang === 'zh' ? proj.label_zh : proj.label_en);
+      var meta = document.createElement('p');
+      meta.className = 'paper-meta';
+      meta.textContent = metaParts.join(' · ');
+      item.appendChild(meta);
+
+      var tags = document.createElement('div');
+      tags.className = 'paper-tags';
+      paper.topics.forEach(function (t) {
+        var tag = document.createElement('button');
+        tag.className = 'paper-tag';
+        tag.type = 'button';
+        tag.textContent = t;
+        tag.addEventListener('click', function () {
+          state.topic = state.topic === t ? null : t;
+          render();
+        });
+        tags.appendChild(tag);
+      });
+      item.appendChild(tags);
+
+      var noteLabel = document.createElement('p');
+      noteLabel.className = 'paper-note-label';
+      noteLabel.innerHTML = '<span class="lang-en">Reading note</span><span class="lang-zh">阅读笔记</span>';
+      item.appendChild(noteLabel);
+
+      var note = document.createElement('p');
+      note.className = 'paper-note';
+      note.textContent = lang === 'zh' ? paper.note_zh : paper.note_en;
+      item.appendChild(note);
+
+      list.appendChild(item);
+    });
+  }
+
+  function render() {
+    updateProjectFilterLabels();
+    renderList();
+  }
+
+  // ---- Init ------------------------------------------------------------
+  (function () {
+    var STORAGE_KEY = 'site-lang';
+    var btns = document.querySelectorAll('.lang-btn');
+
+    function applyLang(lang) {
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      btns.forEach(function (b) {
+        b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
+      });
+      var input = document.getElementById('searchInput');
+      input.placeholder = lang === 'zh'
+        ? input.dataset.placeholderZh
+        : input.dataset.placeholderEn;
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+      render();
+    }
+
+    var initial = document.documentElement.getAttribute('data-lang') || 'en';
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () { applyLang(b.dataset.lang); });
+    });
+
+    renderProjectFilters();
+    applyLang(initial);
+
+    document.getElementById('searchInput').addEventListener('input', function (e) {
+      state.query = e.target.value.trim();
+      render();
+    });
+
+    var backToTop = document.getElementById('backToTop');
+    function toggleBackToTop() {
+      if (window.scrollY > 400) backToTop.classList.add('visible');
+      else backToTop.classList.remove('visible');
+    }
+    window.addEventListener('scroll', toggleBackToTop, { passive: true });
+    toggleBackToTop();
+    backToTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+  </script>
+</body>
+</html>
