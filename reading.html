@@ -236,18 +236,27 @@
 
     .paper-title {
       margin: 0;
-      font-size: 1.02rem;
+      max-width: 68ch;
+      font-size: 1.05rem;
       font-weight: 600;
+      line-height: 1.4;
     }
 
-    .paper-meta {
-      margin: 4px 0 0;
+    .paper-authors {
+      margin: 6px 0 0;
+      max-width: 68ch;
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    .paper-secondary {
+      margin: 2px 0 0;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     .paper-tags {
-      margin: 10px 0 0;
+      margin: 12px 0 0;
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
@@ -264,17 +273,31 @@
       font: inherit;
     }
 
+    .paper-tag.project-tag {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .paper-note-block {
+      margin: 14px 0 0;
+      max-width: 68ch;
+      padding-left: 14px;
+      border-left: 2px solid var(--accent-soft);
+    }
+
     .paper-note {
-      margin: 12px 0 0;
+      margin: 2px 0 0;
       color: var(--text);
       font-size: 0.95rem;
     }
 
     .paper-note-label {
-      font-size: 0.78rem;
-      text-transform: none;
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
       color: var(--muted);
-      margin: 12px 0 2px;
+      margin: 0;
     }
 
     .empty-state {
@@ -398,7 +421,7 @@
 
   var PAPERS = [
     {
-      title_en: 'Neuro-symbolic agentic AI: Architectures, integration patterns, applications, open challenges and future research directions (Computer Science Review，2026)',
+      title_en: 'Neuro-symbolic agentic AI: Architectures, integration patterns, applications, open challenges and future research directions',
       title_zh: '《Neuro-symbolic agentic AI: Architectures, integration patterns, applications, open challenges and future research directions》（Computer Science Review，2026）',
       authors: 'Safayat Bin Hakim, Muhammad Adil, Alvaro Velasquez, Houbing Herbert Song',
       year: 2026,
@@ -410,7 +433,7 @@
       note_zh: '我在写的神经符号智能体综述所要区分的几篇已有综述之一——用于梳理该领域已经被覆盖的内容。'
     },
     {
-      title_en: 'Agentic AI systems: A systematic survey of multi-agent architectures, cognitive foundations, interaction, explainability, security, and performance evaluation (Neurocomputing, 2026)',
+      title_en: 'Agentic AI systems: A systematic survey of multi-agent architectures, cognitive foundations, interaction, explainability, security, and performance evaluation',
       title_zh: '《Agentic AI systems: A systematic survey of multi-agent architectures, cognitive foundations, interaction, explainability, security, and performance evaluation》（Neurocomputing，2026）',
       authors: 'Smita Khapre, Melkamu Abay Mersha, Zainab Olalekan, Hassan Shakil, Samer Iskander, Asser Moustafa, Jugal Kalita',
       year: 2026,
@@ -501,6 +524,7 @@
       var item = document.createElement('div');
       item.className = 'paper-item';
 
+      // Title
       var title = document.createElement('p');
       title.className = 'paper-title';
       var titleText = lang === 'zh' ? paper.title_zh : paper.title_en;
@@ -515,19 +539,39 @@
       }
       item.appendChild(title);
 
-      var metaParts = [];
-      if (paper.authors) metaParts.push(paper.authors);
-      metaParts.push(paper.year);
-      if (paper.venue) metaParts.push(paper.venue);
-      var proj = PROJECTS.filter(function (p) { return p.id === paper.project; })[0];
-      if (proj) metaParts.push(lang === 'zh' ? proj.label_zh : proj.label_en);
-      var meta = document.createElement('p');
-      meta.className = 'paper-meta';
-      meta.textContent = metaParts.join(' · ');
-      item.appendChild(meta);
+      // Authors (own line)
+      if (paper.authors) {
+        var authors = document.createElement('p');
+        authors.className = 'paper-authors';
+        authors.textContent = paper.authors;
+        item.appendChild(authors);
+      }
 
+      // Secondary line: year · venue (muted, smaller)
+      var secondaryParts = [paper.year];
+      if (paper.venue) secondaryParts.push(paper.venue);
+      var secondary = document.createElement('p');
+      secondary.className = 'paper-secondary';
+      secondary.textContent = secondaryParts.join(' · ');
+      item.appendChild(secondary);
+
+      // Tags: project (solid pill, clickable to filter) + topics
       var tags = document.createElement('div');
       tags.className = 'paper-tags';
+
+      var proj = PROJECTS.filter(function (p) { return p.id === paper.project; })[0];
+      if (proj) {
+        var projTag = document.createElement('button');
+        projTag.className = 'paper-tag project-tag';
+        projTag.type = 'button';
+        projTag.textContent = lang === 'zh' ? proj.label_zh : proj.label_en;
+        projTag.addEventListener('click', function () {
+          state.project = proj.id;
+          render();
+        });
+        tags.appendChild(projTag);
+      }
+
       paper.topics.forEach(function (t) {
         var tag = document.createElement('button');
         tag.className = 'paper-tag';
@@ -541,15 +585,21 @@
       });
       item.appendChild(tags);
 
+      // Note, set off in its own bordered block
+      var noteBlock = document.createElement('div');
+      noteBlock.className = 'paper-note-block';
+
       var noteLabel = document.createElement('p');
       noteLabel.className = 'paper-note-label';
       noteLabel.innerHTML = '<span class="lang-en">Reading note</span><span class="lang-zh">阅读笔记</span>';
-      item.appendChild(noteLabel);
+      noteBlock.appendChild(noteLabel);
 
       var note = document.createElement('p');
       note.className = 'paper-note';
       note.textContent = lang === 'zh' ? paper.note_zh : paper.note_en;
-      item.appendChild(note);
+      noteBlock.appendChild(note);
+
+      item.appendChild(noteBlock);
 
       list.appendChild(item);
     });
