@@ -16,6 +16,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tejing Wang | Personal Website</title>
   <meta name="description" content="Tejing Wang's personal website" />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="icon" href="favicon.ico" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Tejing Wang | Personal Website" />
+  <meta property="og:description" content="AI student at Shaanxi Normal University — Neuro-Symbolic AI, Graph-based Concept Learning, Intelligent Agents." />
+  <meta property="og:url" content="https://dank666.github.io/" />
+  <meta property="og:image" content="https://dank666.github.io/IMG_4911.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tejing Wang | Personal Website" />
+  <meta name="twitter:description" content="AI student at Shaanxi Normal University — Neuro-Symbolic AI, Graph-based Concept Learning, Intelligent Agents." />
+  <meta name="twitter:image" content="https://dank666.github.io/IMG_4911.jpeg" />
   <style>
     :root {
       --bg: #ffffff;
@@ -499,6 +515,11 @@
             <a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a>
             <span aria-hidden="true">·</span>
             <a href="https://github.com/dank666" target="_blank">github.com/dank666</a>
+            <span aria-hidden="true">·</span>
+            <a href="CV.pdf" id="cvDownload" class="cv-link">
+              <span class="lang-en">Download CV</span>
+              <span class="lang-zh">下载简历</span>
+            </a>
           </div>
         </div>
       </div>
@@ -536,6 +557,13 @@
           </p>
           <p class="lang-zh">
             我的长期目标是在硕士毕业后赴海外攻读人工智能博士学位，致力于构建连接符号推理与现代基础模型的可解释、可信赖智能系统。
+          </p>
+          <p class="lang-en">
+            GPA 3.33/5.0 (84.48/100), ranked 10th of 32 in my cohort. First author on a paper currently
+            under review at <em>Applied Soft Computing</em>.
+          </p>
+          <p class="lang-zh">
+            GPA 3.33/5.0（百分制 84.48 分），专业排名 10/32。以第一作者身份在 <em>Applied Soft Computing</em> 期刊投稿一篇论文，目前审稿中。
           </p>
         </div>
       </div>
@@ -613,7 +641,6 @@
           <p class="lang-en">Finalized the research scope for a survey on neuro-symbolic agentic AI, organized around planning, memory, and safety/verification.</p>
           <p class="lang-zh">确定了神经符号智能体综述的研究范围，围绕规划、记忆与安全/验证三部分展开。</p>
         </div>
-        
         <div class="timeline-more" id="newsMore" hidden>
           <div class="timeline-item">
             <div class="timeline-meta lang-en"><span>Mar 2026</span></div>
@@ -624,14 +651,14 @@
           <div class="timeline-item">
             <div class="timeline-meta lang-en"><span>Jan 2026</span></div>
             <div class="timeline-meta lang-zh"><span>2026 年 1 月</span></div>
-            <p class="lang-en">Submitted my first-author paper on the automated geography QA system based on LLM and three-way concept analysis to <em>Applied Soft Computing</em>.</p>
-            <p class="lang-zh">以第一作者身份将基于大语言模型与三支概念分析的地理试题自动解答系统的论文投稿至 <em>Applied Soft Computing</em>。</p>
+            <p class="lang-en">Submitted my first-author paper on LLM- and concept-analysis-based geography QA to <em>Applied Soft Computing</em>; currently under review.</p>
+            <p class="lang-zh">以第一作者身份将关于大语言模型与概念分析地理问答的论文投稿至 <em>Applied Soft Computing</em>，目前审稿中。</p>
           </div>
           <div class="timeline-item">
             <div class="timeline-meta lang-en"><span>Jun 2025</span></div>
             <div class="timeline-meta lang-zh"><span>2025 年 6 月</span></div>
-            <p class="lang-en">Started work on the automated geography QA system based on LLM and three-way concept analysis, supervised by Prof. Fei Hao.</p>
-            <p class="lang-zh">在郝飞教授指导下开始进行基于大语言模型与三支概念分析的地理试题自动解答系统的研发工作。</p>
+            <p class="lang-en">Started work on the LLM- and concept-analysis-based automated geography QA system.</p>
+            <p class="lang-zh">开始进行基于大语言模型与概念分析的地理试题自动解答系统的研发工作。</p>
           </div>
         </div>
       </div>
@@ -692,11 +719,11 @@
         <div class="timeline-item">
           <div class="timeline-meta lang-en">
             <span>Shaanxi Normal University</span>
-            <span>Jun 2025 – Jun 2027</span>
+            <span>Jun 2025 – Present</span>
           </div>
           <div class="timeline-meta lang-zh">
             <span>陕西师范大学</span>
-            <span>2025 年 6 月 - 2027 年 6 月</span>
+            <span>2025 年 6 月至今</span>
           </div>
           <p class="lang-en">
             Undergraduate Research Assistant · Supervised by
@@ -755,17 +782,8 @@
 
       <div class="list">
         <div class="publication-item">
-          <div class="publication-title lang-en">
-            A Survey of Neuro-Symbolic Agents
-          </div>
-          <div class="publication-title lang-zh">
-            神经符号智能体综述
-          </div>
-          <p class="publication-meta lang-en">In preparation</p>
-          <p class="publication-meta lang-zh">撰写中</p>
-        </div>
-        
-        <div class="publication-item">
+          <!-- Once a preprint/DOI link is available, wrap the title text below in
+               <a href="LINK" target="_blank">…</a> to make it clickable. -->
           <div class="publication-title lang-en">
             Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering
           </div>
@@ -774,6 +792,18 @@
           </div>
           <p class="publication-meta lang-en">First author · Applied Soft Computing · Under Review</p>
           <p class="publication-meta lang-zh">第一作者 · Applied Soft Computing · 审稿中</p>
+        </div>
+        <div class="publication-item">
+          <!-- Once a preprint/DOI link is available, wrap the title text below in
+               <a href="LINK" target="_blank">…</a> to make it clickable. -->
+          <div class="publication-title lang-en">
+            A Survey of Neuro-Symbolic Agents
+          </div>
+          <div class="publication-title lang-zh">
+            神经符号智能体综述
+          </div>
+          <p class="publication-meta lang-en">In preparation</p>
+          <p class="publication-meta lang-zh">撰写中</p>
         </div>
       </div>
     </section>
@@ -877,14 +907,23 @@
           <div class="contact-value"><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></div>
         </div>
         <div class="contact-item">
+          <div class="contact-label"><span class="lang-en">CV</span><span class="lang-zh">简历</span></div>
+          <div class="contact-value">
+            <a href="CV.pdf" id="cvDownloadContact" class="cv-link">
+              <span class="lang-en">Download PDF</span>
+              <span class="lang-zh">下载 PDF</span>
+            </a>
+          </div>
+        </div>
+        <div class="contact-item">
           <div class="contact-label">GitHub</div>
           <div class="contact-value"><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></div>
         </div>
         <div class="contact-item">
           <div class="contact-label">Google Scholar</div>
           <div class="contact-value">
-            <span class="lang-en" style="font-style: italic;">Coming soon</span>
-            <span class="lang-zh" style="font-style: italic;">待添加</span>
+            <span class="lang-en" style="font-style: italic;">Coming soon — first paper still under review</span>
+            <span class="lang-zh" style="font-style: italic;">待添加——第一篇论文尚在审稿中</span>
           </div>
         </div>
         <div class="contact-item">
@@ -951,6 +990,31 @@
         }
       });
     }
+
+    // CV download: the button always points at CV.pdf. Until that file is
+    // actually added to the repo, clicking it shows a friendly notice
+    // instead of a broken-link 404. Once CV.pdf exists at the repo root,
+    // this starts working automatically — no code changes needed.
+    document.querySelectorAll('.cv-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var cvUrl = link.getAttribute('href');
+        fetch(cvUrl, { method: 'HEAD' })
+          .then(function (res) {
+            if (res.ok) {
+              window.open(cvUrl, '_blank');
+            } else {
+              throw new Error('CV not found');
+            }
+          })
+          .catch(function () {
+            var lang = document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+            alert(lang === 'zh'
+              ? '简历还没有上传，敬请期待。'
+              : "The CV isn't uploaded yet — check back soon.");
+          });
+      });
+    });
   })();
   </script>
 </body>
