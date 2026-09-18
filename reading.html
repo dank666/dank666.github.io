@@ -390,8 +390,7 @@
 
   <main class="container">
     <div class="page-header">
-      <h1 class="lang-en">Reading Library</h1>
-      <h1 class="lang-zh">论文库</h1>
+      <h1 data-i18n data-lang-en="Reading Library" data-lang-zh="论文库">Reading Library</h1>
       <p class="intro lang-en">
         Papers I've read during my research, organized by project and topic, with my own reading notes.
         This is a working library that I add to as I read — some entries are still placeholders while
@@ -630,12 +629,17 @@
   (function () {
     var STORAGE_KEY = 'site-lang';
     var btns = document.querySelectorAll('.lang-btn');
+    var i18nEls = document.querySelectorAll('[data-i18n]');
 
     function applyLang(lang) {
       document.documentElement.setAttribute('data-lang', lang);
       document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
       btns.forEach(function (b) {
         b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
+      });
+      i18nEls.forEach(function (el) {
+        var text = lang === 'zh' ? el.dataset.langZh : el.dataset.langEn;
+        if (text) el.textContent = text;
       });
       var input = document.getElementById('searchInput');
       input.placeholder = lang === 'zh'

@@ -32,6 +32,42 @@
   <meta name="twitter:title" content="Tejing Wang | Personal Website" />
   <meta name="twitter:description" content="AI student at Shaanxi Normal University — Neuro-Symbolic AI, Graph-based Concept Learning, Intelligent Agents." />
   <meta name="twitter:image" content="https://dank666.github.io/IMG_4911.jpeg" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Tejing Wang",
+    "alternateName": "王特警",
+    "url": "https://dank666.github.io/",
+    "image": "https://dank666.github.io/IMG_4911.jpeg",
+    "email": "mailto:wtejing@gmail.com",
+    "jobTitle": "AI Student / Incoming Academic Master's Student",
+    "affiliation": {
+      "@type": "CollegeOrUniversity",
+      "name": "Shaanxi Normal University",
+      "url": "https://www.snnu.edu.cn/"
+    },
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Shaanxi Normal University",
+      "url": "https://www.snnu.edu.cn/"
+    },
+    "knowsAbout": [
+      "Neuro-Symbolic AI",
+      "Graph-based Concept Learning",
+      "Intelligent Agents",
+      "Formal Concept Analysis",
+      "Explainable AI",
+      "Digital Twins",
+      "Embodied Intelligence"
+    ],
+    "sameAs": [
+      "https://github.com/dank666"
+    ]
+  }
+  </script>
+
   <style>
     :root {
       --bg: #ffffff;
@@ -564,12 +600,14 @@
     <section class="hero">
       <div class="hero-card">
         <div class="avatar-wrap">
-          <img class="avatar" src="IMG_4911.jpeg" alt="Portrait of Tejing Wang" />
+          <picture>
+            <source srcset="avatar.webp" type="image/webp" />
+            <img class="avatar" src="IMG_4911.jpeg" alt="Portrait of Tejing Wang" width="700" height="525" />
+          </picture>
         </div>
 
         <div class="hero-text">
-          <h1 class="lang-en">Tejing Wang</h1>
-          <h1 class="lang-zh">王特警</h1>
+          <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>
           <p class="subtitle lang-en">Neuro-Symbolic AI · Graph-based Concept Learning · Intelligent Agents</p>
           <p class="subtitle lang-zh">神经符号人工智能 · 图概念学习 · 智能体系统</p>
           <div class="hero-contact">
@@ -827,10 +865,10 @@
           <p class="lang-zh">独立设计与开发的 AI 学术研究平台（技术栈：Next.js、Supabase、DeepSeek API），核心功能包括论文智能摘要的 AI Reader、基于 Semantic Scholar 与 OpenAlex 数据构建的文献关系图谱（React Flow 可视化），以及提供个性化科研规划的 AI 导师 Nova。目前已停止运营维护，但网站仍可正常访问：<a href="https://www.nextscience.space" target="_blank" rel="noopener">nextscience.space</a>。</p>
 
           <div class="project-gallery">
-            <img src="nextscience-1.jpg" alt="NextScience home feed">
-            <img src="nextscience-2.jpg" alt="NextScience literature map">
-            <img src="nextscience-3.jpg" alt="NextScience AI paper reader">
-            <img src="nextscience-4.jpg" alt="NextScience Nova research mentor">
+            <img src="nextscience-1.jpg" alt="NextScience home feed" loading="lazy" decoding="async">
+            <img src="nextscience-2.jpg" alt="NextScience literature map" loading="lazy" decoding="async">
+            <img src="nextscience-3.jpg" alt="NextScience AI paper reader" loading="lazy" decoding="async">
+            <img src="nextscience-4.jpg" alt="NextScience Nova research mentor" loading="lazy" decoding="async">
           </div>
         </div>
 
@@ -841,10 +879,10 @@
           <p class="lang-zh">基于 ESP32 的具身、环境感应交互装置：通过光敏电阻、压力传感器与飞行时间传感器驱动 RGBW LED 灯带，并使用 Onshape 完成三维结构与传感器/灯光布局设计。同时搭配 Unity 数字孪生仿真系统，实时渲染真菌菌丝网络与合成细胞的光场扩散与信号传递过程，用于与实体装置的传感器数据进行对照验证。</p>
 
         <div class="project-gallery">
-          <img src="embodied-cell-1.jpg" alt="Embodied cell prototype, top view">
-          <img src="embodied-cell-2.jpg" alt="Embodied cell prototype, side view">
-          <img src="embodied-cell-3.jpg" alt="Digital twin simulation, close view">
-          <img src="embodied-cell-4.jpg" alt="Digital twin simulation, top-down view">
+          <img src="embodied-cell-1.jpg" alt="Embodied cell prototype, top view" loading="lazy" decoding="async">
+          <img src="embodied-cell-2.jpg" alt="Embodied cell prototype, side view" loading="lazy" decoding="async">
+          <img src="embodied-cell-3.jpg" alt="Digital twin simulation, close view" loading="lazy" decoding="async">
+          <img src="embodied-cell-4.jpg" alt="Digital twin simulation, top-down view" loading="lazy" decoding="async">
         </div>
       </div>
     </section>
@@ -1030,11 +1068,17 @@
     var STORAGE_KEY = 'site-lang';
     var btns = document.querySelectorAll('.lang-btn');
 
+    var i18nEls = document.querySelectorAll('[data-i18n]');
+
     function apply(lang) {
       document.documentElement.setAttribute('data-lang', lang);
       document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
       btns.forEach(function (b) {
         b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
+      });
+      i18nEls.forEach(function (el) {
+        var text = lang === 'zh' ? el.dataset.langZh : el.dataset.langEn;
+        if (text) el.textContent = text;
       });
       try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
     }

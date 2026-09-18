@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dank666.github.io/sitemap.xml

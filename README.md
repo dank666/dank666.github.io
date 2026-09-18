@@ -30,7 +30,8 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step, no de
 .
 ├── index.html            # main homepage (all sections)
 ├── reading.html          # reading library subpage
-├── IMG_4911.jpeg         # profile photo
+├── IMG_4911.jpeg         # profile photo (JPEG fallback)
+├── avatar.webp           # profile photo (WebP, served first via <picture>)
 ├── CV.pdf                # (not yet added) drop a PDF here to enable the "Download CV" button
 ├── nextscience-1.jpg      # NextScience project gallery images
 ├── nextscience-2.jpg
@@ -45,6 +46,9 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step, no de
 ├── icon-16.png           # favicon fallback, 16px
 ├── icon-32.png           # favicon fallback, 32px
 ├── apple-touch-icon.png  # iOS home-screen icon (180px)
+├── robots.txt            # search engine crawl rules
+├── sitemap.xml           # search engine sitemap
+├── LICENSE                # MIT license (code only — see License section below)
 └── README.md
 ```
 
@@ -69,6 +73,12 @@ python3 -m http.server
 ## Deployment
 
 Hosted via **GitHub Pages** from this repository (`dank666.github.io`), which serves `index.html` at the repo root automatically.
+
+## License
+
+The **code** in this repository (HTML, CSS, and JavaScript) is licensed under the [MIT License](LICENSE) — feel free to use it as a reference or starting point for your own site.
+
+The **written content, personal photos, and project images** are not covered by that license. All rights to that material are reserved by Tejing Wang; please don't reuse the bio text, research statement, or images without permission.
 
 ## Contact
 
