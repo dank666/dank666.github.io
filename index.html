@@ -79,6 +79,29 @@
       --max-width: 760px;
     }
 
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --text: #e7e8ea;
+        --muted: #9199a1;
+        --line: #2a2d33;
+        --accent: #5b90b8;
+        --accent-soft: #1c2530;
+      }
+
+      .navbar {
+        background: rgba(20, 22, 26, 0.88);
+      }
+
+      .avatar-wrap {
+        background: #22252a;
+      }
+
+      .back-to-top {
+        background: #1c1e22;
+      }
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -122,6 +145,23 @@
     img {
       display: block;
       max-width: 100%;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -48px;
+      background: #1f2937;
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      z-index: 100;
+      transition: top 0.15s ease;
+    }
+
+    .skip-link:focus {
+      top: 12px;
     }
 
     .container {
@@ -169,6 +209,29 @@
       min-width: 0;
     }
 
+    .nav-links-wrap {
+      position: relative;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .nav-links-wrap::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 28px;
+      background: linear-gradient(to right, transparent, var(--bg));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .nav-links-wrap.has-overflow::after {
+      opacity: 1;
+    }
+
     .nav-links {
       display: flex;
       gap: 14px;
@@ -176,8 +239,6 @@
       overflow-x: auto;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      min-width: 0;
-      flex: 1 1 auto;
     }
 
     .nav-links::-webkit-scrollbar {
@@ -266,14 +327,14 @@
     }
 
     .hero-text .subtitle {
-      margin: 10px 0 0;
+      margin: 12px 0 0;
       color: var(--accent);
       font-size: 1rem;
       font-weight: 500;
     }
 
     .hero-contact {
-      margin-top: 12px;
+      margin-top: 18px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -316,8 +377,27 @@
       z-index: -1;
     }
 
+    main {
+      counter-reset: section-counter;
+    }
+
+    .section {
+      counter-increment: section-counter;
+    }
+
     .section-header {
       margin-bottom: 22px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .section-header::before {
+      content: counter(section-counter, decimal-leading-zero);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--muted);
     }
 
     .section-title {
@@ -345,6 +425,37 @@
     .contact-list {
       display: grid;
       gap: 20px;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .timeline .timeline-item {
+      position: relative;
+    }
+
+    .timeline .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -17px;
+      top: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid var(--accent);
     }
 
     .card,
@@ -567,6 +678,7 @@
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
   <header class="navbar">
     <div class="nav-inner">
       <div class="logo">
@@ -574,19 +686,21 @@
         <span class="lang-zh">王特警</span>
       </div>
       <div class="nav-right">
-        <nav class="nav-links">
-          <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
-          <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span></a>
-          <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
-          <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
-          <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
-          <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
-          <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></a>
-          <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></a>
-          <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span></a>
-          <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></a>
-          <a href="reading.html"><span class="lang-en">Reading Library</span><span class="lang-zh">论文库</span></a>
-        </nav>
+        <div class="nav-links-wrap">
+          <nav class="nav-links">
+            <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
+            <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span></a>
+            <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
+            <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
+            <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
+            <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
+            <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></a>
+            <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></a>
+            <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span></a>
+            <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></a>
+            <a href="reading.html"><span class="lang-en">Reading Library</span><span class="lang-zh">论文库</span></a>
+          </nav>
+        </div>
         <div class="lang-switch" role="group" aria-label="Language">
           <button class="lang-btn" data-lang="en" type="button">EN</button>
           <span>/</span>
@@ -596,7 +710,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main class="container" id="main-content">
     <section class="hero">
       <div class="hero-card">
         <div class="avatar-wrap">
@@ -1120,6 +1234,20 @@
     window.addEventListener('resize', updateScrollSpy);
     updateScrollSpy();
 
+    // Nav-links overflow fade: hint that there's more to scroll to on mobile.
+    var navLinksWrap = document.querySelector('.nav-links-wrap');
+    var navLinksEl = document.querySelector('.nav-links');
+    function updateNavFade() {
+      if (!navLinksWrap || !navLinksEl) return;
+      var canScrollRight = navLinksEl.scrollWidth - navLinksEl.clientWidth - navLinksEl.scrollLeft > 4;
+      navLinksWrap.classList.toggle('has-overflow', canScrollRight);
+    }
+    if (navLinksEl) {
+      navLinksEl.addEventListener('scroll', updateNavFade, { passive: true });
+    }
+    window.addEventListener('resize', updateNavFade);
+    updateNavFade();
+
     var newsToggle = document.getElementById('newsToggle');
     var newsMore = document.getElementById('newsMore');
     if (newsToggle && newsMore) {
@@ -1161,21 +1289,38 @@
     });
 
     // Project image galleries: click a thumbnail to open it in a lightbox.
-    function openLightbox(imgEl) {
+    // Esc closes it; Left/Right arrow keys step through the same gallery.
+    var lightboxImages = [];
+    var lightboxIndex = -1;
+
+    function closeLightbox() {
       var overlay = document.querySelector('.lightbox-overlay');
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'lightbox-overlay';
-        overlay.addEventListener('click', function () {
-          overlay.classList.remove('visible');
-        });
-        document.body.appendChild(overlay);
-      }
+      if (overlay) overlay.classList.remove('visible');
+    }
+
+    function renderLightboxImage() {
+      var overlay = document.querySelector('.lightbox-overlay');
+      var imgEl = lightboxImages[lightboxIndex];
+      if (!overlay || !imgEl) return;
       overlay.innerHTML = '';
       var bigImg = document.createElement('img');
       bigImg.src = imgEl.src;
       bigImg.alt = imgEl.alt;
       overlay.appendChild(bigImg);
+    }
+
+    function openLightbox(imgEl) {
+      var overlay = document.querySelector('.lightbox-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'lightbox-overlay';
+        overlay.addEventListener('click', closeLightbox);
+        document.body.appendChild(overlay);
+      }
+      var gallery = imgEl.closest('.project-gallery');
+      lightboxImages = gallery ? Array.prototype.slice.call(gallery.querySelectorAll('img')) : [imgEl];
+      lightboxIndex = lightboxImages.indexOf(imgEl);
+      renderLightboxImage();
       overlay.classList.add('visible');
     }
 
@@ -1183,6 +1328,20 @@
       img.addEventListener('click', function () {
         openLightbox(img);
       });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      var overlay = document.querySelector('.lightbox-overlay');
+      if (!overlay || !overlay.classList.contains('visible')) return;
+      if (e.key === 'Escape') {
+        closeLightbox();
+      } else if (e.key === 'ArrowRight' && lightboxImages.length) {
+        lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
+        renderLightboxImage();
+      } else if (e.key === 'ArrowLeft' && lightboxImages.length) {
+        lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
+        renderLightboxImage();
+      }
     });
   })();
   </script>
