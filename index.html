@@ -10,6 +10,12 @@
   } catch (e) {
     document.documentElement.setAttribute('data-lang', 'en');
   }
+  try {
+    var t = localStorage.getItem('site-theme');
+    if (t === 'dark' || t === 'light') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+  } catch (e) {}
 })();
 </script>
   <meta charset="UTF-8" />
@@ -80,7 +86,7 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-theme="light"]) {
         --bg: #14161a;
         --text: #e7e8ea;
         --muted: #9199a1;
@@ -89,17 +95,59 @@
         --accent-soft: #1c2530;
       }
 
-      .navbar {
+      :root:not([data-theme="light"]) .navbar {
         background: rgba(20, 22, 26, 0.88);
       }
 
-      .avatar-wrap {
+      :root:not([data-theme="light"]) .avatar-wrap {
         background: #22252a;
       }
 
-      .back-to-top {
+      :root:not([data-theme="light"]) .back-to-top {
         background: #1c1e22;
       }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #14161a;
+      --text: #e7e8ea;
+      --muted: #9199a1;
+      --line: #2a2d33;
+      --accent: #5b90b8;
+      --accent-soft: #1c2530;
+    }
+
+    :root[data-theme="dark"] .navbar {
+      background: rgba(20, 22, 26, 0.88);
+    }
+
+    :root[data-theme="dark"] .avatar-wrap {
+      background: #22252a;
+    }
+
+    :root[data-theme="dark"] .back-to-top {
+      background: #1c1e22;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      line-height: 1;
+      color: var(--muted);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--text);
     }
 
     * {
@@ -428,18 +476,7 @@
     }
 
     .timeline {
-      position: relative;
       padding-left: 20px;
-    }
-
-    .timeline::before {
-      content: "";
-      position: absolute;
-      left: 3px;
-      top: 4px;
-      bottom: 4px;
-      width: 1px;
-      background: var(--line);
     }
 
     .timeline .timeline-item {
@@ -456,6 +493,20 @@
       border-radius: 50%;
       background: var(--bg);
       border: 2px solid var(--accent);
+      z-index: 1;
+    }
+
+    /* Connects each dot down to the next one. Per-item (rather than one line
+       spanning the whole .timeline) so it stays correct however many items
+       are inside a scrollable .timeline-more block. */
+    .timeline .timeline-item:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: -13.5px;
+      top: 13px;
+      bottom: -20px;
+      width: 1px;
+      background: var(--line);
     }
 
     .card,
@@ -485,6 +536,32 @@
       font-size: 0.96rem;
     }
 
+    .award-list {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .award-list li {
+      position: relative;
+      padding-left: 16px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .award-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.62em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
     .timeline-item,
     .publication-item,
     .contact-item,
@@ -512,7 +589,11 @@
     }
 
     .timeline-more {
-      display: contents;
+      display: grid;
+      gap: 20px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
     .timeline-more[hidden] {
@@ -706,6 +787,7 @@
           <span>/</span>
           <button class="lang-btn" data-lang="zh" type="button">中</button>
         </div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">🌙</button>
       </div>
     </div>
   </header>
@@ -1089,36 +1171,36 @@
         <div class="card">
           <h3 class="lang-en">Competitions</h3>
           <h3 class="lang-zh">竞赛获奖</h3>
-          <p class="lang-en">
-            National First Prize, China Robot and Artificial Intelligence Competition (2025)<br>
-            National First Prize, Geography Teaching AI Innovation Achievement Competition (2025)<br>
-            National Third Prize, Global Campus Artificial Intelligence Algorithm Elite Competition (2025)<br>
-            Provincial First Prize (Shaanxi), China Robot and Artificial Intelligence Competition (2025)<br>
-            Provincial Second Prize (Shaanxi), Global Campus Artificial Intelligence Algorithm Elite Competition (2025)<br>
-            Second Prize, Information Security and Adversarial Technology Competition, Northwest Region (2025)<br>
-            Third Prize, China Collegiate Computing Design Competition, Northwest Region (2024)
-          </p>
-          <p class="lang-zh">
-            中国机器人及人工智能大赛 · 国家级一等奖（2025）<br>
-            地理教学人工智能创新成果评比 · 国家级一等奖（2025）<br>
-            全球校园人工智能算法精英大赛 · 国家级三等奖（2025）<br>
-            中国机器人及人工智能大赛（陕西赛区）· 省级一等奖（2025）<br>
-            全球校园人工智能算法精英大赛（陕西赛区）· 省级二等奖（2025）<br>
-            信息安全与对抗技术竞赛（西北赛区）· 二等奖（2025）<br>
-            中国计算机设计大赛（西北地区赛）· 三等奖（2024）
-          </p>
+          <ul class="award-list lang-en">
+            <li>National First Prize, China Robot and Artificial Intelligence Competition (2025)</li>
+            <li>National First Prize, Geography Teaching AI Innovation Achievement Competition (2025)</li>
+            <li>National Third Prize, Global Campus Artificial Intelligence Algorithm Elite Competition (2025)</li>
+            <li>Provincial First Prize (Shaanxi), China Robot and Artificial Intelligence Competition (2025)</li>
+            <li>Provincial Second Prize (Shaanxi), Global Campus Artificial Intelligence Algorithm Elite Competition (2025)</li>
+            <li>Second Prize, Information Security and Adversarial Technology Competition, Northwest Region (2025)</li>
+            <li>Third Prize, China Collegiate Computing Design Competition, Northwest Region (2024)</li>
+          </ul>
+          <ul class="award-list lang-zh">
+            <li>中国机器人及人工智能大赛 · 国家级一等奖（2025）</li>
+            <li>地理教学人工智能创新成果评比 · 国家级一等奖（2025）</li>
+            <li>全球校园人工智能算法精英大赛 · 国家级三等奖（2025）</li>
+            <li>中国机器人及人工智能大赛（陕西赛区）· 省级一等奖（2025）</li>
+            <li>全球校园人工智能算法精英大赛（陕西赛区）· 省级二等奖（2025）</li>
+            <li>信息安全与对抗技术竞赛（西北赛区）· 二等奖（2025）</li>
+            <li>中国计算机设计大赛（西北地区赛）· 三等奖（2024）</li>
+          </ul>
         </div>
         <div class="card">
           <h3 class="lang-en">Software Copyrights</h3>
           <h3 class="lang-zh">软件著作权</h3>
-          <p class="lang-en">
-            "Weather Teaching Assistant Platform" (Reg. No. 16269380)<br>
-            "Deep Learning-Based Face Recognition Classroom Attendance System" (Reg. No. 16202857)
-          </p>
-          <p class="lang-zh">
-            《气象教学助手平台》（登记号：16269380）<br>
-            《基于深度学习的人脸识别课堂签到系统》（登记号：16202857）
-          </p>
+          <ul class="award-list lang-en">
+            <li>"Weather Teaching Assistant Platform" (Reg. No. 16269380)</li>
+            <li>"Deep Learning-Based Face Recognition Classroom Attendance System" (Reg. No. 16202857)</li>
+          </ul>
+          <ul class="award-list lang-zh">
+            <li>《气象教学助手平台》（登记号：16269380）</li>
+            <li>《基于深度学习的人脸识别课堂签到系统》（登记号：16202857）</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -1203,6 +1285,40 @@
     btns.forEach(function (b) {
       b.addEventListener('click', function () { apply(b.dataset.lang); });
     });
+
+    // Dark mode toggle: follows the system setting until the visitor picks
+    // one explicitly, then that choice is remembered and takes over.
+    var THEME_KEY = 'site-theme';
+    var themeToggle = document.getElementById('themeToggle');
+    var systemDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+    function effectiveTheme() {
+      var override = document.documentElement.getAttribute('data-theme');
+      if (override === 'dark' || override === 'light') return override;
+      return systemDark && systemDark.matches ? 'dark' : 'light';
+    }
+
+    function updateThemeButton() {
+      if (!themeToggle) return;
+      var eff = effectiveTheme();
+      themeToggle.textContent = eff === 'dark' ? '☀️' : '🌙';
+      themeToggle.setAttribute('aria-label', eff === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', function () {
+        var next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+        updateThemeButton();
+      });
+    }
+    updateThemeButton();
+    if (systemDark && systemDark.addEventListener) {
+      systemDark.addEventListener('change', function () {
+        if (!document.documentElement.getAttribute('data-theme')) updateThemeButton();
+      });
+    }
 
     var backToTop = document.getElementById('backToTop');
     function toggleBackToTop() {

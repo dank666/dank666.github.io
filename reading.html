@@ -10,6 +10,12 @@
   } catch (e) {
     document.documentElement.setAttribute('data-lang', 'en');
   }
+  try {
+    var t = localStorage.getItem('site-theme');
+    if (t === 'dark' || t === 'light') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+  } catch (e) {}
 })();
 </script>
   <meta charset="UTF-8" />
@@ -44,7 +50,7 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      :root {
+      :root:not([data-theme="light"]) {
         --bg: #14161a;
         --text: #e7e8ea;
         --muted: #9199a1;
@@ -53,23 +59,71 @@
         --accent-soft: #1c2530;
       }
 
-      .navbar {
+      :root:not([data-theme="light"]) .navbar {
         background: rgba(20, 22, 26, 0.88);
       }
 
-      .search-input,
-      .filter-btn {
+      :root:not([data-theme="light"]) .search-input,
+      :root:not([data-theme="light"]) .filter-btn {
         background: #1c1e22;
       }
 
-      .filter-btn[aria-pressed="true"],
-      .paper-tag.project-tag {
+      :root:not([data-theme="light"]) .filter-btn[aria-pressed="true"],
+      :root:not([data-theme="light"]) .paper-tag.project-tag {
         color: #0e1014;
       }
 
-      .back-to-top {
+      :root:not([data-theme="light"]) .back-to-top {
         background: #1c1e22;
       }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #14161a;
+      --text: #e7e8ea;
+      --muted: #9199a1;
+      --line: #2a2d33;
+      --accent: #5b90b8;
+      --accent-soft: #1c2530;
+    }
+
+    :root[data-theme="dark"] .navbar {
+      background: rgba(20, 22, 26, 0.88);
+    }
+
+    :root[data-theme="dark"] .search-input,
+    :root[data-theme="dark"] .filter-btn {
+      background: #1c1e22;
+    }
+
+    :root[data-theme="dark"] .filter-btn[aria-pressed="true"],
+    :root[data-theme="dark"] .paper-tag.project-tag {
+      color: #0e1014;
+    }
+
+    :root[data-theme="dark"] .back-to-top {
+      background: #1c1e22;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      line-height: 1;
+      color: var(--muted);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--text);
     }
 
     * { box-sizing: border-box; }
@@ -431,6 +485,7 @@
           <span>/</span>
           <button class="lang-btn" data-lang="zh" type="button">中</button>
         </div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">🌙</button>
       </div>
     </div>
   </header>
@@ -703,6 +758,40 @@
 
     renderProjectFilters();
     applyLang(initial);
+
+    // Dark mode toggle: follows the system setting until the visitor picks
+    // one explicitly, then that choice is remembered and takes over.
+    var THEME_KEY = 'site-theme';
+    var themeToggle = document.getElementById('themeToggle');
+    var systemDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+    function effectiveTheme() {
+      var override = document.documentElement.getAttribute('data-theme');
+      if (override === 'dark' || override === 'light') return override;
+      return systemDark && systemDark.matches ? 'dark' : 'light';
+    }
+
+    function updateThemeButton() {
+      if (!themeToggle) return;
+      var eff = effectiveTheme();
+      themeToggle.textContent = eff === 'dark' ? '☀️' : '🌙';
+      themeToggle.setAttribute('aria-label', eff === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', function () {
+        var next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+        updateThemeButton();
+      });
+    }
+    updateThemeButton();
+    if (systemDark && systemDark.addEventListener) {
+      systemDark.addEventListener('change', function () {
+        if (!document.documentElement.getAttribute('data-theme')) updateThemeButton();
+      });
+    }
 
     document.getElementById('searchInput').addEventListener('input', function (e) {
       state.query = e.target.value.trim();
