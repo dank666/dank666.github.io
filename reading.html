@@ -68,7 +68,12 @@
         background: #1c1e22;
       }
 
-      :root:not([data-theme="light"]) .filter-btn[aria-pressed="true"],
+      :root:not([data-theme="light"]) .filter-btn[aria-pressed="true"] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #0e1014;
+      }
+
       :root:not([data-theme="light"]) .paper-tag.project-tag {
         color: #0e1014;
       }
@@ -96,7 +101,12 @@
       background: #1c1e22;
     }
 
-    :root[data-theme="dark"] .filter-btn[aria-pressed="true"],
+    :root[data-theme="dark"] .filter-btn[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0e1014;
+    }
+
     :root[data-theme="dark"] .paper-tag.project-tag {
       color: #0e1014;
     }
