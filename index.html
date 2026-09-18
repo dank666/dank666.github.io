@@ -184,6 +184,14 @@
       text-decoration: underline;
     }
 
+    /* Links inline within a paragraph need a non-color cue too (WCAG 1.4.1) —
+       standalone links (nav, contact rows, buttons) are already distinguishable
+       by their position/structure, so this is scoped to prose text only. */
+    p a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
     a:focus-visible,
     button:focus-visible {
       outline: 2px solid var(--accent);
