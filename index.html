@@ -159,6 +159,11 @@
       text-decoration: none;
     }
 
+    .nav-links a.active {
+      color: var(--text);
+      font-weight: 600;
+    }
+
     .lang-switch {
       display: flex;
       align-items: center;
@@ -451,6 +456,14 @@
       padding: 32px 0 56px;
       color: var(--muted);
       font-size: 0.9rem;
+    }
+
+    .footer p {
+      margin: 0 0 6px;
+    }
+
+    .footer p:last-child {
+      margin-bottom: 0;
     }
 
     .back-to-top {
@@ -999,8 +1012,14 @@
     </section>
 
     <footer class="footer">
-      <span class="lang-en">© 2026 Tejing Wang</span>
-      <span class="lang-zh">© 2026 王特警</span>
+      <p>
+        <span class="lang-en">© 2026 Tejing Wang</span>
+        <span class="lang-zh">© 2026 王特警</span>
+      </p>
+      <p>
+        <span class="lang-en">Last updated: September 2026 · <a href="https://github.com/dank666/dank666.github.io" target="_blank">View source</a></span>
+        <span class="lang-zh">最后更新：2026 年 9 月 · <a href="https://github.com/dank666/dank666.github.io" target="_blank">查看源码</a></span>
+      </p>
     </footer>
   </main>
 
@@ -1037,6 +1056,25 @@
     backToTop.addEventListener('click', function () {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    // Scroll spy: highlight the nav link for whichever section is in view.
+    var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    var navSections = Array.prototype.slice.call(document.querySelectorAll('.section[id]'));
+    function updateScrollSpy() {
+      var scrollPos = window.scrollY + 90;
+      var current = navSections.length ? navSections[0].id : null;
+      navSections.forEach(function (sec) {
+        if (sec.offsetTop <= scrollPos) {
+          current = sec.id;
+        }
+      });
+      navLinks.forEach(function (link) {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    }
+    window.addEventListener('scroll', updateScrollSpy, { passive: true });
+    window.addEventListener('resize', updateScrollSpy);
+    updateScrollSpy();
 
     var newsToggle = document.getElementById('newsToggle');
     var newsMore = document.getElementById('newsMore');
