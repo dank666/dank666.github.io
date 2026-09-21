@@ -206,12 +206,8 @@ export const projects = [
         { en: "Planning", zh: "规划" },
         { en: "Memory", zh: "记忆" },
         { en: "Safety &amp; verification", zh: "安全与验证" }
-      ],
-      caption: { en: "Scope of the survey.", zh: "综述的范围。" }
-    },
-    links: [
-      { label: { en: "My reading notes on related surveys →", zh: "我对相关综述的阅读笔记 →" }, href: "reading.html" }
-    ]
+      ]
+    }
   },
   {
     title: {
@@ -235,12 +231,12 @@ export const projects = [
       zh: "具身细胞——早期探索"
     },
     tagline: {
-      en: "Research assistantship at Xidian University · Mar – Sep 2026 · Advisor: <a href=\"http://lvzhihan.com\" target=\"_blank\">Prof. Zhihan Lyu</a> · Not completed",
-      zh: "西安电子科技大学科研助理 · 2026 年 3 月至 9 月 · 导师：<a href=\"http://lvzhihan.com\" target=\"_blank\">吕智涵教授</a> · 项目未完成"
+      en: "Research assistantship at Xidian University · Mar – Sep 2026 · Advisor: <a href=\"http://lvzhihan.com\" target=\"_blank\">Prof. Zhihan Lyu</a>",
+      zh: "西安电子科技大学科研助理 · 2026 年 3 月至 9 月 · 导师：<a href=\"http://lvzhihan.com\" target=\"_blank\">吕智涵教授</a>"
     },
     description: {
-      en: "An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in its early stage for about six months, and the project ended before it was completed, so it is best read as a learning experience rather than a finished result. What I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from that early stage.",
-      zh: "一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我参与了它大约半年的早期工作，项目在完成之前就结束了，所以它更应被看作一次学习经历，而不是一项已完成的成果。我从中得到的，主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是早期阶段的记录。"
+      en: "An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in it for about six months during my research assistantship, and what I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from my time on the project.",
+      zh: "一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我在科研助理期间参与了它大约半年，从中得到的主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是我参与期间的一些记录。"
     },
     gallery: [
       { src: "images/embodied-cell-top-view.webp", width: 1400, height: 1050, alt: "Embodied cell prototype, top view" },

@@ -1245,14 +1245,14 @@
       font-weight: 700;
     }
 
+    /* Tree connectors: a stem down from the root, a bar across, and a short
+       drop to every label, so each label is visibly attached to the root. */
     .scope-items {
       position: relative;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
       margin: 0;
-      padding: 20px 0 0;
+      padding: 24px 0 0;
       list-style: none;
     }
 
@@ -1261,16 +1261,44 @@
       position: absolute;
       top: 0;
       left: 50%;
-      height: 20px;
+      height: 12px;
       border-left: 1px solid var(--muted);
     }
 
     .scope-items li {
+      position: relative;
+      margin: 0 5px;
       padding: 6px 16px;
       background: var(--accent-soft);
       border: 1px solid var(--line);
       border-radius: 999px;
       font-size: 0.9rem;
+    }
+
+    .scope-items li::before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      height: 12px;
+      border-left: 1px solid var(--muted);
+    }
+
+    .scope-items li::after {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: -6px;
+      right: -6px;
+      border-top: 1px solid var(--muted);
+    }
+
+    .scope-items li:first-child::after {
+      left: 50%;
+    }
+
+    .scope-items li:last-child::after {
+      right: 50%;
     }
 
     .scope figcaption {
@@ -1292,6 +1320,24 @@
         top: -24px;
         left: 50%;
         transform: translateX(-50%);
+      }
+
+      /* Narrow screens: the labels wrap onto several rows, where tree lines
+         would no longer line up, so show them as a plain group under the root. */
+      .scope-items {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 14px;
+      }
+
+      .scope-items li {
+        margin: 0;
+      }
+
+      .scope-items::before,
+      .scope-items li::before,
+      .scope-items li::after {
+        display: none;
       }
     }
 
@@ -1508,11 +1554,11 @@
             interest of mine in graph-based concept cognition learning — using graph structures to
             represent and reason over concepts, in the same spirit as how three-way concept analysis
             represents formal contexts. Separately, a six-month research assistantship on digital
-            twins and embodied systems — which ended before its project was completed — broadened my
-            domain knowledge and introduced me to new tools such as Unity.
+            twins and embodied systems broadened my domain knowledge and introduced me to new tools
+            such as Unity.
           </p>
           <p class="lang-zh">
-            这种对"结构"的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。此外，我还曾用半年时间在数字孪生与具身系统方向担任科研助理，那个项目在完成之前就结束了，但它拓宽了我的领域知识，也让我接触并用上了 Unity 等新工具。
+            这种对"结构"的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。此外，我还曾用半年时间在数字孪生与具身系统方向担任科研助理，这段经历拓宽了我的领域知识，也让我接触并用上了 Unity 等新工具。
           </p>
           <p class="lang-en">
             Going forward, I want to bring these threads together in a Ph.D.: building agentic systems
@@ -1680,8 +1726,8 @@
             本科生科研助理 · 导师：
             <a href="http://lvzhihan.com" target="_blank">吕智涵教授</a>
           </p>
-          <p class="lang-en">Explored digital twins and embodied cells — how physical entities and virtual models can be linked through sensing, mapping, and interaction. The project ended before it was completed; what I gained was mainly broader domain knowledge and hands-on experience with new tools such as Unity.</p>
-          <p class="lang-zh">接触数字孪生与具身细胞方向：了解物理实体与虚拟模型之间如何通过感知、映射与交互建立联系。项目在完成之前就结束了，我的收获主要是拓宽了领域知识，并实际用到了 Unity 等新工具。</p>
+          <p class="lang-en">Explored digital twins and embodied cells — how physical entities and virtual models can be linked through sensing, mapping, and interaction. The work was exploratory; what I gained was mainly broader domain knowledge and hands-on experience with new tools such as Unity.</p>
+          <p class="lang-zh">接触数字孪生与具身细胞方向：了解物理实体与虚拟模型之间如何通过感知、映射与交互建立联系。这段工作以探索为主，我的收获主要是拓宽了领域知识，并实际用到了 Unity 等新工具。</p>
         </div>
       </div>
     </section>
@@ -1732,11 +1778,7 @@
               <li><span class="lang-en">Memory</span><span class="lang-zh">记忆</span></li>
               <li><span class="lang-en">Safety &amp; verification</span><span class="lang-zh">安全与验证</span></li>
             </ul>
-            <figcaption><span class="lang-en">Scope of the survey.</span><span class="lang-zh">综述的范围。</span></figcaption>
           </figure>
-          <p class="project-links">
-            <a href="reading.html"><span class="lang-en">My reading notes on related surveys →</span><span class="lang-zh">我对相关综述的阅读笔记 →</span></a>
-          </p>
         </div>
         <div class="card">
           <h3 class="lang-en">NextScience — AI Research Platform for Early-Career Scientists</h3>
@@ -1753,10 +1795,10 @@
         <div class="card">
           <h3 class="lang-en">Embodied Cell — Early-Stage Exploration</h3>
           <h3 class="lang-zh">具身细胞——早期探索</h3>
-          <p class="project-tagline lang-en">Research assistantship at Xidian University · Mar – Sep 2026 · Advisor: <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a> · Not completed</p>
-          <p class="project-tagline lang-zh">西安电子科技大学科研助理 · 2026 年 3 月至 9 月 · 导师：<a href="http://lvzhihan.com" target="_blank">吕智涵教授</a> · 项目未完成</p>
-          <p class="lang-en">An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in its early stage for about six months, and the project ended before it was completed, so it is best read as a learning experience rather than a finished result. What I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from that early stage.</p>
-          <p class="lang-zh">一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我参与了它大约半年的早期工作，项目在完成之前就结束了，所以它更应被看作一次学习经历，而不是一项已完成的成果。我从中得到的，主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是早期阶段的记录。</p>
+          <p class="project-tagline lang-en">Research assistantship at Xidian University · Mar – Sep 2026 · Advisor: <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a></p>
+          <p class="project-tagline lang-zh">西安电子科技大学科研助理 · 2026 年 3 月至 9 月 · 导师：<a href="http://lvzhihan.com" target="_blank">吕智涵教授</a></p>
+          <p class="lang-en">An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in it for about six months during my research assistantship, and what I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from my time on the project.</p>
+          <p class="lang-zh">一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我在科研助理期间参与了它大约半年，从中得到的主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是我参与期间的一些记录。</p>
           <div class="project-gallery">
             <img src="images/embodied-cell-top-view.webp" alt="Embodied cell prototype, top view" width="1400" height="1050" loading="lazy" decoding="async">
             <img src="images/embodied-cell-side-view.webp" alt="Embodied cell prototype, side view" width="1400" height="793" loading="lazy" decoding="async">
