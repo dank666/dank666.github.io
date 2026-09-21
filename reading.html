@@ -20,8 +20,8 @@
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reading Library | Tejing Wang</title>
-  <meta name="description" content="Tejing Wang's research reading library — papers read during research, organized by project and topic, with reading notes." />
+  <title>Notes | Tejing Wang</title>
+  <meta name="description" content="Research notes and a paper library by Tejing Wang — reading notes on neuro-symbolic AI and related topics, organized by project and topic." />
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png" />
@@ -30,13 +30,13 @@
   <link rel="icon" href="favicon.ico" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Reading Library | Tejing Wang" />
-  <meta property="og:description" content="Papers read during research, organized by project and topic, with reading notes." />
+  <meta property="og:title" content="Notes | Tejing Wang" />
+  <meta property="og:description" content="Research notes and a paper library — reading notes on neuro-symbolic AI and related topics, organized by project and topic." />
   <meta property="og:url" content="https://dank666.github.io/reading.html" />
   <meta property="og:image" content="https://dank666.github.io/IMG_4911.jpeg" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Reading Library | Tejing Wang" />
-  <meta name="twitter:description" content="Papers read during research, organized by project and topic, with reading notes." />
+  <meta name="twitter:title" content="Notes | Tejing Wang" />
+  <meta name="twitter:description" content="Research notes and a paper library — reading notes on neuro-symbolic AI and related topics, organized by project and topic." />
   <meta name="twitter:image" content="https://dank666.github.io/IMG_4911.jpeg" />
   <style>
     :root {
@@ -452,6 +452,25 @@
       margin: 0;
     }
 
+    .filter-row[hidden] {
+      display: none;
+    }
+
+    .note-body {
+      margin: 12px 0 0;
+      max-width: 68ch;
+    }
+
+    .note-body p {
+      margin: 0 0 10px;
+      color: var(--text);
+      font-size: 0.97rem;
+    }
+
+    .note-body p:last-child {
+      margin-bottom: 0;
+    }
+
     .empty-state {
       padding: 40px 0;
       color: var(--muted);
@@ -535,14 +554,14 @@
 
   <main class="container" id="main-content">
     <div class="page-header">
-      <h1 data-i18n data-lang-en="Reading Library" data-lang-zh="论文库">Reading Library</h1>
+      <h1 data-i18n data-lang-en="Notes" data-lang-zh="笔记">Notes</h1>
       <p class="intro lang-en">
-        Papers I've read during my research, organized by project and topic, with my own reading notes.
-        This is a working library that I add to as I read — some entries are still placeholders while
-        I fill in full bibliographic details.
+        Short notes from my research, together with a library of the papers I've read — organized by
+        project and topic, each with my own reading notes. It's a working notebook that I add to as I
+        read; some paper entries are still placeholders while I fill in full bibliographic details.
       </p>
       <p class="intro lang-zh">
-        科研过程中阅读的论文，按项目与主题分类，附上我自己的阅读笔记。这是一个持续更新的资料库，部分条目的完整信息我还在补充中。
+        我在研究中写下的短文笔记，以及读过的论文库——按项目与主题分类，每篇都附有我自己的阅读笔记。这是一个边读边补充的工作笔记本，部分论文条目的完整信息我还在补充中。
       </p>
     </div>
 
@@ -555,13 +574,14 @@
         data-placeholder-en="Search by title, author, or topic…"
         data-placeholder-zh="按标题、作者或主题搜索…"
       />
+      <div class="filter-row" id="typeFilters" role="group" aria-label="Filter by type" hidden></div>
       <div class="filter-row" id="projectFilters" role="group" aria-label="Filter by project"></div>
       <div class="result-count" id="resultCount"></div>
     </div>
 
     <div class="paper-list" id="paperList"></div>
-    <div class="empty-state lang-en" id="emptyEn" hidden>No papers match your filters.</div>
-    <div class="empty-state lang-zh" id="emptyZh" hidden>没有符合当前筛选条件的论文。</div>
+    <div class="empty-state lang-en" id="emptyEn" hidden>No entries match your filters.</div>
+    <div class="empty-state lang-zh" id="emptyZh" hidden>没有符合当前筛选条件的条目。</div>
 
     <footer class="footer">
       <span class="lang-en">© 2026 Tejing Wang</span>
@@ -610,14 +630,81 @@
     }
   ];
 
-  // ---- State --------------------------------------------------------------
-  var state = { project: 'all', topic: null, query: '' };
+  // Short notes. Each one is a small write-up shown alongside the papers.
+  // Add entries here (see README, "Notes"). Template:
+  //   {
+  //     title_en: 'Note title',
+  //     title_zh: '笔记标题',
+  //     date: '2026-09',                  // YYYY-MM
+  //     project: 'agent-survey',          // optional, an id from PROJECTS
+  //     about: { title_en: 'Paper title', title_zh: '论文标题', link: 'https://...' },   // optional: the paper this note is about
+  //     topics: ['some-topic'],
+  //     body_en: ['First paragraph.', 'Second paragraph.'],
+  //     body_zh: ['第一段。', '第二段。']
+  //   }
+  var NOTES = [
+    {
+      title_en: 'A systematic survey of neuro-symbolic agents: what it covers',
+      title_zh: '一篇神经符号智能体系统综述：它覆盖了什么',
+      date: '2026-09',
+      project: 'agent-survey',
+      about: {
+        title_en: 'Neuro-symbolic agentic AI: Architectures, integration patterns, applications, open challenges and future research directions',
+        title_zh: 'Neuro-symbolic agentic AI: Architectures, integration patterns, applications, open challenges and future research directions（Computer Science Review，2026）',
+        link: 'https://www.sciencedirect.com/science/article/pii/S1574013726000110'
+      },
+      topics: ['neuro-symbolic-agents', 'competing-survey'],
+      body_en: [
+        'A PRISMA-based systematic survey of 178 papers (2020 – November 2025) on neuro-symbolic AI agents. It sorts the literature by architecture (single- vs multi-agent, vertical vs horizontal) and by how the neural and symbolic parts are coupled (sequential, parallel, end-to-end differentiable, unified representation), and tags each paper along five dimensions: knowledge representation, learning and inference, logic and reasoning, explainability and trustworthiness, and meta-cognition.',
+        'Its main findings are about imbalance: meta-cognition appears in only about 5% of the papers and explainability in about 28%, only 4% address both knowledge representation and explainability, and single-agent work (65%) outnumbers multi-agent work (35%). It also argues that no integration pattern is best everywhere — effectiveness depends on the application domain.',
+        'Relevance to my survey: planning is covered inside its architecture section (symbolic task planners, and hierarchical planning such as GoalAct; §5.1, §5.3); memory gets one short subsection on episodic, semantic (knowledge-graph) and working memory (§5.6); and verification appears mainly as a gap and a future direction — few papers address the formal verification of integration quality (§6.5, §14.6). None of the three is an axis of its taxonomy.',
+        'For my interest in concept learning, it also has a short section on zero-shot concept learning (§5.7) describing ZeroC, which represents concepts as symbolic graphs mapped to neural energy-based models, so that new concepts can be composed at inference time without extra training.',
+        '(Work in progress — my own assessment of the gaps, and of how my survey differs, is still to come.)'
+      ],
+      body_zh: [
+        '一篇基于 PRISMA 方法的系统综述，涵盖 178 篇关于神经符号智能体的论文（2020 年至 2025 年 11 月）。它一方面按架构（单智能体/多智能体，纵向/横向）整理文献，另一方面按神经与符号部分的耦合方式（顺序、并行、端到端可微、统一表示）分类，并从五个维度给每篇论文打标签：知识表示、学习与推断、逻辑与推理、可解释性与可信性、元认知。',
+        '它的主要发现是研究分布的失衡：元认知只出现在约 5% 的论文中，可解释性约 28%；同时涉及知识表示与可解释性的只有 4%；单智能体研究（65%）多于多智能体研究（35%）。它还指出不存在处处最优的集成模式，效果取决于应用领域。',
+        '与我的综述的关系：规划被放在它的架构章节里讨论（符号任务规划器，以及 GoalAct 这类层次化规划；§5.1、§5.3）；记忆只有一个较短的小节，区分情景记忆、语义记忆（知识图谱）和工作记忆（§5.6）；验证则主要以“研究空白”和“未来方向”的形式出现——很少有工作涉及集成质量的形式化验证（§6.5、§14.6）。这三者都不是它分类法中的一个维度。',
+        '对我关心的概念学习方向，它还有一小节讲零样本概念学习（§5.7），介绍了 ZeroC：把概念表示为符号图，并映射到神经能量模型，因而无需额外训练，就能在推断时通过组合已有概念得到新概念。',
+        '（进行中——我自己对研究空白的判断，以及我的综述与它的区别，还有待补充。）'
+      ]
+    }
+  ];
 
-  // ---- Render ---------------------------------------------------------------
+  // ---- State --------------------------------------------------------------
+  var state = { type: 'all', project: 'all', topic: null, query: '' };
+
+  // ---- Helpers ------------------------------------------------------------
   function currentLang() {
     return document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
   }
 
+  var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function formatNoteDate(date, lang) {
+    var m = /^(\d{4})-(\d{1,2})/.exec(date || '');
+    if (!m) return date || '';
+    var month = parseInt(m[2], 10);
+    return lang === 'zh' ? m[1] + ' 年 ' + month + ' 月' : MONTHS_EN[month - 1] + ' ' + m[1];
+  }
+
+  // One list for both kinds of entry: papers and short notes.
+  function allEntries() {
+    var papers = PAPERS.map(function (p) {
+      return { kind: 'paper', data: p, sortKey: p.year * 100 };
+    });
+    var notes = NOTES.map(function (n) {
+      var m = /^(\d{4})-(\d{1,2})/.exec(n.date || '');
+      return { kind: 'note', data: n, sortKey: m ? parseInt(m[1], 10) * 100 + parseInt(m[2], 10) : 0 };
+    });
+    return papers.concat(notes);
+  }
+
+  function projectOf(id) {
+    return PROJECTS.filter(function (p) { return p.id === id; })[0];
+  }
+
+  // ---- Filters -------------------------------------------------------------
   function renderProjectFilters() {
     var wrap = document.getElementById('projectFilters');
     wrap.innerHTML = '';
@@ -649,128 +736,226 @@
       if (b.dataset.project === 'all') {
         b.textContent = lang === 'zh' ? '全部' : 'All';
       } else {
-        var p = PROJECTS.filter(function (x) { return x.id === b.dataset.project; })[0];
+        var p = projectOf(b.dataset.project);
         b.textContent = lang === 'zh' ? p.label_zh : p.label_en;
       }
       b.setAttribute('aria-pressed', String(b.dataset.project === state.project));
     });
   }
 
-  function matches(paper) {
-    if (state.project !== 'all' && paper.project !== state.project) return false;
-    if (state.topic && paper.topics.indexOf(state.topic) === -1) return false;
+  // "All / Notes / Papers" only appears once there is at least one note, so
+  // the page looks exactly like the old paper library until then.
+  var TYPE_LABELS = {
+    all: { en: 'All', zh: '全部' },
+    note: { en: 'Notes', zh: '笔记' },
+    paper: { en: 'Papers', zh: '论文' }
+  };
+
+  function renderTypeFilters() {
+    var wrap = document.getElementById('typeFilters');
+    wrap.innerHTML = '';
+    wrap.hidden = NOTES.length === 0;
+    if (NOTES.length === 0) return;
+    ['all', 'note', 'paper'].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'filter-btn';
+      b.type = 'button';
+      b.dataset.type = t;
+      b.addEventListener('click', function () {
+        state.type = t;
+        render();
+      });
+      wrap.appendChild(b);
+    });
+    updateTypeFilterLabels();
+  }
+
+  function updateTypeFilterLabels() {
+    var lang = currentLang();
+    document.querySelectorAll('#typeFilters .filter-btn').forEach(function (b) {
+      b.textContent = TYPE_LABELS[b.dataset.type][lang];
+      b.setAttribute('aria-pressed', String(b.dataset.type === state.type));
+    });
+  }
+
+  function matches(entry) {
+    var d = entry.data;
+    if (NOTES.length && state.type !== 'all' && entry.kind !== state.type) return false;
+    if (state.project !== 'all' && d.project !== state.project) return false;
+    if (state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
     if (state.query) {
       var q = state.query.toLowerCase();
-      var hay = [paper.title_en, paper.title_zh, paper.authors, paper.venue]
-        .concat(paper.topics)
-        .join(' ')
-        .toLowerCase();
+      var parts = entry.kind === 'paper'
+        ? [d.title_en, d.title_zh, d.authors, d.venue]
+        : [d.title_en, d.title_zh].concat(d.body_en || [], d.body_zh || []);
+      var hay = parts.concat(d.topics || []).join(' ').toLowerCase();
       if (hay.indexOf(q) === -1) return false;
     }
     return true;
   }
 
+  function countText(n, lang) {
+    var kind = NOTES.length ? state.type : 'paper';
+    if (lang === 'zh') {
+      return n + (kind === 'note' ? ' 篇笔记' : kind === 'paper' ? ' 篇论文' : ' 条');
+    }
+    if (kind === 'note') return n + (n === 1 ? ' note' : ' notes');
+    if (kind === 'paper') return n + (n === 1 ? ' paper' : ' papers');
+    return n + (n === 1 ? ' entry' : ' entries');
+  }
+
+  // ---- Rendering -------------------------------------------------------------
+  function buildTags(d, lang) {
+    var tags = document.createElement('div');
+    tags.className = 'paper-tags';
+
+    var proj = projectOf(d.project);
+    if (proj) {
+      var projTag = document.createElement('button');
+      projTag.className = 'paper-tag project-tag';
+      projTag.type = 'button';
+      projTag.textContent = lang === 'zh' ? proj.label_zh : proj.label_en;
+      projTag.addEventListener('click', function () {
+        state.project = proj.id;
+        render();
+      });
+      tags.appendChild(projTag);
+    }
+
+    (d.topics || []).forEach(function (t) {
+      var tag = document.createElement('button');
+      tag.className = 'paper-tag';
+      tag.type = 'button';
+      tag.textContent = t;
+      tag.addEventListener('click', function () {
+        state.topic = state.topic === t ? null : t;
+        render();
+      });
+      tags.appendChild(tag);
+    });
+    return tags;
+  }
+
+  function buildPaperItem(paper, lang) {
+    var item = document.createElement('div');
+    item.className = 'paper-item';
+
+    // Title
+    var title = document.createElement('p');
+    title.className = 'paper-title';
+    var titleText = lang === 'zh' ? paper.title_zh : paper.title_en;
+    if (paper.link) {
+      var a = document.createElement('a');
+      a.href = paper.link;
+      a.target = '_blank';
+      a.textContent = titleText;
+      title.appendChild(a);
+    } else {
+      title.textContent = titleText;
+    }
+    item.appendChild(title);
+
+    // Authors (own line)
+    if (paper.authors) {
+      var authors = document.createElement('p');
+      authors.className = 'paper-authors';
+      authors.textContent = paper.authors;
+      item.appendChild(authors);
+    }
+
+    // Secondary line: year · venue (muted, smaller)
+    var secondaryParts = [paper.year];
+    if (paper.venue) secondaryParts.push(paper.venue);
+    var secondary = document.createElement('p');
+    secondary.className = 'paper-secondary';
+    secondary.textContent = secondaryParts.join(' · ');
+    item.appendChild(secondary);
+
+    // Tags: project (solid pill, clickable to filter) + topics
+    item.appendChild(buildTags(paper, lang));
+
+    // Note, set off in its own bordered block
+    var noteBlock = document.createElement('div');
+    noteBlock.className = 'paper-note-block';
+
+    var noteLabel = document.createElement('p');
+    noteLabel.className = 'paper-note-label';
+    noteLabel.innerHTML = '<span class="lang-en">Reading note</span><span class="lang-zh">阅读笔记</span>';
+    noteBlock.appendChild(noteLabel);
+
+    var note = document.createElement('p');
+    note.className = 'paper-note';
+    note.textContent = lang === 'zh' ? paper.note_zh : paper.note_en;
+    noteBlock.appendChild(note);
+
+    item.appendChild(noteBlock);
+    return item;
+  }
+
+  function buildNoteItem(note, lang) {
+    var item = document.createElement('div');
+    item.className = 'paper-item note-item';
+
+    var title = document.createElement('p');
+    title.className = 'paper-title';
+    title.textContent = lang === 'zh' ? note.title_zh : note.title_en;
+    item.appendChild(title);
+
+    var secondary = document.createElement('p');
+    secondary.className = 'paper-secondary';
+    secondary.textContent = formatNoteDate(note.date, lang);
+    item.appendChild(secondary);
+
+    if (note.about) {
+      var about = document.createElement('p');
+      about.className = 'paper-secondary';
+      about.appendChild(document.createTextNode(lang === 'zh' ? '关于论文：' : 'About the paper: '));
+      var aboutText = lang === 'zh' ? (note.about.title_zh || note.about.title_en) : note.about.title_en;
+      if (note.about.link) {
+        var link = document.createElement('a');
+        link.href = note.about.link;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = aboutText;
+        about.appendChild(link);
+      } else {
+        about.appendChild(document.createTextNode(aboutText));
+      }
+      item.appendChild(about);
+    }
+
+    item.appendChild(buildTags(note, lang));
+
+    var body = document.createElement('div');
+    body.className = 'note-body';
+    ((lang === 'zh' ? note.body_zh : note.body_en) || []).forEach(function (text) {
+      var para = document.createElement('p');
+      para.textContent = text;
+      body.appendChild(para);
+    });
+    item.appendChild(body);
+    return item;
+  }
+
   function renderList() {
     var lang = currentLang();
     var list = document.getElementById('paperList');
-    var filtered = PAPERS.filter(matches).sort(function (a, b) { return b.year - a.year; });
+    var filtered = allEntries().filter(matches).sort(function (a, b) { return b.sortKey - a.sortKey; });
     list.innerHTML = '';
 
     document.getElementById('emptyEn').hidden = filtered.length !== 0;
     document.getElementById('emptyZh').hidden = filtered.length !== 0;
 
-    var countEl = document.getElementById('resultCount');
-    countEl.textContent = lang === 'zh'
-      ? filtered.length + ' 篇论文'
-      : filtered.length + (filtered.length === 1 ? ' paper' : ' papers');
+    document.getElementById('resultCount').textContent = countText(filtered.length, lang);
 
-    filtered.forEach(function (paper) {
-      var item = document.createElement('div');
-      item.className = 'paper-item';
-
-      // Title
-      var title = document.createElement('p');
-      title.className = 'paper-title';
-      var titleText = lang === 'zh' ? paper.title_zh : paper.title_en;
-      if (paper.link) {
-        var a = document.createElement('a');
-        a.href = paper.link;
-        a.target = '_blank';
-        a.textContent = titleText;
-        title.appendChild(a);
-      } else {
-        title.textContent = titleText;
-      }
-      item.appendChild(title);
-
-      // Authors (own line)
-      if (paper.authors) {
-        var authors = document.createElement('p');
-        authors.className = 'paper-authors';
-        authors.textContent = paper.authors;
-        item.appendChild(authors);
-      }
-
-      // Secondary line: year · venue (muted, smaller)
-      var secondaryParts = [paper.year];
-      if (paper.venue) secondaryParts.push(paper.venue);
-      var secondary = document.createElement('p');
-      secondary.className = 'paper-secondary';
-      secondary.textContent = secondaryParts.join(' · ');
-      item.appendChild(secondary);
-
-      // Tags: project (solid pill, clickable to filter) + topics
-      var tags = document.createElement('div');
-      tags.className = 'paper-tags';
-
-      var proj = PROJECTS.filter(function (p) { return p.id === paper.project; })[0];
-      if (proj) {
-        var projTag = document.createElement('button');
-        projTag.className = 'paper-tag project-tag';
-        projTag.type = 'button';
-        projTag.textContent = lang === 'zh' ? proj.label_zh : proj.label_en;
-        projTag.addEventListener('click', function () {
-          state.project = proj.id;
-          render();
-        });
-        tags.appendChild(projTag);
-      }
-
-      paper.topics.forEach(function (t) {
-        var tag = document.createElement('button');
-        tag.className = 'paper-tag';
-        tag.type = 'button';
-        tag.textContent = t;
-        tag.addEventListener('click', function () {
-          state.topic = state.topic === t ? null : t;
-          render();
-        });
-        tags.appendChild(tag);
-      });
-      item.appendChild(tags);
-
-      // Note, set off in its own bordered block
-      var noteBlock = document.createElement('div');
-      noteBlock.className = 'paper-note-block';
-
-      var noteLabel = document.createElement('p');
-      noteLabel.className = 'paper-note-label';
-      noteLabel.innerHTML = '<span class="lang-en">Reading note</span><span class="lang-zh">阅读笔记</span>';
-      noteBlock.appendChild(noteLabel);
-
-      var note = document.createElement('p');
-      note.className = 'paper-note';
-      note.textContent = lang === 'zh' ? paper.note_zh : paper.note_en;
-      noteBlock.appendChild(note);
-
-      item.appendChild(noteBlock);
-
-      list.appendChild(item);
+    filtered.forEach(function (entry) {
+      list.appendChild(entry.kind === 'paper' ? buildPaperItem(entry.data, lang) : buildNoteItem(entry.data, lang));
     });
   }
 
   function render() {
     updateProjectFilterLabels();
+    updateTypeFilterLabels();
     renderList();
   }
 
@@ -804,6 +989,7 @@
     });
 
     renderProjectFilters();
+    renderTypeFilters();
     applyLang(initial);
 
     // Dark mode toggle: follows the system setting until the visitor picks

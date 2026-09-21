@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+(function () {
+  try {
+    var l = localStorage.getItem('site-lang');
+    if (l !== 'zh' && l !== 'en') l = 'en';
+    document.documentElement.setAttribute('data-lang', l);
+  } catch (e) {
+    document.documentElement.setAttribute('data-lang', 'en');
+  }
+  try {
+    var t = localStorage.getItem('site-theme');
+    if (t === 'dark' || t === 'light') {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+  } catch (e) {}
+})();
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept Lattice Demo | Tejing Wang</title>
+  <meta name="description" content="Interactive concept lattice demo: enter a formal context (objects × attributes) and see its classical and three-way concept lattices drawn live." />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="icon" href="favicon.ico" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Concept Lattice Demo | Tejing Wang" />
+  <meta property="og:description" content="Interactive concept lattice demo: enter a formal context (objects × attributes) and see its classical and three-way concept lattices drawn live." />
+  <meta property="og:url" content="https://dank666.github.io/lattice.html" />
+  <meta property="og:image" content="https://dank666.github.io/IMG_4911.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Concept Lattice Demo | Tejing Wang" />
+  <meta name="twitter:description" content="Interactive concept lattice demo: enter a formal context (objects × attributes) and see its classical and three-way concept lattices drawn live." />
+  <meta name="twitter:image" content="https://dank666.github.io/IMG_4911.jpeg" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #16181c;
+      --muted: #666a70;
+      --line: #e6e4e0;
+      --accent: #24435c;
+      --accent-soft: #ecf1f4;
+      --max-width: 820px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #14161a;
+        --text: #e7e8ea;
+        --muted: #9199a1;
+        --line: #2a2d33;
+        --accent: #5b90b8;
+        --accent-soft: #1c2530;
+      }
+
+      :root:not([data-theme="light"]) .navbar {
+        background: rgba(20, 22, 26, 0.88);
+      }
+
+
+
+
+      :root:not([data-theme="light"]) .back-to-top {
+        background: #1c1e22;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #14161a;
+      --text: #e7e8ea;
+      --muted: #9199a1;
+      --line: #2a2d33;
+      --accent: #5b90b8;
+      --accent-soft: #1c2530;
+    }
+
+    :root[data-theme="dark"] .navbar {
+      background: rgba(20, 22, 26, 0.88);
+    }
+
+
+
+
+    :root[data-theme="dark"] .back-to-top {
+      background: #1c1e22;
+    }
+
+    /* Ghost icon button, styled like the EN / 中 buttons next to it. */
+    .theme-toggle {
+      background: none;
+      border: 0;
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Shows the icon for the mode you would switch TO: moon while light, sun while dark. */
+    .theme-toggle .icon-sun {
+      display: none;
+    }
+
+    .theme-toggle[data-mode="dark"] .icon-moon {
+      display: none;
+    }
+
+    .theme-toggle[data-mode="dark"] .icon-sun {
+      display: block;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Links inline within a paragraph need a non-color cue too (WCAG 1.4.1). */
+    p a { text-decoration: underline; text-underline-offset: 2px; }
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -48px;
+      background: #1f2937;
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      z-index: 100;
+      transition: top 0.15s ease;
+    }
+
+    .skip-link:focus {
+      top: 12px;
+    }
+
+    .container {
+      width: min(var(--max-width), calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    [data-lang="en"] .lang-zh { display: none; }
+    [data-lang="zh"] .lang-en { display: none; }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .nav-inner {
+      width: min(1080px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .nav-links::-webkit-scrollbar { display: none; }
+
+    .nav-links a {
+      font-size: 0.88rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    .lang-switch {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+      border-left: 1px solid var(--line);
+      padding-left: 16px;
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      background: none;
+      border: 0;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font: inherit;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .lang-btn[aria-current="true"] {
+      color: var(--text);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .lang-switch span { color: var(--line); }
+
+    .page-header {
+      padding: 52px 0 28px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3.4vw, 2.3rem);
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    .page-header .intro {
+      margin: 12px 0 0;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+
+    .page-header .back-link {
+      display: inline-block;
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+
+    :root {
+      --max-width: 980px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .lat-panel {
+      margin: 0 0 28px;
+      padding: 22px 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .lat-h {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .lat-hint,
+    .lat-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .lat-toolbar {
+      margin: 14px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+    }
+
+    .lat-field {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .lat-panel select,
+    .lat-name {
+      font: inherit;
+      font-size: 0.88rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 5px 8px;
+    }
+
+    .lat-panel select:focus,
+    .lat-name:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .lat-btn,
+    .lat-mode {
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .lat-btn:hover:not(:disabled),
+    .lat-mode:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .lat-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .lat-mode[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+
+    .lat-table-wrap {
+      margin: 16px 0 0;
+      overflow-x: auto;
+    }
+
+    .lat-table {
+      border-collapse: separate;
+      border-spacing: 4px;
+    }
+
+    .lat-table th,
+    .lat-table td {
+      padding: 0;
+      font-weight: 400;
+      vertical-align: middle;
+    }
+
+    .lat-name {
+      width: 112px;
+    }
+
+    .lat-colhead .lat-name {
+      display: block;
+      width: 124px;
+      margin: 0 auto 3px;
+      text-align: center;
+    }
+
+    .lat-colhead,
+    .lat-rowhead {
+      text-align: center;
+    }
+
+    .lat-rowhead {
+      white-space: nowrap;
+      text-align: left;
+    }
+
+    .lat-x {
+      width: 22px;
+      height: 22px;
+      margin-left: 4px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: none;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .lat-colhead .lat-x {
+      margin: 0;
+    }
+
+    .lat-x:hover:not(:disabled) {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    .lat-x:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .lat-cell {
+      width: 100%;
+      min-width: 40px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--bg);
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .lat-cell:hover {
+      border-color: var(--accent);
+    }
+
+    .lat-cell[aria-checked="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .lat-addcell {
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .lat-modes {
+      margin: 12px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .lat-defs {
+      margin: 14px 0 0;
+    }
+
+    .lat-def {
+      margin: 0;
+      max-width: 72ch;
+      color: var(--text);
+      font-size: 0.93rem;
+    }
+
+    .lat-panel[data-mode="classical"] .lat-def:not([data-for="classical"]),
+    .lat-panel[data-mode="oe"] .lat-def:not([data-for="oe"]),
+    .lat-panel[data-mode="ae"] .lat-def:not([data-for="ae"]) {
+      display: none;
+    }
+
+    .lat-def-note {
+      margin: 8px 0 0;
+      max-width: 72ch;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .lat-counts {
+      margin: 16px 0 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+    }
+
+    .lat-chip {
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .lat-chip.is-current {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .lat-diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg);
+      overflow-x: auto;
+    }
+
+    .lat-diagram svg {
+      display: block;
+    }
+
+    .lat-message {
+      margin: 0;
+      padding: 28px 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .lat-edge {
+      stroke: var(--muted);
+      stroke-opacity: 0.55;
+      stroke-width: 1.3;
+    }
+
+    .lat-edge.is-active {
+      stroke: var(--accent);
+      stroke-opacity: 1;
+      stroke-width: 2.2;
+    }
+
+    .lat-node {
+      cursor: pointer;
+      outline: none;
+    }
+
+    .lat-hit {
+      fill: transparent;
+    }
+
+    .lat-dot {
+      fill: var(--bg);
+      stroke: var(--accent);
+      stroke-width: 2;
+    }
+
+    .lat-dot.has-ext {
+      fill: var(--accent-soft);
+    }
+
+    .lat-node:hover .lat-dot,
+    .lat-node:focus-visible .lat-dot,
+    .lat-node.is-active .lat-dot {
+      fill: var(--accent);
+    }
+
+    .lat-lbl {
+      font-size: 12px;
+      fill: var(--text);
+      paint-order: stroke;
+      stroke: var(--bg);
+      stroke-width: 3px;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    .lat-lbl-pos {
+      fill: var(--accent);
+    }
+
+    .lat-lbl-neg {
+      fill: var(--muted);
+      font-style: italic;
+    }
+
+    .lat-info {
+      min-height: 4.4em;
+      margin: 14px 0 0;
+    }
+
+    .lat-info-line {
+      margin: 0 0 3px;
+      font-size: 0.92rem;
+    }
+
+    .lat-list {
+      margin: 12px 0 0;
+    }
+
+    .lat-list summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .lat-list-table {
+      margin: 10px 0 0;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .lat-list-table th {
+      padding: 6px 10px;
+      text-align: left;
+      color: var(--muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .lat-list-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .lat-list-row {
+      cursor: pointer;
+    }
+
+    .lat-list-row:hover,
+    .lat-list-row.is-active {
+      background: var(--accent-soft);
+    }
+
+    @media (max-width: 640px) {
+      .lat-panel {
+        padding: 16px 14px 18px;
+      }
+    }
+
+    .footer .footer-note {
+      margin: 8px 0 0;
+    }
+
+    .footer {
+      padding: 40px 0 56px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--line);
+      margin-top: 20px;
+    }
+
+    .back-to-top {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--accent);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 30;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .back-to-top:hover { border-color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .nav-inner { display: block; }
+      .nav-right { margin-top: 10px; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
+  <header class="navbar">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="lang-en">Tejing Wang</span>
+        <span class="lang-zh">王特警</span>
+      </div>
+      <div class="nav-right">
+        <nav class="nav-links">
+          <a href="index.html"><span class="lang-en">← Home</span><span class="lang-zh">← 返回主页</span></a>
+        </nav>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn" data-lang="en" type="button">EN</button>
+          <span>/</span>
+          <button class="lang-btn" data-lang="zh" type="button">中</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="main-content">
+    <div class="page-header">
+      <h1 data-i18n data-lang-en="Concept Lattice Demo" data-lang-zh="概念格演示">Concept Lattice Demo</h1>
+      <p class="intro lang-en">
+        Enter a formal context — a table of objects and the attributes they have — and watch its concept
+        lattice being drawn. Switch to three-way concepts to see, in addition, which attributes a group of
+        objects definitely lacks. It is a small teaching tool for the kind of structure behind my research
+        on concept learning and three-way concept analysis.
+      </p>
+      <p class="intro lang-zh">
+        输入一个形式背景（对象与属性组成的表格），实时画出它的概念格。切换到三支概念，还能看到一组对象“肯定不具有”哪些属性。这是一个小型的教学演示，展示的正是我研究概念学习与三支概念分析时所依托的结构。
+      </p>
+    </div>
+
+    <section class="lat-panel" aria-labelledby="ctxTitle">
+      <h2 class="lat-h" id="ctxTitle"><span class="lang-en">Formal context</span><span class="lang-zh">形式背景</span></h2>
+      <p class="lat-hint">
+        <span class="lang-en">Click a cell to toggle it (✓ = the object has the attribute). Type in the boxes to rename objects and attributes.</span>
+        <span class="lang-zh">点击单元格切换（✓ 表示该对象具有该属性）。在输入框里输入即可重命名对象和属性。</span>
+      </p>
+      <div class="lat-toolbar">
+        <label class="lat-field"><span class="lang-en">Example</span><span class="lang-zh">示例</span>
+          <select id="presetSelect"></select>
+        </label>
+        <button class="lat-btn" id="clearBtn" type="button"><span class="lang-en">Clear all cells</span><span class="lang-zh">清空所有单元格</span></button>
+        <span class="lat-note" id="sizeNote"></span>
+      </div>
+      <div class="lat-table-wrap">
+        <table class="lat-table" id="ctxTable"></table>
+      </div>
+    </section>
+
+    <section class="lat-panel" id="outPanel" data-mode="classical" aria-labelledby="outTitle">
+      <h2 class="lat-h" id="outTitle"><span class="lang-en">Concept lattice</span><span class="lang-zh">概念格</span></h2>
+      <div class="lat-modes" role="group" aria-label="Kind of concept">
+        <button class="lat-mode" type="button" data-mode="classical" aria-pressed="true"><span class="lang-en">Classical concepts</span><span class="lang-zh">经典概念</span></button>
+        <button class="lat-mode" type="button" data-mode="oe" aria-pressed="false"><span class="lang-en">Three-way (object-induced)</span><span class="lang-zh">三支概念（对象诱导）</span></button>
+        <button class="lat-mode" type="button" data-mode="ae" aria-pressed="false"><span class="lang-en">Three-way (attribute-induced)</span><span class="lang-zh">三支概念（属性诱导）</span></button>
+      </div>
+
+      <div class="lat-defs">
+        <p class="lat-def" data-for="classical">
+          <span class="lang-en"><strong>Classical concept</strong> (X, Y): X is a set of objects, Y is the set of attributes that <em>all</em> of them share, and X is exactly the set of objects having all of Y. Concepts are ordered by inclusion of their extents X; the result is the concept lattice (top = all objects).</span>
+          <span class="lang-zh"><strong>经典概念</strong> (X, Y)：X 是对象集合，Y 是这些对象<em>全部</em>共有的属性，并且 X 恰好是拥有 Y 中所有属性的对象集合。概念按外延 X 的包含关系排序，得到概念格（最上面是包含全部对象的概念）。</span>
+        </p>
+        <p class="lat-def" data-for="oe">
+          <span class="lang-en"><strong>Three-way concept</strong> (X, (Y, Z)): Y is the set of attributes that every object in X has, Z is the set of attributes that <em>no</em> object in X has, and X is exactly the set of objects having all of Y and none of Z. It records what the objects do have <em>and</em> what they definitely lack (shown as <em>¬attribute</em>).</span>
+          <span class="lang-zh"><strong>三支概念</strong> (X, (Y, Z))：Y 是 X 中每个对象都具有的属性，Z 是 X 中<em>所有</em>对象都不具有的属性，并且 X 恰好是具有 Y 中全部属性、且不具有 Z 中任何属性的对象集合。它既记录对象“有什么”，也记录“肯定没有什么”（图中以 <em>¬属性</em> 表示）。</span>
+        </p>
+        <p class="lat-def" data-for="ae">
+          <span class="lang-en"><strong>Attribute-induced three-way concept</strong> (Y, (X, W)): the dual view. Y is a set of attributes, X is the set of objects having all of them, W is the set of objects having none of them, and Y is exactly the set of attributes that all of X have and none of W has. Here the nodes are sets of attributes.</span>
+          <span class="lang-zh"><strong>属性诱导的三支概念</strong> (Y, (X, W))：对偶视角。Y 是属性集合，X 是拥有 Y 中全部属性的对象，W 是不拥有 Y 中任何属性的对象，并且 Y 恰好是 X 中所有对象都具有、且 W 中所有对象都不具有的属性集合。此时节点是属性的集合。</span>
+        </p>
+        <p class="lat-def-note">
+          <span class="lang-en">Notation and naming differ between papers; this page uses the common formulation in which the three-way concepts are the concepts of the table extended with a negated copy of every attribute.</span>
+          <span class="lang-zh">不同论文的记号和叫法略有差异；本页采用的是常见的表述：三支概念等价于在表格中为每个属性增加一个“否定”副本之后得到的概念。</span>
+        </p>
+      </div>
+
+      <p class="lat-counts" id="counts" aria-live="polite"></p>
+      <div class="lat-diagram" id="diagram"></div>
+      <div class="lat-info" id="info" aria-live="polite"></div>
+      <details class="lat-list">
+        <summary id="listSummary"><span class="lang-en">All concepts</span><span class="lang-zh">全部概念</span></summary>
+        <div id="conceptList"></div>
+      </details>
+    </section>
+
+    <footer class="footer">
+      <span class="lang-en">© 2026 Tejing Wang</span>
+      <span class="lang-zh">© 2026 王特警</span>
+      <p id="analyticsNote" class="footer-note" hidden>
+        <span class="lang-en">Only anonymous page-view statistics are collected (via GoatCounter) — no cookies, no IP addresses stored, no personal data.</span>
+        <span class="lang-zh">仅收集匿名的页面浏览统计（通过 GoatCounter）——不使用 cookie，不存储 IP 地址，不收集个人信息。</span>
+      </p>
+    </footer>
+  </main>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">↑</button>
+
+  <script>
+  (function () {
+    var STORAGE_KEY = 'site-lang';
+    var btns = document.querySelectorAll('.lang-btn');
+    var i18nEls = document.querySelectorAll('[data-i18n]');
+
+    function applyLang(lang) {
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      btns.forEach(function (b) {
+        b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
+      });
+      i18nEls.forEach(function (el) {
+        var text = lang === 'zh' ? el.dataset.langZh : el.dataset.langEn;
+        if (text) el.textContent = text;
+      });
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    }
+
+    var initial = document.documentElement.getAttribute('data-lang') || 'en';
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () { applyLang(b.dataset.lang); });
+    });
+
+    applyLang(initial);
+
+    // Dark mode toggle: follows the system setting until the visitor picks
+    // one explicitly, then that choice is remembered and takes over.
+    var THEME_KEY = 'site-theme';
+    var themeToggle = document.getElementById('themeToggle');
+    var systemDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+    function effectiveTheme() {
+      var override = document.documentElement.getAttribute('data-theme');
+      if (override === 'dark' || override === 'light') return override;
+      return systemDark && systemDark.matches ? 'dark' : 'light';
+    }
+
+    function updateThemeButton() {
+      if (!themeToggle) return;
+      var eff = effectiveTheme();
+      var label = eff === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      themeToggle.dataset.mode = eff;
+      themeToggle.setAttribute('aria-label', label);
+      themeToggle.title = label;
+    }
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', function () {
+        var next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+        updateThemeButton();
+      });
+    }
+    updateThemeButton();
+    if (systemDark && systemDark.addEventListener) {
+      systemDark.addEventListener('change', function () {
+        if (!document.documentElement.getAttribute('data-theme')) updateThemeButton();
+      });
+    }
+
+    var backToTop = document.getElementById('backToTop');
+    function toggleBackToTop() {
+      if (window.scrollY > 400) backToTop.classList.add('visible');
+      else backToTop.classList.remove('visible');
+    }
+    window.addEventListener('scroll', toggleBackToTop, { passive: true });
+    toggleBackToTop();
+    backToTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+  </script>
+  <script src="lattice-core.js"></script>
+  <script src="lattice.js"></script>
+  <script src="analytics.js" defer></script>
+</body>
+</html>

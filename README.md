@@ -13,7 +13,8 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 - **Sections** — News, About, Research Statement, Education, Experience, Projects, Publications, Skills, Awards, Contact
 - **Scroll-spy navigation** — the nav link for whichever section is currently in view is highlighted automatically as you scroll. On wide screens the less-used links live in a "More" dropdown (`#navMoreMenu` in `index.html`) to keep the bar uncluttered; to move a link between the bar and the dropdown, just move its `<a>` line. Below 900px the dropdown flattens back into a normal horizontally-scrolling row.
 - **Project image galleries** — project cards can include a thumbnail grid; clicking a thumbnail opens it full-size in a lightbox overlay (Esc to close, Left/Right arrow keys to step through the gallery)
-- **Reading Library** (`reading.html`) — a separate, growing library of papers read during research, organized by project and topic, with searchable/filterable notes
+- **Notes** (`reading.html`) — a separate, growing page that holds both short notes and a library of the papers I've read, organized by project and topic, with searchable/filterable entries and a reading note on every paper
+- **Concept lattice demo** (`lattice.html`) — enter a formal context (objects × attributes) and see its classical concept lattice or one of two three-way concept lattices drawn live (pure front end, no back end). The maths is in `lattice-core.js` and was checked against a brute-force implementation.
 - **Analytics** (`analytics.js`) — privacy-friendly GoatCounter page views, referrers (`?ref=`) and which home-page sections get read; switch it off by emptying `GOATCOUNTER_CODE` in the file
 - **Collapsible, scalable News feed** — only the most recent 3 updates show by default; older entries expand into a height-capped, scrollable list, so it stays usable whether there are 3 entries or 300
 - **CV download** — a "Download CV" link (hero and Contact section) points at `CV.pdf`; if that file doesn't exist yet, clicking it shows a friendly "not uploaded yet" notice instead of a broken link. Once `CV.pdf` is added to the repo root, the button starts working automatically — no code changes needed.
@@ -32,7 +33,10 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 ```
 .
 ├── index.html            # main homepage (all sections)
-├── reading.html          # reading library subpage
+├── reading.html          # Notes: short notes + paper library subpage
+├── lattice.html          # concept lattice demo page
+├── lattice.js            # concept lattice demo: table editor and diagram
+├── lattice-core.js       # concept lattice demo: the concept computation (pure functions)
 ├── analytics.js          # GoatCounter analytics (the site code is set at the top of the file)
 ├── visitors.js           # visitor map: records a visit, draws the map (Worker URL goes at the top)
 ├── vendor/               # d3-array, d3-geo, topojson-client, world-atlas map data (see vendor/README.md)
@@ -187,9 +191,11 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 - **头像**：仓库根目录的 `avatar.webp`（主用）和 `IMG_4911.jpeg`（兼容旧浏览器的备用格式）是同一张照片的两种格式，两个都要换成新照片才行——直接把新照片发给我，我帮你处理成这两种格式并放到正确的文件名。
 - **简历（CV）**：把 PDF 文件重命名为 `CV.pdf`，放进仓库根目录即可，网站会自动识别，Hero 区和 Contact 区的"下载简历"按钮会立刻生效，不用改任何代码。
 
-### Reading Library（论文库）加论文
+### Notes（笔记与论文库）加内容
 
-`reading.html` 里不用碰 HTML，直接在文件里搜 `var PAPERS = [`，往数组里加一条新的对象（照抄格式即可）：
+`reading.html`（页面名称是 **Notes / 笔记**）里有两种条目：**论文**和**短文笔记**。都不用碰 HTML，直接改文件里的数组。
+
+**加一篇论文**：搜 `var PAPERS = [`，往数组里加一条新的对象（照抄格式即可）：
 
 ```js
 {
@@ -206,7 +212,24 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 }
 ```
 
-如果这篇论文属于一个全新的项目（不是"agent-survey"），先在上面的 `var PROJECTS = [ ... ]` 数组里加一条新项目：
+**加一篇短文笔记**：搜 `var NOTES = [`，往数组里加一条（文件里有注释掉的模板）：
+
+```js
+{
+  title_en: 'Note title',
+  title_zh: '笔记标题',
+  date: '2026-09',                    // 年-月
+  project: 'agent-survey',            // 可选，PROJECTS 里的 id
+  about: { title_en: 'Paper title', title_zh: '论文标题', link: 'https://...' },  // 可选：这篇笔记讲的是哪篇论文（显示为一行带链接的"关于论文"）
+  topics: ['some-topic'],
+  body_en: ['First paragraph.', 'Second paragraph.'],   // 每个字符串是一段
+  body_zh: ['第一段。', '第二段。']
+}
+```
+
+页面上一开始只有论文时看起来和原来的论文库一样；只要 `NOTES` 里有了第一条，就会自动出现"全部 / 笔记 / 论文"的类型筛选。论文和笔记混排，按时间从新到旧。
+
+如果内容属于一个全新的项目（不是"agent-survey"），先在上面的 `var PROJECTS = [ ... ]` 数组里加一条新项目：
 
 ```js
 { id: 'new-project-id', label_en: 'Project Name', label_zh: '项目中文名' }
@@ -222,6 +245,10 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 - **板块阅读**：主页每个板块被读到时会记一次事件（`section/about`、`section/research`……），在 GoatCounter 后台的 Events 里看。
 
 不会被统计的：本地预览（localhost、局域网 IP、`file://`）、开启了 Do Not Track 的访客、以及上面排除的浏览器。和访客地图一样，中国大陆网络多半连不上 GoatCounter，所以这些数据主要反映海外访问。
+
+### 概念格演示
+
+`lattice.html` 是纯前端页面，不需要后端。计算部分在 `lattice-core.js`（纯函数，可以直接在 Node 里 `require` 测试），界面在 `lattice.js`。想改示例表格，改 `lattice.js` 里的 `PRESETS`。表格大小上限（12 × 12）和画图的概念数上限（400）是文件顶部的常量 `MAX_OBJECTS`、`MAX_ATTRS`、`DRAW_LIMIT`。页面里"三支概念"采用的是常见表述：等价于给每个属性增加一个"否定"副本之后的概念；如果你论文里的定义或记号不同，改 `lattice.html` 里的说明文字（`.lat-def`）和 `lattice-core.js` 顶部的注释即可。
 
 ### 每次改完之后
 
