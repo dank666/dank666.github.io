@@ -20,13 +20,17 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 - **CV download** — a "Download CV" link (hero and Contact section) points at `CV.pdf`; if that file doesn't exist yet, clicking it shows a friendly "not uploaded yet" notice instead of a broken link. Once `CV.pdf` is added to the repo root, the button starts working automatically — no code changes needed.
 - **Social link previews** — Open Graph and Twitter Card meta tags on both pages, so sharing the link in email/Slack/WeChat shows a title, description, and preview image instead of a bare URL
 - **Favicon** — a "TW" monogram icon (SVG + PNG/ICO fallbacks) shown in browser tabs and bookmarks
+- **Content in a data file** — News, Publications, Awards and Projects live in `data/content.mjs` as `{ en, zh }` pairs; a small dependency-free script (`tools/build.mjs`) writes them into `index.html` as plain static HTML, and refuses to build if either language is missing
+- **Publication cards** with a status tag (Under Review / In Preparation / …) and PDF / arXiv / Code / BibTeX buttons that light up as soon as you fill in the links
+- **Project cards with schematic figures**, **folded awards** (strongest three shown, the rest one click away), a compact **Skills** list, and a note that you are open to remote collaboration and research internships
+- **Emails are assembled by script** instead of being written into the HTML, so simple scrapers reading the page source don't find them
 - **Visitor map** — a "Visitors" section with a world map of city-level, anonymous visit counts (bigger and darker dot = more visits). Backed by a small Cloudflare Worker + D1 database in `visitor-worker/`; no IPs are stored. See [Visitor map](#visitor-map-访客地图) below.
 - **Footer with last-updated date and source link** — a small "Last updated" line plus a link back to this repository
 - Sticky nav, back-to-top button, skip-to-content link, responsive down to mobile, reduced-motion support
 
 ## Tech stack
 
-Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chosen deliberately to keep the site easy to hand-edit and cheap to host on GitHub Pages. The only third-party code is the small set of D3 modules and map data used by the visitor map, copied into `vendor/` (no CDN, no npm install).
+Plain **HTML / CSS / vanilla JavaScript** — no framework and nothing to install. Chosen deliberately to keep the site easy to hand-edit and cheap to host on GitHub Pages. The site itself is static; the only tooling is one optional Node script (`tools/build.mjs`, no dependencies) that turns `data/content.mjs` into HTML while you edit. The only third-party code is the small set of D3 modules and map data used by the visitor map, copied into `vendor/` (no CDN, no npm install).
 
 ## Project structure
 
@@ -39,19 +43,14 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 ├── lattice-core.js       # concept lattice demo: the concept computation (pure functions)
 ├── analytics.js          # GoatCounter analytics (the site code is set at the top of the file)
 ├── visitors.js           # visitor map: records a visit, draws the map (Worker URL goes at the top)
+├── data/content.mjs      # News, Publications, Awards, Projects — the one place to edit them
+├── tools/build.mjs       # writes data/content.mjs into index.html (node tools/build.mjs)
+├── tests/                # tests for the concept-lattice maths (node tests/lattice-core.test.js)
+├── .github/workflows/    # CI: fails if index.html is out of date or a test breaks
+├── images/               # photos and screenshots (WebP; the avatar also has a JPEG fallback)
 ├── vendor/               # d3-array, d3-geo, topojson-client, world-atlas map data (see vendor/README.md)
 ├── visitor-worker/       # Cloudflare Worker + D1 backend for the visitor map (deployed separately)
-├── IMG_4911.jpeg         # profile photo (JPEG fallback)
-├── avatar.webp           # profile photo (WebP, served first via <picture>)
 ├── CV.pdf                # (not yet added) drop a PDF here to enable the "Download CV" button
-├── nextscience-1.jpg      # NextScience project gallery images
-├── nextscience-2.jpg
-├── nextscience-3.jpg
-├── nextscience-4.jpg
-├── embodied-cell-1.jpg    # Embodied Cell project gallery images
-├── embodied-cell-2.jpg
-├── embodied-cell-3.jpg
-├── embodied-cell-4.jpg
 ├── favicon.svg           # favicon, modern browsers
 ├── favicon.ico           # favicon fallback (16/32/48px), older browsers
 ├── icon-16.png           # favicon fallback, 16px
@@ -67,28 +66,35 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 
 这一节是写给未来的自己看的——不用记代码细节，照着对应小节复制模板改文字就行。
 
-### 基本规则：中英文成对出现
+### 基本规则：中英文成对出现，先改数据再构建
 
-页面上几乎每一段可翻译的文字，在 HTML 里都是**成对**写的：一份 `class="lang-en"`，一份 `class="lang-zh"`，紧挨着放在一起。页面通过 `<html>` 标签上的 `data-lang` 属性，用 CSS 把当前不需要的那份隐藏掉。
+页面上几乎每一段可翻译的文字，都是**成对**出现的：一份英文（`lang-en`）、一份中文（`lang-zh`），页面用 `<html>` 上的 `data-lang` 属性通过 CSS 隐藏当前不需要的那份。
 
-**改内容时的唯一原则：改哪段文字，就同时改它对应的中/英文两份，不要只改一份。** 加新内容时，两份也要一起加，顺序和位置保持一一对应（少数地方比如导航栏英文名字、GitHub/ORCID 这种没有译法的标签除外，那些本来就没有 `lang-zh`）。
+- **News、Publications、Awards、Projects** 四个板块的内容都在 **`data/content.mjs`** 里，每段文字是一个 `{ en: "...", zh: "..." }` 对。改完之后运行一次：
+
+  ```bash
+  node tools/build.mjs
+  ```
+
+  它会把内容写进 `index.html` 里标着 `GENERATED` 的区块（**不要手改这些区块，会被覆盖**）。任何一边的文字缺失或为空，构建会直接报错并告诉你是哪一条，所以不会再出现"改了英文忘了中文"。数据里的文字是 HTML：`&` 要写成 `&amp;`，可以用 `<em>…</em>` 和 `<a href="…" target="_blank">…</a>`。
+- **其余板块**（About、Research、Education、Experience、Skills、Contact 等）仍然直接在 `index.html` 里手写，同样是成对的 `lang-en` / `lang-zh`，改哪段就同时改两份。
+- 没有安装 Node 的话，也可以直接把改动告诉我，我来改并构建。
 
 ### 加一条 News（动态）
 
-打开 `index.html`，找到 `<section class="section" id="news">`。News 区块只在页面上常驻显示**最新 3 条**，更早的会自动折叠进"显示更早的动态"按钮里，不用担心以后攒多了会把页面撑长（这部分是限高可滚动的）。
+在 `data/content.mjs` 的 `news` 数组**最前面**加一条（越新的排越上面），然后运行 `node tools/build.mjs`：
 
-加新动态时：
-1. 把下面这段模板粘贴到 `<div class="timeline">` 里**第一条**的前面（越新的排越上面）；
-2. 原来排第 3 的那条，手动剪切挪到下面 `<div class="timeline-more" id="newsMore" hidden>` 里面的最前面（保持「常驻 3 条 + 其余折叠」的结构）。
-
-```html
-<div class="timeline-item">
-  <div class="timeline-meta lang-en"><span>Mon YYYY</span></div>
-  <div class="timeline-meta lang-zh"><span>YYYY 年 M 月</span></div>
-  <p class="lang-en">English description of the update.</p>
-  <p class="lang-zh">中文描述。</p>
-</div>
+```js
+{
+  date: "2026-10",                 // 年-月；页面上的 "Oct 2026" / "2026 年 10 月" 由它自动生成
+  text: {
+    en: "English description of the update.",
+    zh: "中文描述。"
+  }
+},
 ```
+
+页面上常驻显示最新 3 条（`NEWS_VISIBLE`），更早的自动折叠进"显示更早的动态"，不用手动挪。
 
 ### 更新 Education / Experience（教育背景 / 科研经历）
 
@@ -109,86 +115,73 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 </div>
 ```
 
-### 加一个 Project（项目经历，含图片画廊）
+### 加一个 Project（项目经历，含示意图和图片画廊）
 
-在 `<section id="projects">` 的 `<div class="list">` 里加一个 `.card`：
+在 `data/content.mjs` 的 `projects` 数组里加一项（排在前面的先显示），然后运行 `node tools/build.mjs`。除了 `title` 和 `description`，其余字段都是可选的：
 
-```html
-<div class="card">
-  <h3 class="lang-en">Project Name — Short Tagline</h3>
-  <h3 class="lang-zh">项目中文名 —— 简短说明</h3>
-  <p class="lang-en">English description of the project.</p>
-  <p class="lang-zh">中文项目描述。</p>
-
-  <div class="project-gallery">
-    <img src="project-1.jpg" alt="Description of image 1" loading="lazy" decoding="async">
-    <img src="project-2.jpg" alt="Description of image 2" loading="lazy" decoding="async">
-  </div>
-</div>
+```js
+{
+  title:       { en: "Project Name", zh: "项目名称" },
+  tagline:     { en: "Role · status · advisor", zh: "角色 · 状态 · 导师" },   // 标题下面的一行小字
+  description: { en: "English description.", zh: "中文描述。" },
+  figure: {                                   // 示意图，三选一：
+    type: "flow",                             //   流程：几个方框加箭头（手机上自动竖排）
+    steps: [
+      { label: { en: "Input", zh: "输入" }, title: { en: "…", zh: "…" } },
+      { label: { en: "Method", zh: "方法" }, title: { en: "…", zh: "…" } }
+    ],
+    caption: { en: "Schematic overview.", zh: "示意图。" }
+  },
+  //   type: "scope"  一个中心框 + 几个并列的小标签（见"神经符号智能体综述"那一项）
+  //   type: "image"  放你自己画的图：{ type: "image", src: "images/x.webp", alt: "…", width: 1200, height: 600, caption: {…} }
+  links:   [{ label: { en: "Read more →", zh: "了解更多 →" }, href: "reading.html" }],
+  gallery: [{ src: "images/xxx.webp", alt: "Description", width: 1280, height: 690 }]
+},
 ```
 
-图片画廊是可选的（没有图就把 `.project-gallery` 那块删掉）。点击图片放大的灯箱效果是自动生效的，不用额外写 JS。
-
-**加新图片时注意**：直接把手机拍的原图放进仓库体积会很大（几 MB 一张很常见），会拖慢网站加载。建议先压缩、缩小尺寸再放进来——可以直接把图片发给我（Claude），我帮你压缩并生成合适的文件；如果想自己弄，可以用 [Squoosh](https://squoosh.app/)（网页版，不用装软件）压到几百 KB 以内。
+**加图片时**：图片放进 `images/`，用有语义的文件名（比如 `nextscience-home-feed.webp`，不要 `IMG_1234.jpg`），格式用 WebP，宽度 1400px 以内、几百 KB 以内。手机拍的原图动辄几 MB，会拖慢网站。可以把图片直接发给我，我来转换和命名；想自己弄，可以用 [Squoosh](https://squoosh.app/)（网页版）。`width` / `height` 是图片的实际像素尺寸，用来提前占好位置、避免页面跳动。点击缩略图放大的灯箱是自动的。
 
 ### 加 / 更新一条 Publication（论文发表）
 
-在 `<section id="publications">` 里加一个 `.publication-item`：
+在 `data/content.mjs` 的 `publications` 数组里加一项，然后运行 `node tools/build.mjs`：
 
-```html
-<div class="publication-item">
-  <div class="publication-title lang-en">Paper Title in English</div>
-  <div class="publication-title lang-zh">论文中文标题</div>
-  <p class="publication-meta lang-en">Author role · Venue · Status</p>
-  <p class="publication-meta lang-zh">作者身份 · 期刊/会议 · 状态</p>
-</div>
+```js
+{
+  status: "under-review",     // "in-preparation" | "under-review" | "preprint" | "published"
+  title: { en: "Paper Title in English", zh: "论文中文标题" },
+  meta:  { en: "First author · Venue", zh: "第一作者 · 期刊/会议" },   // 可选，状态标签旁边的一行
+  links: { pdf: "", arxiv: "", code: "", bibtex: "" }
+},
 ```
 
-等论文有预印本/DOI 链接了，把标题文字包一层链接即可（两份都要包）：
+`links` 就是卡片下面的 **PDF / arXiv / Code / BibTeX** 四个按钮。论文正式刊登、有了链接之后，把对应的字段填上，那个按钮就会从灰色虚线的"占位"变成可点击的按钮：`pdf` / `arxiv` / `code` 填网址；`bibtex` 直接把整条 BibTeX 文本填进去（可以用反引号写多行），点按钮会把它复制到剪贴板。没填的按钮显示为占位；如果你更想只显示已有的按钮，把文件里的 `SHOW_PLACEHOLDER_LINKS` 改成 `false`。
+
+### 更新 Skills（技能）
+
+Skills 现在是紧凑的"一行一类"列表，直接在 `index.html` 的 `<dl class="skill-list">` 里改。加一类就复制一个 `.skill-row`：
 
 ```html
-<div class="publication-title lang-en"><a href="链接" target="_blank">Paper Title in English</a></div>
-```
-
-### 加一条 Skill（技能）
-
-在 `<section id="skills">` 里加一个 `.card`（格式和 Project 卡片一样，但不需要图片画廊）：
-
-```html
-<div class="card">
-  <h3 class="lang-en">Skill Category</h3>
-  <h3 class="lang-zh">技能类别</h3>
-  <p class="lang-en">Comma-separated skills in English.</p>
-  <p class="lang-zh">用顿号分隔的中文技能列表。</p>
+<div class="skill-row">
+  <dt><span class="lang-en">Category</span><span class="lang-zh">类别</span></dt>
+  <dd><span class="lang-en">Comma-separated skills.</span><span class="lang-zh">用顿号分隔的技能。</span></dd>
 </div>
 ```
 
 ### 加一条 Award / Software Copyright（获奖 / 软著）
 
-在 `<section id="awards">` 对应的 `<ul class="award-list lang-en">` 和 `<ul class="award-list lang-zh">` 里各加一个 `<li>`（两份数量、顺序要对应）：
+在 `data/content.mjs` 的 `awards` 里，往对应分组的 `items` 里加一项（两种语言一起写），然后运行 `node tools/build.mjs`。**把最强的排在前面**：竞赛那一组的 `visible: 3` 表示默认只显示前 3 项，其余折叠在"Show N more / 再显示 N 项"按钮后面；想多显示几项就改这个数字，不想折叠就删掉这一行。
 
-```html
-<li>Prize name, Competition name (Year)</li>
-```
+### 更新 Contact（联系方式）
 
-```html
-<li>奖项名称，赛事名称（年份）</li>
-```
+在 `index.html` 的 `<section id="contact">` 里找到对应的 `.contact-item`，把 "Coming soon" / "待添加" 那两行换成真正的链接（格式参考 GitHub 那一条）。
 
-### 更新 Contact（联系方式：Google Scholar / ORCID 等）
+**邮箱**不是直接写在 HTML 里的：地址被拆成 `data-u`（@ 前面）和 `data-d`（@ 后面）两个属性，由页面脚本拼出来，所以只读网页源码的简单爬虫找不到。要改或加一个邮箱，复制一个 `<a class="email-link" data-u="…" data-d="…">` 即可（没开 JavaScript 时会显示成 `name [at] domain [dot] tld`）。这只能挡住最简单的爬虫；请注意 Git 历史里早先提交过的明文地址是删不掉的。
 
-在 `<section id="contact">` 里找到对应的 `.contact-item`，把 "Coming soon" / "待添加" 那两行换成真正的链接，格式参考 GitHub 那一条：
-
-```html
-<div class="contact-item">
-  <div class="contact-label">Google Scholar</div>
-  <div class="contact-value"><a href="你的主页链接" target="_blank">显示文字</a></div>
-</div>
-```
+页面首屏和 Contact 里各有一句"欢迎远程合作或科研实习"（`hero-open` / `contact-open`），想改措辞或暂时去掉，直接改或删这两段。
 
 ### 换头像 / 加简历
 
-- **头像**：仓库根目录的 `avatar.webp`（主用）和 `IMG_4911.jpeg`（兼容旧浏览器的备用格式）是同一张照片的两种格式，两个都要换成新照片才行——直接把新照片发给我，我帮你处理成这两种格式并放到正确的文件名。
+- **头像**：`images/avatar.webp`（主用）和 `images/avatar.jpg`（兼容旧浏览器、也用于微信/邮件里的链接预览图）是同一张照片的两种格式，两个都要换成新照片才行——直接把新照片发给我，我帮你处理成这两种格式并放到正确的文件名。
 - **简历（CV）**：把 PDF 文件重命名为 `CV.pdf`，放进仓库根目录即可，网站会自动识别，Hero 区和 Contact 区的"下载简历"按钮会立刻生效，不用改任何代码。
 
 ### Notes（笔记与论文库）加内容
@@ -252,9 +245,10 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 
 ### 每次改完之后
 
-1. **更新页脚"最后更新"日期**：`index.html` 的 `<footer>` 里有一行 "Last updated: ... / 最后更新：..."，是手写的，改完内容后顺手把月份改一下（GitHub Pages 不会自动生成这个日期）。
-2. **本地预览**（可选）：不改代码只是想看看效果，直接双击 `index.html` 用浏览器打开就行，不需要起服务器。
-3. **发布**：改完 `git add` / `git commit` / `git push` 到 `main` 分支，GitHub Pages 会在一两分钟内自动更新线上网站。如果这部分不熟悉，把改动告诉我，我可以帮你提交和推送。
+1. **如果改了 `data/content.mjs`，先运行 `node tools/build.mjs`**，把内容写进 `index.html`。忘了也不会悄悄出错：推送后 GitHub 上的检查（`.github/workflows/check.yml`）会发现 `index.html` 和数据对不上并标红。
+2. **页脚"最后更新"是自动的**：页面加载时会向服务器询问这个页面上次更新的时间（在 GitHub Pages 上就是最近一次推送发布的时间），不用手改。`build.mjs` 每次运行也会把 HTML 里的兜底文字刷新成当月，只在页面拿不到服务器时间时才会看到它。
+3. **本地预览**：在仓库根目录运行 `python3 -m http.server`，打开 `http://localhost:8000`（访客地图和概念格演示页需要通过 HTTP 访问；只改文字的话直接双击 `index.html` 也行）。
+4. **发布**：改完 `git add` / `git commit` / `git push` 到 `main` 分支，GitHub Pages 会在一两分钟内自动更新线上网站。如果这部分不熟悉，把改动告诉我，我可以帮你提交和推送。
 
 ## Visitor map（访客地图）
 
@@ -275,7 +269,7 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 
 ## Running locally
 
-For most edits no build step is required — just open `index.html` in a browser. To see the visitor map, serve the folder with any static file server instead (the map data is loaded over HTTP), e.g.:
+Only News, Publications, Awards and Projects need the build step (`node tools/build.mjs` after editing `data/content.mjs`); everything else is edited in place. To preview, serve the folder with any static file server (the visitor map and lattice demo load their data over HTTP), e.g.:
 
 ```bash
 python3 -m http.server
@@ -293,5 +287,5 @@ The **written content, personal photos, and project images** are not covered by 
 
 ## Contact
 
-- Email: [wtejing@gmail.com](mailto:wtejing@gmail.com)
+- Email: see the Contact section of the [website](https://dank666.github.io/#contact)
 - GitHub: [@dank666](https://github.com/dank666)

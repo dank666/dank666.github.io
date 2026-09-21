@@ -1,0 +1,20 @@
+# Runs on every push and pull request. It does not deploy anything (GitHub Pages
+# publishes the site as before); it only fails loudly if something is out of sync.
+name: Checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: index.html matches data/content.mjs
+        run: node tools/build.mjs --check
+      - name: Concept lattice maths
+        run: node tests/lattice-core.test.js

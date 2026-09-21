@@ -33,11 +33,11 @@
   <meta property="og:title" content="Tejing Wang — Neuro-Symbolic AI, Concept Learning, Agents | SNNU" />
   <meta property="og:description" content="AI student at Shaanxi Normal University (SNNU). Research on neuro-symbolic AI, graph-based concept learning, and intelligent agents." />
   <meta property="og:url" content="https://dank666.github.io/" />
-  <meta property="og:image" content="https://dank666.github.io/IMG_4911.jpeg" />
+  <meta property="og:image" content="https://dank666.github.io/images/avatar.jpg" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Tejing Wang — Neuro-Symbolic AI, Concept Learning, Agents | SNNU" />
   <meta name="twitter:description" content="AI student at Shaanxi Normal University (SNNU). Research on neuro-symbolic AI, graph-based concept learning, and intelligent agents." />
-  <meta name="twitter:image" content="https://dank666.github.io/IMG_4911.jpeg" />
+  <meta name="twitter:image" content="https://dank666.github.io/images/avatar.jpg" />
 
   <script type="application/ld+json">
   {
@@ -46,8 +46,7 @@
     "name": "Tejing Wang",
     "alternateName": "王特警",
     "url": "https://dank666.github.io/",
-    "image": "https://dank666.github.io/IMG_4911.jpeg",
-    "email": "mailto:wtejing@gmail.com",
+    "image": "https://dank666.github.io/images/avatar.jpg",
     "jobTitle": "AI Student / Incoming Academic Master's Student",
     "affiliation": {
       "@type": "CollegeOrUniversity",
@@ -1014,6 +1013,343 @@
       display: none;
     }
   </style>
+  <style>
+    /* Content components: publication cards, project figures, compact skills,
+       folded awards, collaboration note. Colours come from the theme variables
+       only, so light/dark (system or manual) needs no extra rules. */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    /* Publications as cards */
+    .publication-item.pub-card,
+    .publication-item.pub-card:last-child {
+      padding: 16px 18px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .pub-status-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 12px;
+      margin-top: 8px;
+    }
+
+    .pub-status-row .publication-meta {
+      margin: 0;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 1px 10px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.7;
+    }
+
+    .status-under-review {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .status-in-preparation {
+      border: 1px dashed var(--muted);
+      color: var(--muted);
+    }
+
+    .status-preprint {
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+
+    .status-published {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .pub-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pub-btn {
+      padding: 3px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--bg);
+      color: var(--accent);
+      font: inherit;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      cursor: pointer;
+    }
+
+    a.pub-btn:hover,
+    button.pub-btn:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Links that are not available yet: present, but clearly inactive. */
+    .pub-btn.is-soon {
+      background: transparent;
+      border: 1px dashed var(--muted);
+      color: var(--muted);
+      cursor: default;
+      opacity: 0.85;
+    }
+
+    .pub-btn-done {
+      display: none;
+    }
+
+    .pub-btn.is-copied .pub-btn-label {
+      display: none;
+    }
+
+    .pub-btn.is-copied .pub-btn-done {
+      display: inline;
+    }
+
+    /* The gallery images carry width/height attributes (so the browser can
+       reserve their space); keep the existing 4:3 crop instead of letting the
+       height attribute stretch them. */
+    .project-gallery img {
+      height: auto;
+    }
+
+    /* Projects: tagline, links, schematic figures */
+    .card .project-tagline {
+      margin: 2px 0 0;
+      font-size: 0.9rem;
+    }
+
+    .project-links {
+      margin: 12px 0 0;
+    }
+
+    .project-links a {
+      display: inline-block;
+      margin-right: 18px;
+      font-size: 0.95rem;
+    }
+
+    .flow {
+      margin: 16px 0 0;
+    }
+
+    .flow figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .flow-image img {
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow-steps {
+      display: flex;
+      align-items: stretch;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .flow-step {
+      position: relative;
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 12px 14px;
+      background: var(--accent-soft);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .flow-step + .flow-step {
+      margin-left: 32px;
+    }
+
+    .flow-step + .flow-step::before {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      left: -25px;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1.15rem;
+    }
+
+    .flow-kicker {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .flow-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .scope {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .scope .scope-root {
+      padding: 10px 20px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .scope-items {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 0;
+      padding: 20px 0 0;
+      list-style: none;
+    }
+
+    .scope-items::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      height: 20px;
+      border-left: 1px solid var(--muted);
+    }
+
+    .scope-items li {
+      padding: 6px 16px;
+      background: var(--accent-soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+
+    .scope figcaption {
+      align-self: flex-start;
+    }
+
+    @media (max-width: 640px) {
+      .flow-steps {
+        flex-direction: column;
+      }
+
+      .flow-step + .flow-step {
+        margin-top: 28px;
+        margin-left: 0;
+      }
+
+      .flow-step + .flow-step::before {
+        content: "↓";
+        top: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Awards: folded list */
+    .card > .show-more-btn {
+      margin-top: 14px;
+    }
+
+    /* Skills: one compact row each */
+    .skill-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 236px 1fr;
+      gap: 4px 18px;
+      align-items: baseline;
+    }
+
+    .skill-row dt {
+      font-weight: 600;
+    }
+
+    .skill-row dd {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 640px) {
+      .skill-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* With two email addresses the contact row wraps; spacing instead of "·"
+       separators keeps a wrapped line from starting or ending with a dot. */
+    .hero-contact {
+      gap: 6px 20px;
+    }
+
+    .hero-contact .sep {
+      display: none;
+    }
+
+    /* Collaboration note and second email */
+    .hero-open {
+      margin: 14px 0 0;
+      font-size: 0.93rem;
+    }
+
+    .hero-open::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      vertical-align: middle;
+    }
+
+    .contact-open {
+      margin: 0 0 20px;
+    }
+
+    .contact-note {
+      margin-left: 6px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
@@ -1066,8 +1402,8 @@
       <div class="hero-card">
         <div class="avatar-wrap">
           <picture>
-            <source srcset="avatar.webp" type="image/webp" />
-            <img class="avatar" src="IMG_4911.jpeg" alt="Portrait of Tejing Wang" width="700" height="525" />
+            <source srcset="images/avatar.webp" type="image/webp" />
+            <img class="avatar" src="images/avatar.jpg" alt="Portrait of Tejing Wang" width="700" height="525" fetchpriority="high" />
           </picture>
         </div>
 
@@ -1076,7 +1412,9 @@
           <p class="subtitle lang-en">Neuro-Symbolic AI · Graph-based Concept Learning · Intelligent Agents</p>
           <p class="subtitle lang-zh">神经符号人工智能 · 图概念学习 · 智能体系统</p>
           <div class="hero-contact">
-            <a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a>
+            <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn">42312205 [at] snnu [dot] edu [dot] cn</a>
+            <span class="sep" aria-hidden="true">·</span>
+            <a class="email-link" href="#contact" data-u="wtejing" data-d="gmail.com">wtejing [at] gmail [dot] com</a>
             <span class="sep" aria-hidden="true">·</span>
             <a href="https://github.com/dank666" target="_blank">github.com/dank666</a>
             <span class="sep" aria-hidden="true">·</span>
@@ -1085,6 +1423,10 @@
               <span class="lang-zh">下载简历</span>
             </a>
           </div>
+          <p class="hero-open">
+            <span class="lang-en">Open to remote collaboration and research internships on neuro-symbolic agents and concept learning.</span>
+            <span class="lang-zh">欢迎围绕神经符号智能体、概念学习的远程合作或科研实习。</span>
+          </p>
         </div>
       </div>
     </section>
@@ -1187,6 +1529,7 @@
         <h2 class="section-title"><span class="lang-en">News</span><span class="lang-zh">动态</span></h2>
       </div>
 
+      <!-- BEGIN GENERATED: news — edit data/content.mjs, then run "node tools/build.mjs" -->
       <div class="timeline">
         <div class="timeline-item">
           <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
@@ -1232,6 +1575,7 @@
         <span class="label-show"><span class="lang-en">Show earlier updates</span><span class="lang-zh">显示更早的动态</span></span>
         <span class="label-hide"><span class="lang-en">Hide earlier updates</span><span class="lang-zh">收起</span></span>
       </button>
+      <!-- END GENERATED: news -->
     </section>
 
     <section class="section" id="education">
@@ -1330,34 +1674,79 @@
         <h2 class="section-title"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></h2>
       </div>
 
+      <!-- BEGIN GENERATED: projects — edit data/content.mjs, then run "node tools/build.mjs" -->
       <div class="list">
+        <div class="card">
+          <h3 class="lang-en">Automated Geography Question Answering with LLMs and Three-Way Concept Analysis</h3>
+          <h3 class="lang-zh">融合大语言模型与三支概念分析的地理试题自动解答</h3>
+          <p class="project-tagline lang-en">First-author research · Under review at <em>Applied Soft Computing</em> · Advisor: <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a></p>
+          <p class="project-tagline lang-zh">第一作者研究工作 · <em>Applied Soft Computing</em> 审稿中 · 导师：<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a></p>
+          <p class="lang-en">A system that answers geography multiple-choice questions by combining a large language model with three-way concept analysis. It turns implicit textbook knowledge into explicit decision rules — an attempt to ground a black-box model in reasoning that a person can inspect.</p>
+          <p class="lang-zh">一个回答地理选择题的系统，把大语言模型与三支概念分析结合起来，将教材中隐含的知识转化为显式的决策规则——尝试让“黑箱”模型的推理过程变得可以被人检查。</p>
+          <figure class="flow">
+            <ol class="flow-steps">
+              <li class="flow-step">
+                <span class="flow-kicker"><span class="lang-en">Input</span><span class="lang-zh">输入</span></span>
+                <span class="flow-title"><span class="lang-en">Textbook knowledge + question</span><span class="lang-zh">教材知识 + 题目</span></span>
+              </li>
+              <li class="flow-step">
+                <span class="flow-kicker"><span class="lang-en">Method</span><span class="lang-zh">方法</span></span>
+                <span class="flow-title"><span class="lang-en">LLM + three-way concept analysis</span><span class="lang-zh">大语言模型 + 三支概念分析</span></span>
+              </li>
+              <li class="flow-step">
+                <span class="flow-kicker"><span class="lang-en">Output</span><span class="lang-zh">输出</span></span>
+                <span class="flow-title"><span class="lang-en">Explicit decision rules → answer</span><span class="lang-zh">显式决策规则 → 作答</span></span>
+              </li>
+            </ol>
+            <figcaption><span class="lang-en">Schematic overview of the approach.</span><span class="lang-zh">方法示意图。</span></figcaption>
+          </figure>
+        </div>
+        <div class="card">
+          <h3 class="lang-en">A Survey of Neuro-Symbolic Agents</h3>
+          <h3 class="lang-zh">神经符号智能体综述</h3>
+          <p class="project-tagline lang-en">In preparation</p>
+          <p class="project-tagline lang-zh">撰写中</p>
+          <p class="lang-en">A survey of neuro-symbolic agentic AI, organized around planning, memory, and safety/verification. To position it, I am reviewing the existing surveys to map what the literature already covers.</p>
+          <p class="lang-zh">一篇神经符号智能体综述，围绕规划、记忆与安全/验证三部分展开。为了确定它的定位，我正在梳理已有的综述，看清这个领域已经覆盖了什么。</p>
+          <figure class="flow scope">
+            <div class="scope-root"><span class="lang-en">Neuro-symbolic agentic AI</span><span class="lang-zh">神经符号智能体</span></div>
+            <ul class="scope-items">
+              <li><span class="lang-en">Planning</span><span class="lang-zh">规划</span></li>
+              <li><span class="lang-en">Memory</span><span class="lang-zh">记忆</span></li>
+              <li><span class="lang-en">Safety &amp; verification</span><span class="lang-zh">安全与验证</span></li>
+            </ul>
+            <figcaption><span class="lang-en">Scope of the survey.</span><span class="lang-zh">综述的范围。</span></figcaption>
+          </figure>
+          <p class="project-links">
+            <a href="reading.html"><span class="lang-en">My reading notes on related surveys →</span><span class="lang-zh">我对相关综述的阅读笔记 →</span></a>
+          </p>
+        </div>
         <div class="card">
           <h3 class="lang-en">NextScience — AI Research Platform for Early-Career Scientists</h3>
           <h3 class="lang-zh">NextScience —— 面向早期科研人员的 AI 研究平台</h3>
           <p class="lang-en">An AI-powered academic research platform built solo (Next.js, Supabase, DeepSeek API), featuring an AI Reader for paper summarization, a Literature Map for visualizing citation networks (Semantic Scholar + OpenAlex + React Flow), and Nova, an AI research mentor for personalized research planning. No longer actively maintained, but still live at <a href="https://www.nextscience.space" target="_blank" rel="noopener">nextscience.space</a>.</p>
           <p class="lang-zh">独立设计与开发的 AI 学术研究平台（技术栈：Next.js、Supabase、DeepSeek API），核心功能包括论文智能摘要的 AI Reader、基于 Semantic Scholar 与 OpenAlex 数据构建的文献关系图谱（React Flow 可视化），以及提供个性化科研规划的 AI 导师 Nova。目前已停止运营维护，但网站仍可正常访问：<a href="https://www.nextscience.space" target="_blank" rel="noopener">nextscience.space</a>。</p>
-
           <div class="project-gallery">
-            <img src="nextscience-1.jpg" alt="NextScience home feed" loading="lazy" decoding="async">
-            <img src="nextscience-2.jpg" alt="NextScience literature map" loading="lazy" decoding="async">
-            <img src="nextscience-3.jpg" alt="NextScience AI paper reader" loading="lazy" decoding="async">
-            <img src="nextscience-4.jpg" alt="NextScience Nova research mentor" loading="lazy" decoding="async">
+            <img src="images/nextscience-home-feed.webp" alt="NextScience home feed" width="1280" height="690" loading="lazy" decoding="async">
+            <img src="images/nextscience-literature-map.webp" alt="NextScience literature map" width="1280" height="693" loading="lazy" decoding="async">
+            <img src="images/nextscience-ai-reader.webp" alt="NextScience AI paper reader" width="1280" height="695" loading="lazy" decoding="async">
+            <img src="images/nextscience-nova-mentor.webp" alt="NextScience Nova research mentor" width="1280" height="695" loading="lazy" decoding="async">
           </div>
         </div>
-
         <div class="card">
           <h3 class="lang-en">Embodied Cell Prototype &amp; Structural Design</h3>
           <h3 class="lang-zh">具身细胞原型与结构设计</h3>
           <p class="lang-en">An ESP32-based art/research installation exploring embodied, environment-reactive behavior: RGBW LEDs driven by photoresistor, force-sensing, and time-of-flight sensor inputs, with 3D structural design and sensor/LED layout modeled in Onshape. Paired with a Unity digital twin simulating fungal hyphal networks and synthetic cells, rendering light-field diffusion and cell signaling in real time to compare against the physical device's sensor readings.</p>
           <p class="lang-zh">基于 ESP32 的具身、环境感应交互装置：通过光敏电阻、压力传感器与飞行时间传感器驱动 RGBW LED 灯带，并使用 Onshape 完成三维结构与传感器/灯光布局设计。同时搭配 Unity 数字孪生仿真系统，实时渲染真菌菌丝网络与合成细胞的光场扩散与信号传递过程，用于与实体装置的传感器数据进行对照验证。</p>
-
-        <div class="project-gallery">
-          <img src="embodied-cell-1.jpg" alt="Embodied cell prototype, top view" loading="lazy" decoding="async">
-          <img src="embodied-cell-2.jpg" alt="Embodied cell prototype, side view" loading="lazy" decoding="async">
-          <img src="embodied-cell-3.jpg" alt="Digital twin simulation, close view" loading="lazy" decoding="async">
-          <img src="embodied-cell-4.jpg" alt="Digital twin simulation, top-down view" loading="lazy" decoding="async">
+          <div class="project-gallery">
+            <img src="images/embodied-cell-top-view.webp" alt="Embodied cell prototype, top view" width="1400" height="1050" loading="lazy" decoding="async">
+            <img src="images/embodied-cell-side-view.webp" alt="Embodied cell prototype, side view" width="1400" height="793" loading="lazy" decoding="async">
+            <img src="images/digital-twin-close-view.webp" alt="Digital twin simulation, close view" width="1400" height="791" loading="lazy" decoding="async">
+            <img src="images/digital-twin-top-down.webp" alt="Digital twin simulation, top-down view" width="1400" height="792" loading="lazy" decoding="async">
+          </div>
         </div>
       </div>
+      <!-- END GENERATED: projects -->
     </section>
 
     <section class="section" id="publications">
@@ -1365,33 +1754,39 @@
         <h2 class="section-title"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></h2>
       </div>
 
+      <!-- BEGIN GENERATED: publications — edit data/content.mjs, then run "node tools/build.mjs" -->
       <div class="list">
-        <div class="publication-item">
-          <!-- Once a preprint/DOI link is available, wrap the title text below in
-               <a href="LINK" target="_blank">…</a> to make it clickable. -->
-          <div class="publication-title lang-en">
-            A Survey of Neuro-Symbolic Agents
+        <div class="publication-item pub-card">
+          <div class="publication-title lang-en">A Survey of Neuro-Symbolic Agents</div>
+          <div class="publication-title lang-zh">神经符号智能体综述</div>
+          <div class="pub-status-row">
+            <span class="status-pill status-in-preparation"><span class="lang-en">In Preparation</span><span class="lang-zh">撰写中</span></span>
           </div>
-          <div class="publication-title lang-zh">
-            神经符号智能体综述
+          <div class="pub-links" role="group" aria-label="Paper links / 论文链接">
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">PDF</span>
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">arXiv</span>
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供"><span class="lang-en">Code</span><span class="lang-zh">代码</span></span>
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">BibTeX</span>
           </div>
-          <p class="publication-meta lang-en">In preparation</p>
-          <p class="publication-meta lang-zh">撰写中</p>
         </div>
-        
-        <div class="publication-item">
-          <!-- Once a preprint/DOI link is available, wrap the title text below in
-               <a href="LINK" target="_blank">…</a> to make it clickable. -->
-          <div class="publication-title lang-en">
-            Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering
+        <div class="publication-item pub-card">
+          <div class="publication-title lang-en">Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering</div>
+          <div class="publication-title lang-zh">融合大语言模型与三支概念分析的地理多选题自动解答</div>
+          <div class="pub-status-row">
+            <span class="status-pill status-under-review"><span class="lang-en">Under Review</span><span class="lang-zh">审稿中</span></span>
+            <span class="publication-meta lang-en">First author · Applied Soft Computing</span>
+            <span class="publication-meta lang-zh">第一作者 · Applied Soft Computing</span>
           </div>
-          <div class="publication-title lang-zh">
-            融合大语言模型与三支概念分析的地理多选题自动解答
+          <div class="pub-links" role="group" aria-label="Paper links / 论文链接">
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">PDF</span>
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">arXiv</span>
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供"><span class="lang-en">Code</span><span class="lang-zh">代码</span></span>
+            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">BibTeX</span>
           </div>
-          <p class="publication-meta lang-en">First author · Applied Soft Computing · Under Review</p>
-          <p class="publication-meta lang-zh">第一作者 · Applied Soft Computing · 审稿中</p>
         </div>
+        <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>
       </div>
+      <!-- END GENERATED: publications -->
     </section>
 
     <section class="section" id="skills">
@@ -1399,44 +1794,32 @@
         <h2 class="section-title"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></h2>
       </div>
 
-      <div class="list">
-        <div class="card">
-          <h3 class="lang-en">Programming &amp; Engineering</h3>
-          <h3 class="lang-zh">编程与工程</h3>
-          <p class="lang-en">Python, C++, Linux; full-stack web development (Next.js, FastAPI, Supabase); embedded hardware (ESP32, sensors, LED systems)</p>
-          <p class="lang-zh">Python、C++、Linux；全栈 Web 开发（Next.js、FastAPI、Supabase）；嵌入式硬件（ESP32、传感器、LED 系统）</p>
+      <dl class="skill-list">
+        <div class="skill-row">
+          <dt><span class="lang-en">Artificial Intelligence</span><span class="lang-zh">人工智能</span></dt>
+          <dd><span class="lang-en">Formal concept analysis and three-way concept analysis; machine learning and deep learning; LLM application development and agent systems</span><span class="lang-zh">形式概念分析与三支概念分析；机器学习与深度学习；大语言模型应用开发与智能体系统</span></dd>
         </div>
-        <div class="card">
-          <h3 class="lang-en">Artificial Intelligence</h3>
-          <h3 class="lang-zh">人工智能</h3>
-          <p class="lang-en">Formal concept analysis and three-way concept analysis; machine learning and deep learning; LLM application development and agent systems</p>
-          <p class="lang-zh">形式概念分析与三支概念分析；机器学习与深度学习；大语言模型应用开发与智能体系统</p>
+        <div class="skill-row">
+          <dt><span class="lang-en">Research</span><span class="lang-zh">科研能力</span></dt>
+          <dd><span class="lang-en">Literature review and reproduction; experimental design and comparative analysis; academic writing in Chinese and English; LaTeX</span><span class="lang-zh">文献阅读与复现；实验设计与对比分析；中英文科研写作；LaTeX 排版</span></dd>
         </div>
-        <div class="card">
-          <h3 class="lang-en">LLM-Assisted Workflows</h3>
-          <h3 class="lang-zh">大模型辅助工作流</h3>
-          <p class="lang-en">ChatGPT, Claude, Claude Code, Codex — code generation, debugging, and refactoring; academic writing and English-language polishing</p>
-          <p class="lang-zh">ChatGPT、Claude、Claude Code、Codex——代码生成、调试与重构；学术写作与英文润色</p>
+        <div class="skill-row">
+          <dt><span class="lang-en">Programming &amp; Engineering</span><span class="lang-zh">编程与工程</span></dt>
+          <dd><span class="lang-en">Python, C++, Linux; full-stack web development (Next.js, FastAPI, Supabase); embedded hardware (ESP32, sensors, LED systems)</span><span class="lang-zh">Python、C++、Linux；全栈 Web 开发（Next.js、FastAPI、Supabase）；嵌入式硬件（ESP32、传感器、LED 系统）</span></dd>
         </div>
-        <div class="card">
-          <h3 class="lang-en">Research</h3>
-          <h3 class="lang-zh">科研能力</h3>
-          <p class="lang-en">Literature review and reproduction; experimental design and comparative analysis; academic writing in Chinese and English; LaTeX</p>
-          <p class="lang-zh">文献阅读与复现；实验设计与对比分析；中英文科研写作；LaTeX 排版</p>
+        <div class="skill-row">
+          <dt><span class="lang-en">Design &amp; Modeling</span><span class="lang-zh">设计与建模</span></dt>
+          <dd><span class="lang-en">3D modeling in Onshape; embodied-cell prototype design; digital twin structural design</span><span class="lang-zh">Onshape 三维建模；具身细胞原型设计；数字孪生结构设计</span></dd>
         </div>
-        <div class="card">
-          <h3 class="lang-en">Design &amp; Modeling</h3>
-          <h3 class="lang-zh">设计与建模</h3>
-          <p class="lang-en">3D modeling in Onshape; embodied-cell prototype design; digital twin structural design</p>
-          <p class="lang-zh">Onshape 三维建模；具身细胞原型设计；数字孪生结构设计</p>
+        <div class="skill-row">
+          <dt><span class="lang-en">Languages</span><span class="lang-zh">语言</span></dt>
+          <dd><span class="lang-en">Mandarin Chinese (native); English — IELTS score to be added</span><span class="lang-zh">中文（母语）；英语——雅思成绩待补充</span></dd>
         </div>
-        <div class="card">
-          <h3 class="lang-en">Languages</h3>
-          <h3 class="lang-zh">语言</h3>
-          <p class="lang-en">Mandarin Chinese (native); English — IELTS score to be added</p>
-          <p class="lang-zh">中文（母语）；英语——雅思成绩待补充</p>
+        <div class="skill-row">
+          <dt><span class="lang-en">LLM tools</span><span class="lang-zh">大模型工具</span></dt>
+          <dd><span class="lang-en">ChatGPT, Claude, Codex for coding and writing</span><span class="lang-zh">ChatGPT、Claude、Codex，用于编程与写作</span></dd>
         </div>
-      </div>
+      </dl>
     </section>
 
     <section class="section" id="awards">
@@ -1444,6 +1827,7 @@
         <h2 class="section-title"><span class="lang-en">Awards &amp; Honors</span><span class="lang-zh">获奖情况</span></h2>
       </div>
 
+      <!-- BEGIN GENERATED: awards — edit data/content.mjs, then run "node tools/build.mjs" -->
       <div class="list">
         <div class="card">
           <h3 class="lang-en">Competitions</h3>
@@ -1452,20 +1836,30 @@
             <li>National First Prize, China Robot and Artificial Intelligence Competition (2025)</li>
             <li>National First Prize, Geography Teaching AI Innovation Achievement Competition (2025)</li>
             <li>National Third Prize, Global Campus Artificial Intelligence Algorithm Elite Competition (2025)</li>
-            <li>Provincial First Prize (Shaanxi), China Robot and Artificial Intelligence Competition (2025)</li>
-            <li>Provincial Second Prize (Shaanxi), Global Campus Artificial Intelligence Algorithm Elite Competition (2025)</li>
-            <li>Second Prize, Information Security and Adversarial Technology Competition, Northwest Region (2025)</li>
-            <li>Third Prize, China Collegiate Computing Design Competition, Northwest Region (2024)</li>
           </ul>
           <ul class="award-list lang-zh">
             <li>中国机器人及人工智能大赛 · 国家级一等奖（2025）</li>
             <li>地理教学人工智能创新成果评比 · 国家级一等奖（2025）</li>
             <li>全球校园人工智能算法精英大赛 · 国家级三等奖（2025）</li>
-            <li>中国机器人及人工智能大赛（陕西赛区）· 省级一等奖（2025）</li>
-            <li>全球校园人工智能算法精英大赛（陕西赛区）· 省级二等奖（2025）</li>
-            <li>信息安全与对抗技术竞赛（西北赛区）· 二等奖（2025）</li>
-            <li>中国计算机设计大赛（西北地区赛）· 三等奖（2024）</li>
           </ul>
+          <div class="award-more" id="awardsMore0" hidden>
+            <ul class="award-list lang-en">
+              <li>Provincial First Prize (Shaanxi), China Robot and Artificial Intelligence Competition (2025)</li>
+              <li>Provincial Second Prize (Shaanxi), Global Campus Artificial Intelligence Algorithm Elite Competition (2025)</li>
+              <li>Second Prize, Information Security and Adversarial Technology Competition, Northwest Region (2025)</li>
+              <li>Third Prize, China Collegiate Computing Design Competition, Northwest Region (2024)</li>
+            </ul>
+            <ul class="award-list lang-zh">
+              <li>中国机器人及人工智能大赛（陕西赛区）· 省级一等奖（2025）</li>
+              <li>全球校园人工智能算法精英大赛（陕西赛区）· 省级二等奖（2025）</li>
+              <li>信息安全与对抗技术竞赛（西北赛区）· 二等奖（2025）</li>
+              <li>中国计算机设计大赛（西北地区赛）· 三等奖（2024）</li>
+            </ul>
+          </div>
+          <button class="show-more-btn" id="awardsToggle0" type="button" aria-expanded="false" aria-controls="awardsMore0" data-state="collapsed">
+            <span class="label-show"><span class="lang-en">Show 4 more</span><span class="lang-zh">再显示 4 项</span></span>
+            <span class="label-hide"><span class="lang-en">Show fewer</span><span class="lang-zh">收起</span></span>
+          </button>
         </div>
         <div class="card">
           <h3 class="lang-en">Software Copyrights</h3>
@@ -1480,6 +1874,7 @@
           </ul>
         </div>
       </div>
+      <!-- END GENERATED: awards -->
     </section>
 
     <section class="section" id="contact">
@@ -1487,10 +1882,24 @@
         <h2 class="section-title"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></h2>
       </div>
 
+      <p class="contact-open">
+        <span class="lang-en">Open to remote collaboration and research internships on neuro-symbolic agents and concept learning — feel free to get in touch.</span>
+        <span class="lang-zh">欢迎围绕神经符号智能体、概念学习的远程合作或科研实习，欢迎随时联系。</span>
+      </p>
+
       <div class="contact-list">
         <div class="contact-item">
           <div class="contact-label"><span class="lang-en">Email</span><span class="lang-zh">邮箱</span></div>
-          <div class="contact-value"><a href="mailto:wtejing@gmail.com">wtejing@gmail.com</a></div>
+          <div class="contact-value">
+            <div>
+              <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn">42312205 [at] snnu [dot] edu [dot] cn</a>
+              <span class="contact-note"><span class="lang-en">(university)</span><span class="lang-zh">（学校）</span></span>
+            </div>
+            <div>
+              <a class="email-link" href="#contact" data-u="wtejing" data-d="gmail.com">wtejing [at] gmail [dot] com</a>
+              <span class="contact-note"><span class="lang-en">(personal)</span><span class="lang-zh">（个人）</span></span>
+            </div>
+          </div>
         </div>
         <div class="contact-item">
           <div class="contact-label"><span class="lang-en">CV</span><span class="lang-zh">简历</span></div>
@@ -1557,8 +1966,8 @@
         <span class="lang-zh">© 2026 王特警</span>
       </p>
       <p>
-        <span class="lang-en">Last updated: September 2026 · <a href="https://github.com/dank666/dank666.github.io" target="_blank">View source</a></span>
-        <span class="lang-zh">最后更新：2026 年 9 月 · <a href="https://github.com/dank666/dank666.github.io" target="_blank">查看源码</a></span>
+        <span class="lang-en">Last updated: <span class="js-updated-en">September 2026</span> · <a href="https://github.com/dank666/dank666.github.io" target="_blank">View source</a></span>
+        <span class="lang-zh">最后更新：<span class="js-updated-zh">2026 年 9 月</span> · <a href="https://github.com/dank666/dank666.github.io" target="_blank">查看源码</a></span>
       </p>
       <p id="privacyNote">
         <span class="lang-en">Only anonymous, city-level visit counts are collected — no IP addresses are recorded.</span>
@@ -1720,20 +2129,71 @@
     window.addEventListener('resize', updateNavFade);
     updateNavFade();
 
-    var newsToggle = document.getElementById('newsToggle');
-    var newsMore = document.getElementById('newsMore');
-    if (newsToggle && newsMore) {
-      newsToggle.addEventListener('click', function () {
-        var expanded = newsToggle.getAttribute('aria-expanded') === 'true';
-        newsToggle.setAttribute('aria-expanded', String(!expanded));
-        newsToggle.dataset.state = expanded ? 'collapsed' : 'expanded';
+    // "Show more" buttons (News, Awards): each toggles the element named in its aria-controls.
+    document.querySelectorAll('.show-more-btn[aria-controls]').forEach(function (btn) {
+      var target = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!target) return;
+      btn.addEventListener('click', function () {
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!expanded));
+        btn.dataset.state = expanded ? 'collapsed' : 'expanded';
         if (expanded) {
-          newsMore.setAttribute('hidden', '');
+          target.setAttribute('hidden', '');
         } else {
-          newsMore.removeAttribute('hidden');
+          target.removeAttribute('hidden');
         }
       });
-    }
+    });
+
+    // Email addresses are assembled here rather than written into the HTML, so
+    // simple scrapers that only read the page source don't find them. Without
+    // JavaScript the visitor sees "name [at] domain [dot] tld" instead.
+    document.querySelectorAll('.email-link').forEach(function (a) {
+      var addr = a.getAttribute('data-u') + '@' + a.getAttribute('data-d');
+      a.setAttribute('href', 'mailto:' + addr);
+      a.textContent = addr;
+    });
+
+    // BibTeX buttons copy their entry to the clipboard.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('[data-bibtex]') : null;
+      if (!btn) return;
+      var text = btn.getAttribute('data-bibtex');
+      function done() {
+        btn.classList.add('is-copied');
+        var status = document.getElementById('bibStatus');
+        if (status) status.textContent = document.documentElement.getAttribute('data-lang') === 'zh' ? '已复制 BibTeX' : 'BibTeX copied to clipboard';
+        setTimeout(function () { btn.classList.remove('is-copied'); }, 1800);
+      }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { if (document.execCommand('copy')) done(); } catch (err) {}
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+      else fallback();
+    });
+
+    // "Last updated": ask the server when this page was last changed (on GitHub
+    // Pages that is the last deploy, i.e. the latest push). If that isn't
+    // possible the text in the HTML, refreshed by tools/build.mjs, stays.
+    try {
+      fetch(location.pathname, { method: 'HEAD', cache: 'no-cache' }).then(function (res) {
+        var header = res.headers.get('last-modified');
+        var d = header ? new Date(header) : null;
+        if (!d || isNaN(d.getTime())) return;
+        var en = document.querySelector('.js-updated-en');
+        var zh = document.querySelector('.js-updated-zh');
+        if (en) en.textContent = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        if (zh) zh.textContent = d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月';
+      }).catch(function () {});
+    } catch (err) {}
 
     // CV download: the button always points at CV.pdf. Until that file is
     // actually added to the repo, clicking it shows a friendly notice
