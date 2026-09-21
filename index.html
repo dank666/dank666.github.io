@@ -992,25 +992,25 @@
       font-size: 0.86rem;
     }
 
-    .visitor-empty {
+    .visitor-empty,
+    .visitor-error {
+      display: none;
       margin: 0;
       color: var(--muted);
       font-style: italic;
     }
 
-    /* Loading / empty / ready: show the map only once there is data to show. */
-    .visitor-map[data-state="ready"] .visitor-empty {
-      display: none;
+    /* States: loading (nothing shown yet) / ready (map) / empty (reachable
+       but no visits recorded) / error (service or libraries couldn't load). */
+    .visitor-map[data-state="empty"] .visitor-empty,
+    .visitor-map[data-state="error"] .visitor-error {
+      display: block;
     }
 
     .visitor-map:not([data-state="ready"]) .visitor-stats,
     .visitor-map:not([data-state="ready"]) .visitor-canvas,
     .visitor-map:not([data-state="ready"]) .visitor-hint {
       display: none;
-    }
-
-    .visitor-map[data-state="loading"] .visitor-empty {
-      visibility: hidden;
     }
   </style>
 </head>
@@ -1536,6 +1536,10 @@
         <p class="visitor-empty">
           <span class="lang-en">No data yet</span>
           <span class="lang-zh">暂无数据</span>
+        </p>
+        <p class="visitor-error">
+          <span class="lang-en">The visitor map couldn't be loaded — the stats service may not be reachable from your network.</span>
+          <span class="lang-zh">访客地图暂时无法加载，当前网络可能无法访问统计服务。</span>
         </p>
       </div>
     </section>

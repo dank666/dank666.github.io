@@ -3,7 +3,10 @@
 
    Everything here fails silently: if the Worker is unreachable, the libraries
    don't load, or anything else goes wrong, the rest of the page is untouched
-   and the Visitors block just shows "No data yet". */
+   and the Visitors block shows a short message instead of the map ("No data
+   yet" if the service answered but has no visits, a "couldn't be loaded"
+   notice if it couldn't be reached — e.g. from mainland China, where
+   *.workers.dev is generally blocked). */
 (function () {
   'use strict';
 
@@ -231,8 +234,11 @@
     started = true;
     if (!API_BASE) { setState('empty'); return; }
 
-    // Wait for our own hit (if any) so it shows up in the numbers below.
-    var stats = hit.then(function () { return fetchJSON(API_BASE + '/stats'); }).then(normalize);
+    // Wait for our own hit (if any) so it shows up in the numbers below, but
+    // not for long: on a network that can't reach the Worker the hit would
+    // otherwise burn a full timeout before /stats even starts.
+    var hitSettled = Promise.race([hit, new Promise(function (r) { setTimeout(r, 2500); })]);
+    var stats = hitSettled.then(function () { return fetchJSON(API_BASE + '/stats'); }).then(normalize);
     Promise.all([stats, loadLibs()])
       .then(function (r) {
         if (!r[0]) { setState('empty'); return; }
@@ -242,7 +248,7 @@
         setState('ready');
         render();
       })
-      .catch(function () { setState('empty'); });
+      .catch(function () { setState('error'); });
   }
 
   var hit = recordHit();

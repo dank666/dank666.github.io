@@ -231,6 +231,7 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
   4. `npx wrangler deploy` → 记下输出的 `https://visitor-map.<你的子域>.workers.dev`，填进 `visitors.js` 的 `API_BASE`，再提交推送
 - **本地预览地图**：地图数据要通过 HTTP 读取，所以要起静态服务器（`python3 -m http.server`），直接双击打开 `index.html` 时该区块会显示"暂无数据"。
 - 计数只是"尽力而为"：`Origin` 头可以被伪造，所以别把它当作严格准确的统计。
+- **已知限制：中国大陆网络通常连不上 `*.workers.dev`。** 大陆访客的访问不会被记录，他们看到的 Visitors 区块是"访客地图暂时无法加载"的提示（数据库里没有数据时才显示"暂无数据"）。所以地图主要反映海外访客。要改善的话可以给 Worker 绑定自己的域名（Cloudflare Custom Domain），再把 `visitors.js` 里的 `API_BASE` 换成新域名；或者换成国内可访问的后端。
 
 ## Running locally
 
