@@ -458,6 +458,10 @@
       text-align: center;
     }
 
+    .footer .footer-note {
+      margin: 8px 0 0;
+    }
+
     .footer {
       padding: 40px 0 56px;
       color: var(--muted);
@@ -562,6 +566,10 @@
     <footer class="footer">
       <span class="lang-en">© 2026 Tejing Wang</span>
       <span class="lang-zh">© 2026 王特警</span>
+      <p id="analyticsNote" class="footer-note" hidden>
+        <span class="lang-en">Only anonymous page-view statistics are collected (via GoatCounter) — no cookies, no IP addresses stored, no personal data.</span>
+        <span class="lang-zh">仅收集匿名的页面浏览统计（通过 GoatCounter）——不使用 cookie，不存储 IP 地址，不收集个人信息。</span>
+      </p>
     </footer>
   </main>
 
@@ -851,5 +859,6 @@
     });
   })();
   </script>
+  <script src="analytics.js" defer></script>
 </body>
 </html>

@@ -14,6 +14,7 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 - **Scroll-spy navigation** — the nav link for whichever section is currently in view is highlighted automatically as you scroll. On wide screens the less-used links live in a "More" dropdown (`#navMoreMenu` in `index.html`) to keep the bar uncluttered; to move a link between the bar and the dropdown, just move its `<a>` line. Below 900px the dropdown flattens back into a normal horizontally-scrolling row.
 - **Project image galleries** — project cards can include a thumbnail grid; clicking a thumbnail opens it full-size in a lightbox overlay (Esc to close, Left/Right arrow keys to step through the gallery)
 - **Reading Library** (`reading.html`) — a separate, growing library of papers read during research, organized by project and topic, with searchable/filterable notes
+- **Analytics** (`analytics.js`) — privacy-friendly GoatCounter page views, referrers (`?ref=`) and which home-page sections get read; switch it off by emptying `GOATCOUNTER_CODE` in the file
 - **Collapsible, scalable News feed** — only the most recent 3 updates show by default; older entries expand into a height-capped, scrollable list, so it stays usable whether there are 3 entries or 300
 - **CV download** — a "Download CV" link (hero and Contact section) points at `CV.pdf`; if that file doesn't exist yet, clicking it shows a friendly "not uploaded yet" notice instead of a broken link. Once `CV.pdf` is added to the repo root, the button starts working automatically — no code changes needed.
 - **Social link previews** — Open Graph and Twitter Card meta tags on both pages, so sharing the link in email/Slack/WeChat shows a title, description, and preview image instead of a bare URL
@@ -32,6 +33,7 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 .
 ├── index.html            # main homepage (all sections)
 ├── reading.html          # reading library subpage
+├── analytics.js          # GoatCounter analytics (the site code is set at the top of the file)
 ├── visitors.js           # visitor map: records a visit, draws the map (Worker URL goes at the top)
 ├── vendor/               # d3-array, d3-geo, topojson-client, world-atlas map data (see vendor/README.md)
 ├── visitor-worker/       # Cloudflare Worker + D1 backend for the visitor map (deployed separately)
@@ -209,6 +211,17 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chose
 ```js
 { id: 'new-project-id', label_en: 'Project Name', label_zh: '项目中文名' }
 ```
+
+### 统计与来源（GoatCounter）
+
+`analytics.js` 已经开启，统计页面在 `https://dank666.goatcounter.com`。所有页面（主页、Notes、概念格演示）都只需要加载这一个文件，**不要**再往页面里粘贴 GoatCounter 官方给的那段 `<script>`，否则每次访问会被记两次。
+
+- **开关**：`analytics.js` 里的 `GOATCOUNTER_CODE` 就是 `.goatcounter.com` 前面的那一段。改成空字符串 `''` 就会完全关闭（页面里不会多任何东西，页脚的隐私说明也会恢复成只提访客地图的那一句）；换成自己的其他站点就填新的代码。开启后页脚的隐私说明会自动换成包含统计的那一句。
+- **谁点了哪个链接**：给发出去的链接加 `?ref=` 参数，比如简历里写 `https://dank666.github.io/?ref=cv`，邮件签名写 `?ref=email`。GoatCounter 会把它当作来源显示。建议按"用途"分组（cv、email、linkedin……），不要给每个收件人单独编号，那样就成了在追踪个人。
+- **把自己排除在统计之外**：在自己的浏览器里打开一次 `https://dank666.github.io/#toggle-goatcounter`。
+- **板块阅读**：主页每个板块被读到时会记一次事件（`section/about`、`section/research`……），在 GoatCounter 后台的 Events 里看。
+
+不会被统计的：本地预览（localhost、局域网 IP、`file://`）、开启了 Do Not Track 的访客、以及上面排除的浏览器。和访客地图一样，中国大陆网络多半连不上 GoatCounter，所以这些数据主要反映海外访问。
 
 ### 每次改完之后
 
