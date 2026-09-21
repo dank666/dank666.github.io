@@ -18,12 +18,13 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 - **CV download** — a "Download CV" link (hero and Contact section) points at `CV.pdf`; if that file doesn't exist yet, clicking it shows a friendly "not uploaded yet" notice instead of a broken link. Once `CV.pdf` is added to the repo root, the button starts working automatically — no code changes needed.
 - **Social link previews** — Open Graph and Twitter Card meta tags on both pages, so sharing the link in email/Slack/WeChat shows a title, description, and preview image instead of a bare URL
 - **Favicon** — a "TW" monogram icon (SVG + PNG/ICO fallbacks) shown in browser tabs and bookmarks
+- **Visitor map** — a "Visitors" section with a world map of city-level, anonymous visit counts (bigger and darker dot = more visits). Backed by a small Cloudflare Worker + D1 database in `visitor-worker/`; no IPs are stored. See [Visitor map](#visitor-map-访客地图) below.
 - **Footer with last-updated date and source link** — a small "Last updated" line plus a link back to this repository
 - Sticky nav, back-to-top button, skip-to-content link, responsive down to mobile, reduced-motion support
 
 ## Tech stack
 
-Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step, no dependencies. Chosen deliberately to keep the site easy to hand-edit and cheap to host on GitHub Pages.
+Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step. Chosen deliberately to keep the site easy to hand-edit and cheap to host on GitHub Pages. The only third-party code is the small set of D3 modules and map data used by the visitor map, copied into `vendor/` (no CDN, no npm install).
 
 ## Project structure
 
@@ -31,6 +32,9 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step, no de
 .
 ├── index.html            # main homepage (all sections)
 ├── reading.html          # reading library subpage
+├── visitors.js           # visitor map: records a visit, draws the map (Worker URL goes at the top)
+├── vendor/               # d3-array, d3-geo, topojson-client, world-atlas map data (see vendor/README.md)
+├── visitor-worker/       # Cloudflare Worker + D1 backend for the visitor map (deployed separately)
 ├── IMG_4911.jpeg         # profile photo (JPEG fallback)
 ├── avatar.webp           # profile photo (WebP, served first via <picture>)
 ├── CV.pdf                # (not yet added) drop a PDF here to enable the "Download CV" button
@@ -212,9 +216,25 @@ Plain **HTML / CSS / vanilla JavaScript** — no framework, no build step, no de
 2. **本地预览**（可选）：不改代码只是想看看效果，直接双击 `index.html` 用浏览器打开就行，不需要起服务器。
 3. **发布**：改完 `git add` / `git commit` / `git push` 到 `main` 分支，GitHub Pages 会在一两分钟内自动更新线上网站。如果这部分不熟悉，把改动告诉我，我可以帮你提交和推送。
 
+## Visitor map（访客地图）
+
+页面底部的 **Visitors** 区块会在世界地图上按城市显示访问量。只记录城市级别的匿名次数（经纬度取整到约 0.1°），**不存 IP，也不存 User-Agent**。
+
+- **前端**：`visitors.js`。访客打开主页时，如果这个浏览器今天还没计过数，就向 Worker 发一次 `POST /hit`（`localStorage` 里的 `visitor-last-hit` 记录日期）；滚动到该区块时再 `GET /stats` 并画图。任何请求失败都会静默处理，区块显示"暂无数据"，不影响页面其他部分。
+- **后端**：`visitor-worker/`（Cloudflare Worker + D1）。`POST /hit` 只接受来自 `https://dank666.github.io` 的请求；`GET /stats` 另外允许 `localhost`（本地预览用）。明显的爬虫 UA 不计数。
+- **只统计线上访问**：在 localhost / `file://` 打开页面时**不会**发 `/hit`，本地预览不会增加计数。
+- **Worker 地址**填在 `visitors.js` 最顶部的 `API_BASE`（留空时区块显示"暂无数据"）。
+- **首次部署**（在 `visitor-worker/` 目录下，需要 Cloudflare 账号，都是手动执行）：
+  1. `npx wrangler login`
+  2. `npx wrangler d1 create visitor-map` → 把输出里的 `database_id` 填进 `wrangler.toml`
+  3. `npx wrangler d1 execute visitor-map --remote --file=schema.sql`
+  4. `npx wrangler deploy` → 记下输出的 `https://visitor-map.<你的子域>.workers.dev`，填进 `visitors.js` 的 `API_BASE`，再提交推送
+- **本地预览地图**：地图数据要通过 HTTP 读取，所以要起静态服务器（`python3 -m http.server`），直接双击打开 `index.html` 时该区块会显示"暂无数据"。
+- 计数只是"尽力而为"：`Origin` 头可以被伪造，所以别把它当作严格准确的统计。
+
 ## Running locally
 
-No build step required — just open `index.html` in a browser, or serve the folder with any static file server, e.g.:
+For most edits no build step is required — just open `index.html` in a browser. To see the visitor map, serve the folder with any static file server instead (the map data is loaded over HTTP), e.g.:
 
 ```bash
 python3 -m http.server

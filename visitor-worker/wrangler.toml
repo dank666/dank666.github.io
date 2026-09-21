@@ -1,0 +1,14 @@
+name = "visitor-map"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Filled in after running `npx wrangler d1 create visitor-map`.
+# (A database_id is an identifier, not a secret.)
+[[d1_databases]]
+binding = "DB"
+database_name = "visitor-map"
+database_id = "8de41460-dc34-4aaf-86ce-52136846522c"
+
+[vars]
+# Only this origin may record visits (POST /hit).
+SITE_ORIGIN = "https://dank666.github.io"

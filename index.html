@@ -767,6 +767,108 @@
       }
     }
   </style>
+  <style>
+    /* Visitors map. Colours come only from the theme variables above, so it
+       follows light/dark (system or manual toggle) with no JS involved. */
+    .visitor-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 28px;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .visitor-stats strong {
+      margin-left: 6px;
+      color: var(--text);
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .visitor-canvas {
+      position: relative;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .visitor-canvas svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .visitor-land {
+      fill: var(--line);
+      fill: color-mix(in srgb, var(--muted) 28%, var(--bg));
+      stroke: var(--bg);
+      stroke-width: 0.5;
+    }
+
+    .visitor-dot {
+      fill: var(--accent);
+      stroke: var(--bg);
+      stroke-width: 1;
+      cursor: pointer;
+    }
+
+    .visitor-dot:hover,
+    .visitor-dot:focus,
+    .visitor-dot.is-active {
+      stroke: var(--text);
+      stroke-width: 1.5;
+      outline: none;
+    }
+
+    .visitor-tip {
+      position: absolute;
+      z-index: 2;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.82rem;
+      line-height: 1.4;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .visitor-tip[hidden] {
+      display: none;
+    }
+
+    .visitor-hint {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .visitor-empty {
+      margin: 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* Loading / empty / ready: show the map only once there is data to show. */
+    .visitor-map[data-state="ready"] .visitor-empty {
+      display: none;
+    }
+
+    .visitor-map:not([data-state="ready"]) .visitor-stats,
+    .visitor-map:not([data-state="ready"]) .visitor-canvas,
+    .visitor-map:not([data-state="ready"]) .visitor-hint {
+      display: none;
+    }
+
+    .visitor-map[data-state="loading"] .visitor-empty {
+      visibility: hidden;
+    }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
@@ -789,6 +891,7 @@
             <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></a>
             <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span></a>
             <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></a>
+            <a href="#visitors"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span></a>
             <a href="reading.html"><span class="lang-en">Reading Library</span><span class="lang-zh">论文库</span></a>
           </nav>
         </div>
@@ -1255,6 +1358,34 @@
       </div>
     </section>
 
+    <section class="section" id="visitors">
+      <div class="section-header">
+        <h2 class="section-title"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span></h2>
+      </div>
+
+      <div class="visitor-map" id="visitorMap" data-state="loading">
+        <p class="visitor-stats">
+          <span>
+            <span class="lang-en">Total visits</span><span class="lang-zh">总访问数</span>
+            <strong id="visitorTotal">–</strong>
+          </span>
+          <span>
+            <span class="lang-en">Countries</span><span class="lang-zh">国家数</span>
+            <strong id="visitorCountries">–</strong>
+          </span>
+        </p>
+        <div class="visitor-canvas" id="visitorCanvas"></div>
+        <p class="visitor-hint">
+          <span class="lang-en">Each dot is a city — bigger and darker means more visits.</span>
+          <span class="lang-zh">每个圆点代表一座城市，圆点越大、颜色越深，访问越多。</span>
+        </p>
+        <p class="visitor-empty">
+          <span class="lang-en">No data yet</span>
+          <span class="lang-zh">暂无数据</span>
+        </p>
+      </div>
+    </section>
+
     <footer class="footer">
       <p>
         <span class="lang-en">© 2026 Tejing Wang</span>
@@ -1263,6 +1394,10 @@
       <p>
         <span class="lang-en">Last updated: September 2026 · <a href="https://github.com/dank666/dank666.github.io" target="_blank">View source</a></span>
         <span class="lang-zh">最后更新：2026 年 9 月 · <a href="https://github.com/dank666/dank666.github.io" target="_blank">查看源码</a></span>
+      </p>
+      <p>
+        <span class="lang-en">Only anonymous, city-level visit counts are collected — no IP addresses are recorded.</span>
+        <span class="lang-zh">仅统计城市级别的匿名访问次数，不记录 IP 地址。</span>
       </p>
     </footer>
   </main>
@@ -1471,5 +1606,6 @@
     });
   })();
   </script>
+  <script src="visitors.js" defer></script>
 </body>
 </html>
