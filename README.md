@@ -11,7 +11,7 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 - **Bilingual (EN / 中文)** — one-click language toggle in the nav bar; the choice is remembered across pages via `localStorage`
 - **Dark mode** — follows the system setting automatically; a toggle button next to the language switch lets a visitor override it, remembered the same way
 - **Sections** — News, About, Research Statement, Education, Experience, Projects, Publications, Skills, Awards, Contact
-- **Scroll-spy navigation** — the nav link for whichever section is currently in view is highlighted automatically as you scroll
+- **Scroll-spy navigation** — the nav link for whichever section is currently in view is highlighted automatically as you scroll. On wide screens the less-used links live in a "More" dropdown (`#navMoreMenu` in `index.html`) to keep the bar uncluttered; to move a link between the bar and the dropdown, just move its `<a>` line. Below 900px the dropdown flattens back into a normal horizontally-scrolling row.
 - **Project image galleries** — project cards can include a thumbnail grid; clicking a thumbnail opens it full-size in a lightbox overlay (Esc to close, Left/Right arrow keys to step through the gallery)
 - **Reading Library** (`reading.html`) — a separate, growing library of papers read during research, organized by project and topic, with searchable/filterable notes
 - **Collapsible, scalable News feed** — only the most recent 3 updates show by default; older entries expand into a height-capped, scrollable list, so it stays usable whether there are 3 entries or 300

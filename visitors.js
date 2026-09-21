@@ -259,21 +259,6 @@
     start();
   }
 
-  // The Visitors section is short, so when the page is scrolled to the very
-  // bottom the existing scroll spy (in index.html) can never reach it. This
-  // listener runs after that one and highlights the nav link in that case.
-  var visitorsLink = document.querySelector('.nav-links a[href="#visitors"]');
-  function highlightAtBottom() {
-    if (!visitorsLink) return;
-    var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-    if (!atBottom) return;
-    document.querySelectorAll('.nav-links a.active').forEach(function (a) { a.classList.remove('active'); });
-    visitorsLink.classList.add('active');
-  }
-  window.addEventListener('scroll', highlightAtBottom, { passive: true });
-  window.addEventListener('resize', highlightAtBottom);
-  highlightAtBottom();
-
   // Redraw on width changes and on EN/中 switch (tooltip text and country
   // names are generated in JS; everything else follows CSS).
   if ('ResizeObserver' in window) {

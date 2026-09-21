@@ -129,25 +129,48 @@
       background: #1c1e22;
     }
 
+    /* Ghost icon button, styled like the EN / 中 buttons next to it. */
     .theme-toggle {
       background: none;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
+      border: 0;
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
-      line-height: 1;
       color: var(--muted);
       cursor: pointer;
       flex-shrink: 0;
     }
 
     .theme-toggle:hover {
-      border-color: var(--accent);
+      background: var(--accent-soft);
       color: var(--text);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Shows the icon for the mode you would switch TO: moon while light, sun while dark. */
+    .theme-toggle .icon-sun {
+      display: none;
+    }
+
+    .theme-toggle[data-mode="dark"] .icon-moon {
+      display: none;
+    }
+
+    .theme-toggle[data-mode="dark"] .icon-sun {
+      display: block;
     }
 
     * {
@@ -315,6 +338,127 @@
     .nav-links a.active {
       color: var(--text);
       font-weight: 600;
+    }
+
+    .nav-inner {
+      gap: 32px;
+    }
+
+    .nav-links {
+      align-items: center;
+    }
+
+    /* "More" dropdown: holds the less-used links so the bar stays uncluttered.
+       Below 900px it is flattened back into the plain scrolling link row. */
+    .nav-more {
+      position: relative;
+      display: flex;
+    }
+
+    .nav-more-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 0;
+      background: none;
+      border: 0;
+      font: inherit;
+      font-size: 0.88rem;
+      color: var(--muted);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .nav-more-btn:hover,
+    .nav-more-btn[aria-expanded="true"],
+    .nav-more-btn.has-active {
+      color: var(--text);
+    }
+
+    .nav-more-btn.has-active {
+      font-weight: 600;
+    }
+
+    .nav-caret {
+      width: 6px;
+      height: 6px;
+      margin-left: 7px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: translateY(-2px) rotate(45deg);
+    }
+
+    .nav-more-btn[aria-expanded="true"] .nav-caret {
+      transform: translateY(1px) rotate(-135deg);
+    }
+
+    .nav-more-menu {
+      position: absolute;
+      top: calc(100% + 14px);
+      right: 0;
+      z-index: 25;
+      min-width: 180px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-more-menu[hidden] {
+      display: none;
+    }
+
+    .nav-more-menu a {
+      display: block;
+      padding: 7px 12px;
+      border-radius: 6px;
+    }
+
+    .nav-more-menu a:hover,
+    .nav-more-menu a.active {
+      background: var(--accent-soft);
+    }
+
+    @media (min-width: 901px) {
+      .nav-links {
+        overflow: visible;
+      }
+
+      .nav-links-wrap::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .nav-inner {
+        display: block;
+      }
+
+      .nav-right {
+        margin-top: 10px;
+        justify-content: space-between;
+      }
+
+      .nav-more-btn {
+        display: none;
+      }
+
+      .nav-more,
+      .nav-more-menu,
+      .nav-more-menu[hidden] {
+        display: contents;
+      }
+
+      /* Flattened into the row: drop the dropdown-item look. */
+      .nav-more-menu a,
+      .nav-more-menu a:hover,
+      .nav-more-menu a.active {
+        padding: 0;
+        border-radius: 0;
+        background: none;
+      }
     }
 
     .lang-switch {
@@ -883,16 +1027,23 @@
           <nav class="nav-links">
             <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
             <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span></a>
-            <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
             <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
             <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
             <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
             <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></a>
-            <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></a>
-            <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span></a>
-            <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></a>
-            <a href="#visitors"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span></a>
-            <a href="reading.html"><span class="lang-en">Reading Library</span><span class="lang-zh">论文库</span></a>
+            <div class="nav-more">
+              <button class="nav-more-btn" id="navMoreBtn" type="button" aria-expanded="false" aria-controls="navMoreMenu">
+                <span class="lang-en">More</span><span class="lang-zh">更多</span><span class="nav-caret" aria-hidden="true"></span>
+              </button>
+              <div class="nav-more-menu" id="navMoreMenu" hidden>
+                <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
+                <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></a>
+                <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span></a>
+                <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></a>
+                <a href="#visitors"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span></a>
+                <a href="reading.html"><span class="lang-en">Reading Library</span><span class="lang-zh">论文库</span></a>
+              </div>
+            </div>
           </nav>
         </div>
         <div class="lang-switch" role="group" aria-label="Language">
@@ -900,7 +1051,10 @@
           <span>/</span>
           <button class="lang-btn" data-lang="zh" type="button">中</button>
         </div>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode">🌙</button>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
       </div>
     </div>
   </header>
@@ -1446,8 +1600,10 @@
     function updateThemeButton() {
       if (!themeToggle) return;
       var eff = effectiveTheme();
-      themeToggle.textContent = eff === 'dark' ? '☀️' : '🌙';
-      themeToggle.setAttribute('aria-label', eff === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      var label = eff === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      themeToggle.dataset.mode = eff;
+      themeToggle.setAttribute('aria-label', label);
+      themeToggle.title = label;
     }
 
     if (themeToggle) {
@@ -1476,6 +1632,37 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
+    // "More" dropdown in the nav (desktop only — on narrow screens CSS
+    // flattens it into the normal scrolling link row and hides the button).
+    var navMoreBtn = document.getElementById('navMoreBtn');
+    var navMoreMenu = document.getElementById('navMoreMenu');
+    function setMoreOpen(open) {
+      if (!navMoreBtn || !navMoreMenu) return;
+      navMoreBtn.setAttribute('aria-expanded', String(open));
+      navMoreMenu.hidden = !open;
+    }
+    if (navMoreBtn && navMoreMenu) {
+      var navMore = navMoreBtn.parentNode;
+      navMoreBtn.addEventListener('click', function () {
+        setMoreOpen(navMoreBtn.getAttribute('aria-expanded') !== 'true');
+      });
+      navMoreMenu.addEventListener('click', function (e) {
+        if (e.target.closest('a')) setMoreOpen(false);
+      });
+      document.addEventListener('click', function (e) {
+        if (!navMore.contains(e.target)) setMoreOpen(false);
+      });
+      navMore.addEventListener('focusout', function (e) {
+        if (e.relatedTarget && !navMore.contains(e.relatedTarget)) setMoreOpen(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navMoreBtn.getAttribute('aria-expanded') === 'true') {
+          setMoreOpen(false);
+          navMoreBtn.focus();
+        }
+      });
+    }
+
     // Scroll spy: highlight the nav link for whichever section is in view.
     var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
     var navSections = Array.prototype.slice.call(document.querySelectorAll('.section[id]'));
@@ -1487,9 +1674,18 @@
           current = sec.id;
         }
       });
+      // A short last section can never reach the top of the viewport, so at
+      // the very bottom of the page count the last section as current.
+      if (navSections.length && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        current = navSections[navSections.length - 1].id;
+      }
       navLinks.forEach(function (link) {
         link.classList.toggle('active', link.getAttribute('href') === '#' + current);
       });
+      // Mark the "More" button when the current section lives inside its menu.
+      if (navMoreBtn && navMoreMenu) {
+        navMoreBtn.classList.toggle('has-active', !!navMoreMenu.querySelector('a.active'));
+      }
     }
     window.addEventListener('scroll', updateScrollSpy, { passive: true });
     window.addEventListener('resize', updateScrollSpy);
