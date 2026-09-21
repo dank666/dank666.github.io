@@ -712,6 +712,7 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 ```
 
 - 如果新照片的尺寸不是 700×525，去 `index.html` 里搜 `class="avatar"`，把那个 `<img>` 的 `width`、`height` 改成实际尺寸。
+- **想让头像显示得更大或更小**：在 `index.html` 的样式里搜 `.avatar-wrap`，改 `width` 和 `height`（桌面是 `200px`，手机端在文件靠后的 `@media (max-width: 640px)` 里，是 `116px`）；同时把上面的 `.hero-card` 的 `grid-template-columns` 第一列改成同样的数字（桌面 `200px 1fr`，手机 `116px 1fr`），否则文字和头像之间的间距会不对。
 
 ### 8.5 网站图标
 

@@ -497,14 +497,14 @@
 
     .hero-card {
       display: grid;
-      grid-template-columns: 148px 1fr;
-      gap: 26px;
+      grid-template-columns: 200px 1fr;
+      gap: 34px;
       align-items: center;
     }
 
     .avatar-wrap {
-      width: 148px;
-      height: 148px;
+      width: 200px;
+      height: 200px;
       border-radius: 50%;
       overflow: hidden;
       background: #f4f4f4;
@@ -516,6 +516,22 @@
       height: 100%;
       object-fit: cover;
       border-radius: 50%;
+    }
+
+    /* Balance the lines of the subtitle so a single word never wraps alone
+       (browsers without support just wrap normally). */
+    .hero-text .subtitle,
+    .hero-open {
+      text-wrap: balance;
+    }
+
+    /* On wide screens keep each "·"-separated phrase in one piece, so a line
+       break never splits a term such as "Graph-based Concept Learning".
+       (Not on phones: the text column is too narrow for that.) */
+    @media (min-width: 641px) {
+      .subtitle .nw {
+        white-space: nowrap;
+      }
     }
 
     .hero-text h1 {
@@ -902,12 +918,13 @@
       }
 
       .hero-card {
-        grid-template-columns: 96px 1fr;
+        grid-template-columns: 116px 1fr;
+        gap: 20px;
       }
 
       .avatar-wrap {
-        width: 96px;
-        height: 96px;
+        width: 116px;
+        height: 116px;
       }
     }
   </style>
@@ -1409,8 +1426,8 @@
 
         <div class="hero-text">
           <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>
-          <p class="subtitle lang-en">Neuro-Symbolic AI · Graph-based Concept Learning · Intelligent Agents</p>
-          <p class="subtitle lang-zh">神经符号人工智能 · 图概念学习 · 智能体系统</p>
+          <p class="subtitle lang-en"><span class="nw">Neuro-Symbolic AI</span> · <span class="nw">Graph-based Concept Learning</span> · <span class="nw">Intelligent Agents</span></p>
+          <p class="subtitle lang-zh"><span class="nw">神经符号人工智能</span> · <span class="nw">图概念学习</span> · <span class="nw">智能体系统</span></p>
           <div class="hero-contact">
             <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn">42312205 [at] snnu [dot] edu [dot] cn</a>
             <span class="sep" aria-hidden="true">·</span>
