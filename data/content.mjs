@@ -231,12 +231,16 @@ export const projects = [
   },
   {
     title: {
-      en: "Embodied Cell Prototype &amp; Structural Design",
-      zh: "具身细胞原型与结构设计"
+      en: "Embodied Cell — Early-Stage Exploration",
+      zh: "具身细胞——早期探索"
+    },
+    tagline: {
+      en: "Research assistantship at Xidian University · Mar – Sep 2026 · Advisor: <a href=\"http://lvzhihan.com\" target=\"_blank\">Prof. Zhihan Lyu</a> · Not completed",
+      zh: "西安电子科技大学科研助理 · 2026 年 3 月至 9 月 · 导师：<a href=\"http://lvzhihan.com\" target=\"_blank\">吕智涵教授</a> · 项目未完成"
     },
     description: {
-      en: "An ESP32-based art/research installation exploring embodied, environment-reactive behavior: RGBW LEDs driven by photoresistor, force-sensing, and time-of-flight sensor inputs, with 3D structural design and sensor/LED layout modeled in Onshape. Paired with a Unity digital twin simulating fungal hyphal networks and synthetic cells, rendering light-field diffusion and cell signaling in real time to compare against the physical device's sensor readings.",
-      zh: "基于 ESP32 的具身、环境感应交互装置：通过光敏电阻、压力传感器与飞行时间传感器驱动 RGBW LED 灯带，并使用 Onshape 完成三维结构与传感器/灯光布局设计。同时搭配 Unity 数字孪生仿真系统，实时渲染真菌菌丝网络与合成细胞的光场扩散与信号传递过程，用于与实体装置的传感器数据进行对照验证。"
+      en: "An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in its early stage for about six months, and the project ended before it was completed, so it is best read as a learning experience rather than a finished result. What I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from that early stage.",
+      zh: "一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我参与了它大约半年的早期工作，项目在完成之前就结束了，所以它更应被看作一次学习经历，而不是一项已完成的成果。我从中得到的，主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是早期阶段的记录。"
     },
     gallery: [
       { src: "images/embodied-cell-top-view.webp", width: 1400, height: 1050, alt: "Embodied cell prototype, top view" },
