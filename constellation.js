@@ -278,6 +278,12 @@
     var t = withTimeout();
     options = options || {};
     options.signal = t.controller.signal;
+    // The Worker sends `Cache-Control: max-age=30` on GET /checkins so a
+    // plain page load doesn't hit the network every time. But the refetch
+    // right after a check-in or undo must see the fresh state, not a cached
+    // pre-mutation response — so every request from here bypasses the
+    // browser's HTTP cache.
+    if (!options.cache) options.cache = 'no-store';
     return fetch(API_BASE + path, options)
       .then(function (res) {
         t.settle();
