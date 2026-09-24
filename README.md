@@ -25,12 +25,13 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 - [11. 概念格演示](#11-概念格演示)
 - [12. 统计（GoatCounter）](#12-统计goatcounter)
 - [13. 访客地图（Cloudflare Worker）](#13-访客地图cloudflare-worker)
-- [14. 外观：配色、字体、宽度](#14-外观配色字体宽度)
-- [15. 自动检查和测试](#15-自动检查和测试)
-- [16. 排错：出了问题看这里](#16-排错出了问题看这里)
-- [17. 文件说明](#17-文件说明)
-- [18. 设计取舍：为什么是这样](#18-设计取舍为什么是这样)
-- [19. 定期维护清单](#19-定期维护清单)
+- [14. Constellation 打卡（Cloudflare Worker）](#14-constellation-打卡cloudflare-worker)
+- [15. 外观：配色、字体、宽度](#15-外观配色字体宽度)
+- [16. 自动检查和测试](#16-自动检查和测试)
+- [17. 排错：出了问题看这里](#17-排错出了问题看这里)
+- [18. 文件说明](#18-文件说明)
+- [19. 设计取舍：为什么是这样](#19-设计取舍为什么是这样)
+- [20. 定期维护清单](#20-定期维护清单)
 - [License](#license)
 
 ---
@@ -100,13 +101,14 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 | 改网页标题 / 描述 / 微信和邮件里的分享预览 | 每个页面的 `<head>` | 不用 | [7.5](#75-网页标题描述分享预览) |
 | 加一个新页面 | 复制现有页面 + 检查清单 | 不用 | [7.6](#76-新增一个独立页面) |
 | 压缩一张图片、给图片起名字 | 终端命令 | 不用 | [8](#8-图片怎么压缩命名放进页面) |
-| 改配色 / 字体 / 页面宽度 | 每个页面 `<style>` 开头的变量 | 不用 | [14](#14-外观配色字体宽度) |
+| 改配色 / 字体 / 页面宽度 | 每个页面 `<style>` 开头的变量 | 不用 | [15](#15-外观配色字体宽度) |
 | 概念格演示里加一个示例表格 | `lattice.js` 的 `PRESETS` | 不用 | [11](#11-概念格演示) |
 | 给简历、邮件里的链接加来源标记 | 在链接后面加 `?ref=cv` | 不用 | [12](#12-统计goatcounter) |
 | 关掉 / 换掉统计 | `analytics.js` 里的 `GOATCOUNTER_CODE` | 不用 | [12](#12-统计goatcounter) |
 | 看访客地图的数据 / 删掉测试数据 | `wrangler d1` 命令 | 不用 | [13](#13-访客地图cloudflare-worker) |
+| 查看 / 修正 Constellation 的打卡记录 | `wrangler d1` 命令 | 不用 | [14](#14-constellation-打卡cloudflare-worker) |
 | 推送后发现改错了 | `git revert` | 不用 | [3.4](#34-改错了怎么办) |
-| 页面没更新 / 报错 / 显示不对 | 排错表 | — | [16](#16-排错出了问题看这里) |
+| 页面没更新 / 报错 / 显示不对 | 排错表 | — | [17](#17-排错出了问题看这里) |
 
 ---
 
@@ -164,7 +166,7 @@ git push
 
 1. 等一两分钟。GitHub Pages 自动发布，线上页面会更新。
 2. 打开线上页面，用 `Cmd+Shift+R` **强制刷新**（浏览器和 GitHub 会缓存文件约 10 分钟，不强制刷新可能看到旧的）。
-3. 在仓库页面的 **Actions** 标签里，最新一次 "Checks" 应该是绿色的 ✓。红色 ✗ 见 [15](#15-自动检查和测试)。
+3. 在仓库页面的 **Actions** 标签里，最新一次 "Checks" 应该是绿色的 ✓。红色 ✗ 见 [16](#16-自动检查和测试)。
 
 ### 3.3 提交信息怎么写
 
@@ -838,7 +840,7 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
   - 前面一项和这一项之间要有逗号。
 - **大小限制**：表格最大 12×12、画出来的概念数上限 400，是 `lattice.js` 开头的 `MAX_OBJECTS`、`MAX_ATTRS`、`DRAW_LIMIT`。
 - **页面里"三支概念"的定义**采用的是常见表述：三支概念等价于"给每个属性增加一个'否定'副本之后的概念"。如果你论文里的定义或记号不同，改 `lattice.html` 里的说明文字（搜 `lat-def`）和 `lattice-core.js` 顶部的注释。
-- **改了 `lattice-core.js` 的计算逻辑之后，一定要运行测试**：`node tests/lattice-core.test.js`。它会拿一个独立的暴力算法逐项对照结果，全部通过才说明算对了（[第 15 节](#15-自动检查和测试)）。改界面和示例表格不需要测试。
+- **改了 `lattice-core.js` 的计算逻辑之后，一定要运行测试**：`node tests/lattice-core.test.js`。它会拿一个独立的暴力算法逐项对照结果，全部通过才说明算对了（[第 16 节](#16-自动检查和测试)）。改界面和示例表格不需要测试。
 
 ---
 
@@ -917,9 +919,72 @@ curl -s https://visitor-map.dank666.workers.dev/stats -H "Origin: https://dank66
 
 ---
 
-## 14. 外观：配色、字体、宽度
+## 14. Constellation 打卡（Cloudflare Worker）
 
-### 14.1 配色
+**Constellation** 页（`constellation.html`）是一个每天打卡的小工具：每完成一天计划中的事，就点亮一颗星星；星星按日期确定性地排布成一片会生长的星空，随着星星越来越多，整片天空也会更亮更绚烂。**漏掉的一天不会摘掉任何星星**——数据库里干脆不存在"失败"这种状态，只有"这天有没有星"，所以断掉一天不会让已经积累的星空变丑或倒退，只是那天没有新的星光。
+
+### 14.1 它是怎么工作的
+
+- **前端** `constellation.html` + `constellation.js`：公开可见，任何人打开都能看到星空和统计（点亮的星星数、当前连续天数、最长纪录）。`GET /checkins` 不需要认证。
+- **打卡是拥有者专属的**：页面底部有一个不起眼的"拥有者登录"链接，输入一个私人 token（存在这台设备的 `localStorage` 里，`constellation-token`），才会出现"点亮今天的星星"按钮。`POST /checkin`、`DELETE /checkin` 都要求请求头带 `Authorization: Bearer <token>`，Worker 端用密钥 `ADMIN_TOKEN` 核对——这不是银行级别的安全性，但足够挡住随手路过的访客，对这种低风险的个人打卡数据够用了。
+- **后端** `constellation-worker/`（Cloudflare Worker + D1 数据库），和 `visitor-worker/` 是完全独立的两个 Worker，互不影响。
+- **Worker 地址**填在 `constellation.js` 最顶部的 `API_BASE`（留空时页面显示"还没有星星"，不会报错）。
+
+### 14.2 首次部署
+
+在 `constellation-worker/` 目录下，需要 Cloudflare 账号，都是手动执行：
+
+```bash
+cd constellation-worker
+npx wrangler login
+npx wrangler d1 create constellation-log        # 把输出里的 database_id 填进 wrangler.toml
+npx wrangler d1 execute constellation-log --remote --file=schema.sql
+npx wrangler secret put ADMIN_TOKEN             # 粘贴一个自己起的长随机字符串，这就是打卡用的密码
+npx wrangler deploy                             # 记下输出的 https://constellation-log.<你的子域>.workers.dev
+```
+
+部署完之后：
+
+1. 把 Worker 地址填进 `constellation.js` 顶部的 `API_BASE`，提交推送。
+2. 打开线上的 `constellation.html`，点"拥有者登录"，粘贴刚才 `wrangler secret put` 时设置的那个 token，保存。这台设备以后就会一直记得，直到你手动"退出登录"或清空浏览器数据。
+3. 换一台设备（比如手机）也想打卡：同样打开页面，用同一个 token 登录一次即可——数据是共享的，token 只是"谁能写"的凭证，不是"哪台设备"的凭证。
+
+### 14.3 日常维护命令
+
+**这些命令都在 `constellation-worker/` 目录里运行**，需要已登录 Cloudflare。
+
+```bash
+# 看所有打卡记录
+npx wrangler d1 execute constellation-log --remote --command "SELECT * FROM checkins ORDER BY date"
+
+# 补一条漏打的卡（比如忘了在网页上点）
+npx wrangler d1 execute constellation-log --remote --command "INSERT OR REPLACE INTO checkins (date, note, created_at) VALUES ('2026-01-01', '', datetime('now'))"
+
+# 删掉某一天（手滑点错了）
+npx wrangler d1 execute constellation-log --remote --command "DELETE FROM checkins WHERE date = '2026-01-01'"
+
+# 换一个新的 token（原 token 立刻失效，所有设备要重新登录）
+npx wrangler secret put ADMIN_TOKEN
+```
+
+**验证 Worker 是不是活着**（在任何目录）：
+
+```bash
+curl -s https://constellation-log.<你的子域>.workers.dev/checkins -H "Origin: https://dank666.github.io"
+# 应该返回 {"days":[…],"stats":{…}}
+```
+
+### 14.4 设计取舍
+
+- **没有"失败"状态，只是不写。** 早期考虑过"漏打卡就让星星变暗"之类的惩罚性视觉效果，但这类设计容易触发"破罐子破摔"——一旦画面被弄丑，人反而更容易干脆放弃。所以这里只做纯粹的正向积累：有就加分，没有就不变。
+- **星星的位置只取决于它自己的序号（第几颗），和总数无关**（用黄金角螺旋 + 按日期哈希的抖动），这样新增一颗星星不会让已有的星星跳动或重新排布。
+- **认证很轻量**，因为数据本身价值很低（打卡日期 + 一句可选备注），主要目的是挡住"随手点了别人的按钮"，不是防真正的攻击者。
+
+---
+
+## 15. 外观：配色、字体、宽度
+
+### 15.1 配色
 
 **每个页面**（`index.html`、`reading.html`、`lattice.html`）的 `<style>` 开头都定义了一组颜色变量，页面上所有颜色都引用它们。搜 `--accent:`，每个页面有**三处**：
 
@@ -946,18 +1011,18 @@ curl -s https://visitor-map.dank666.workers.dev/stats -H "Origin: https://dank66
 | 头像圆框的底色 | `.avatar-wrap`：浅色 `#f4f4f4`，深色 `#22252a` |
 | 右下角"返回顶部"按钮 | `.back-to-top`：浅色 `#ffffff`，深色 `#1c1e22` |
 
-### 14.2 字体和宽度
+### 15.2 字体和宽度
 
 - **字体**：用的是系统自带字体（`font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", …`），所以加载最快。要换的话搜 `font-family`。
 - **正文宽度**：`--max-width` 变量。主页是 `760px`，Notes 页和概念格演示更宽。改大了正文行就更长、更难读，一般不建议超过 820px。
 
-### 14.3 深色模式
+### 15.3 深色模式
 
-深色模式**基本不需要单独维护**：只要你写的样式用的是上面的变量（`var(--bg)`、`var(--accent)`…），就会自动跟随。所以**新写样式时不要写死颜色**（比如 `#ffffff`），否则深色模式下会出现刺眼的白块。上面 14.1 列出的三处是历史遗留的例外，改背景色时要单独照顾。
+深色模式**基本不需要单独维护**：只要你写的样式用的是上面的变量（`var(--bg)`、`var(--accent)`…），就会自动跟随。所以**新写样式时不要写死颜色**（比如 `#ffffff`），否则深色模式下会出现刺眼的白块。上面 15.1 列出的三处是历史遗留的例外，改背景色时要单独照顾。
 
 ---
 
-## 15. 自动检查和测试
+## 16. 自动检查和测试
 
 推送到 GitHub 后，`.github/workflows/check.yml` 会自动运行（在仓库页面的 **Actions** 标签里看，名字是 "Checks"）。它**只检查，不会部署或修改任何东西**，做两件事：
 
@@ -981,7 +1046,7 @@ node tests/lattice-core.test.js
 
 ---
 
-## 16. 排错：出了问题看这里
+## 17. 排错：出了问题看这里
 
 | 现象 | 可能的原因 → 怎么办 |
 | --- | --- |
@@ -996,14 +1061,14 @@ node tests/lattice-core.test.js
 | **访客地图显示"暂时无法加载"** | 访客的网络连不上 Worker（中国大陆网络常见，见 [13.5](#135-已知限制)） |
 | **统计后台一直没有数据** | ① 是不是从 localhost 或已排除的浏览器访问的；② 是不是开了 Do Not Track；③ `analytics.js` 里的 `GOATCOUNTER_CODE` 是否为空；④ 大陆网络连不上 |
 | **点"Download CV"提示还没上传** | 仓库根目录没有 `CV.pdf`，见[第 9 节](#9-简历-cv) |
-| **深色模式下有刺眼的白块** | 某处样式写死了颜色。改用 `var(--bg)` 这类变量（[14.3](#143-深色模式)） |
+| **深色模式下有刺眼的白块** | 某处样式写死了颜色。改用 `var(--bg)` 这类变量（[15.3](#153-深色模式)） |
 | **`git push` 被拒绝** | `git pull --rebase` 之后再 `git push` |
 | **我不知道自己现在处在什么状态** | `git status` 看有哪些未提交的改动，`git log --oneline -5` 看最近几次提交 |
 | **微信里分享的预览图不对** | 平台缓存了旧预览，过一阵会刷新；确认 `og:image` 是完整网址且是 JPG/PNG |
 
 ---
 
-## 17. 文件说明
+## 18. 文件说明
 
 ```
 .
@@ -1012,6 +1077,8 @@ node tests/lattice-core.test.js
 ├── lattice.html          概念格演示的页面
 ├── lattice.js            概念格演示：表格编辑器、画图、示例表格 PRESETS
 ├── lattice-core.js       概念格演示：概念的计算（纯函数，有测试保护）
+├── constellation.html    Constellation 页：每完成一天就点亮一颗星星的打卡工具
+├── constellation.js      Constellation：星图的绘制、打卡/撤销请求（Worker 地址 API_BASE 在文件开头）
 ├── analytics.js          GoatCounter 统计（站点代码 GOATCOUNTER_CODE 在文件开头）
 ├── visitors.js           访客地图：记录一次访问、画地图（Worker 地址 API_BASE 在文件开头）
 ├── data/
@@ -1028,6 +1095,10 @@ node tests/lattice-core.test.js
 │   ├── src/index.js      Worker 代码
 │   ├── schema.sql        数据库表结构
 │   └── wrangler.toml     Worker 配置（数据库 id 不是密钥）
+├── constellation-worker/ Constellation 打卡数据的后端（Cloudflare Worker + D1），单独部署，不随网站发布
+│   ├── src/index.js      Worker 代码
+│   ├── schema.sql        数据库表结构
+│   └── wrangler.toml     Worker 配置（数据库 id 不是密钥；ADMIN_TOKEN 是密钥，另外设置）
 ├── CV.pdf                （尚未添加）放进来，"下载简历"按钮就自动生效
 ├── favicon.svg / favicon.ico / icon-16.png / icon-32.png / apple-touch-icon.png   网站图标
 ├── robots.txt            给搜索引擎的抓取规则（允许全部）
@@ -1040,7 +1111,7 @@ node tests/lattice-core.test.js
 
 ---
 
-## 18. 设计取舍：为什么是这样
+## 19. 设计取舍：为什么是这样
 
 - **纯静态、不用框架**：GitHub Pages 免费托管，没有服务器要维护，不会"过期"。没有 npm 依赖，也就没有依赖过期或安全更新的烦恼。
 - **内容进数据文件、再生成静态 HTML，而不是在浏览器里用 JavaScript 渲染**：搜索引擎和 AI 阅读工具往往**不执行 JavaScript**，如果内容是脚本渲染的，它们看到的是空白的论文和项目。生成成静态 HTML 就不会有这个问题。同时数据文件强制中英文成对，避免"改了一边忘了另一边"。
@@ -1053,7 +1124,7 @@ node tests/lattice-core.test.js
 
 ---
 
-## 19. 定期维护清单
+## 20. 定期维护清单
 
 **每次更新内容后**
 
@@ -1077,6 +1148,7 @@ node tests/lattice-core.test.js
 - [ ] 研究陈述、About 里的描述是否和你现在的研究方向一致
 - [ ] 项目描述里"进行中 / 已结束 / 未完成"的状态是否准确
 - [ ] 访客地图：Worker 还活着吗（[13.2](#132-日常维护命令) 的 `curl`）；Cloudflare 登录过期了就 `npx wrangler login`
+- [ ] Constellation：Worker 还活着吗（[14.3](#143-日常维护命令) 的 `curl`）
 - [ ] Node 版本：偶尔 `node -v`，低于 20 就升级
 
 ---

@@ -1,0 +1,18 @@
+name = "constellation-log"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Filled in after running `npx wrangler d1 create constellation-log`.
+# (A database_id is an identifier, not a secret.)
+[[d1_databases]]
+binding = "DB"
+database_name = "constellation-log"
+database_id = "b45bc50e-0bb0-4645-a01b-0afd47455b1f"
+
+[vars]
+# Reads (GET /checkins) are allowed from this origin, plus localhost.
+SITE_ORIGIN = "https://dank666.github.io"
+
+# ADMIN_TOKEN is a secret, not a var — set it with:
+#   npx wrangler secret put ADMIN_TOKEN
+# Writes (POST/DELETE /checkin) require it as `Authorization: Bearer <token>`.
