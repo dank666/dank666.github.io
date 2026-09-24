@@ -367,7 +367,9 @@
     if (checkinNote) checkinNote.value = todayNote;
     if (checkinBtn) {
       checkinBtn.disabled = false;
-      checkinBtn.classList.toggle('is-done', state.todayDone);
+      // Stays clickable even when already done today — re-clicking just
+      // re-saves the note, e.g. after editing it.
+      checkinBtn.dataset.done = state.todayDone ? 'true' : 'false';
     }
     if (checkinUndoBtn) checkinUndoBtn.hidden = !state.todayDone;
   }

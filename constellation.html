@@ -134,6 +134,12 @@
 
     .container { width: min(var(--max-width), calc(100% - 40px)); margin: 0 auto; }
 
+    /* Defensive: some component classes below set their own `display`
+       (flex, for layout), which would otherwise win the cascade over the
+       UA stylesheet's `[hidden] { display: none }` and make a "hidden"
+       panel render anyway. This keeps `hidden` authoritative everywhere. */
+    [hidden] { display: none !important; }
+
     [data-lang="en"] .lang-zh { display: none; }
     [data-lang="zh"] .lang-en { display: none; }
 
@@ -215,47 +221,64 @@
     .constellation:not([data-state="ready"]) .constellation-canvas-wrap { display: none; }
 
     /* ---- Check-in panel --------------------------------------------- */
-    .checkin-panel { margin: 18px 0 0; font-size: 0.9rem; }
+    .checkin-panel { margin: 22px 0 0; font-size: 0.9rem; }
 
     .owner-link {
-      background: none; border: 0; padding: 4px 0; font: inherit; font-size: 0.82rem;
+      background: none; border: 0; padding: 2px 0; font: inherit; font-size: 0.8rem;
       color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
     }
     .owner-link:hover { color: var(--text); }
 
-    .owner-form { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    /* Sign-in: a small, quiet form — this is a maintenance affordance for
+       the site owner, not something meant to draw a visitor's eye. */
+    .owner-form {
+      display: flex; gap: 8px; margin-top: 10px; max-width: 340px;
+    }
     .owner-token {
-      flex: 1 1 200px; min-width: 0; padding: 8px 10px; font: inherit; font-size: 0.88rem;
+      flex: 1 1 auto; min-width: 0; padding: 6px 10px; font: inherit; font-size: 0.85rem;
+      border: 1px solid var(--line); border-radius: 7px; color: var(--text); background: #fff;
+    }
+
+    /* Signed-in: a proper card, its own visual weight since this is the
+       page's one interactive action. */
+    .checkin-unlocked {
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--accent-soft);
+    }
+
+    .checkin-note-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .checkin-note-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .checkin-note {
+      flex: 1 1 200px; min-width: 0; padding: 7px 10px; font: inherit; font-size: 0.88rem;
       border: 1px solid var(--line); border-radius: 8px; color: var(--text); background: #fff;
     }
 
-    .checkin-unlocked {
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-      padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--accent-soft);
-    }
-    .checkin-note-label { font-size: 0.82rem; color: var(--muted); }
-    .checkin-note {
-      flex: 1 1 160px; min-width: 0; padding: 7px 10px; font: inherit; font-size: 0.88rem;
-      border: 1px solid var(--line); border-radius: 8px; color: var(--text); background: #fff;
-    }
+    .checkin-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
     .btn {
-      font: inherit; font-size: 0.88rem; font-weight: 600; padding: 8px 16px;
+      font: inherit; font-size: 0.88rem; font-weight: 600; padding: 8px 18px;
       border-radius: 8px; border: 1px solid var(--accent); cursor: pointer;
       background: var(--accent); color: #fff;
     }
     .btn:hover { opacity: 0.92; }
-    .btn:disabled { opacity: 0.55; cursor: default; }
-    .btn.is-done { background: transparent; color: var(--accent); }
+    .btn[data-done="true"] {
+      background: transparent; color: var(--accent); cursor: default;
+    }
+    .btn[data-done="true"]:hover { opacity: 1; }
+    .btn[data-done="false"] .label-done,
+    .btn[data-done="true"] .label-todo { display: none; }
 
     .btn-ghost {
-      font: inherit; font-size: 0.82rem; padding: 6px 10px; border-radius: 8px;
+      font: inherit; font-size: 0.8rem; padding: 5px 10px; border-radius: 7px;
       border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer;
     }
     .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
 
-    .checkin-status { font-size: 0.82rem; color: var(--muted); }
+    .checkin-status { flex: 1 0 100%; font-size: 0.82rem; color: var(--muted); }
     .checkin-status.is-error { color: #b3452c; }
+
+    /* Tucked to the far edge, deliberately low-key next to the primary action. */
+    .checkin-signout { margin-left: auto; }
 
     .back-to-top {
       position: fixed; right: 22px; bottom: 22px; width: 42px; height: 42px;
@@ -354,20 +377,25 @@
         </div>
 
         <div class="checkin-unlocked" id="checkinUnlocked" hidden>
-          <label class="checkin-note-label" for="checkinNote">
-            <span class="lang-en">Note (optional)</span><span class="lang-zh">备注（可选）</span>
-          </label>
-          <input class="checkin-note" type="text" id="checkinNote" maxlength="200" />
-          <button class="btn" id="checkinBtn" type="button">
-            <span class="lang-en">Light tonight's star</span><span class="lang-zh">点亮今天的星星</span>
-          </button>
-          <button class="btn-ghost" id="checkinUndoBtn" type="button" hidden>
-            <span class="lang-en">Undo today</span><span class="lang-zh">撤销今天</span>
-          </button>
-          <span class="checkin-status" id="checkinStatus" hidden></span>
-          <button class="owner-link" id="ownerSignoutBtn" type="button">
-            <span class="lang-en">Sign out</span><span class="lang-zh">退出登录</span>
-          </button>
+          <div class="checkin-note-row">
+            <label class="checkin-note-label" for="checkinNote">
+              <span class="lang-en">Note (optional)</span><span class="lang-zh">备注（可选）</span>
+            </label>
+            <input class="checkin-note" type="text" id="checkinNote" maxlength="200" />
+          </div>
+          <div class="checkin-actions">
+            <button class="btn" id="checkinBtn" type="button" data-done="false">
+              <span class="label-todo"><span class="lang-en">Light tonight's star</span><span class="lang-zh">点亮今天的星星</span></span>
+              <span class="label-done"><span class="lang-en">✓ Star lit</span><span class="lang-zh">✓ 星星已点亮</span></span>
+            </button>
+            <button class="btn-ghost" id="checkinUndoBtn" type="button" hidden>
+              <span class="lang-en">Undo today</span><span class="lang-zh">撤销今天</span>
+            </button>
+            <button class="owner-link checkin-signout" id="ownerSignoutBtn" type="button">
+              <span class="lang-en">Sign out</span><span class="lang-zh">退出登录</span>
+            </button>
+            <span class="checkin-status" id="checkinStatus" hidden></span>
+          </div>
         </div>
       </div>
     </div>
