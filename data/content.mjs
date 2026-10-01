@@ -6,7 +6,9 @@
 // fails loudly if one side is missing, so the two languages can no longer drift.
 //
 // Texts are HTML: write &amp; for "&", and you may use <em>…</em> and
-// <a href="…" target="_blank">…</a> inside them.
+// <a href="…" target="_blank">…</a> inside them. <em> is for the name of a
+// journal or conference: it is set in the italic display face. Use it only for
+// names in Latin letters, never around Chinese text.
 
 // ---- News ---------------------------------------------------------------
 // Newest first. `date` is 'YYYY-MM'; the English and Chinese date labels are
@@ -18,7 +20,7 @@ export const news = [
   {
     date: "2026-09",
     text: {
-      en: "Continuing as an academic master's student at Shaanxi Normal University, now advised by Prof. Fei Hao.",
+      en: "Continuing as an academic master’s student at Shaanxi Normal University, now advised by Prof. Fei Hao.",
       zh: "确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。"
     }
   },
@@ -63,8 +65,7 @@ export const news = [
 // One card per paper. `status` is one of:
 //   'in-preparation' | 'under-review' | 'preprint' | 'published'
 // `meta` (optional) is the short line next to the status, e.g. role and venue.
-// Wrap the journal or conference name in <em>…</em>: that sets it in the italic
-// display face. Only do so for names in Latin letters, never for Chinese ones.
+// Wrap the journal or conference name in <em>…</em> (see the top of this file).
 //
 // `links` holds the buttons under each card. Fill them in once the paper is out:
 //   pdf, arxiv, code   a URL
@@ -145,11 +146,11 @@ export const awards = [
     },
     items: [
       {
-        en: "\"Weather Teaching Assistant Platform\" (Reg. No. 16269380)",
+        en: "“Weather Teaching Assistant Platform” (Reg. No. 16269380)",
         zh: "《气象教学助手平台》（登记号：16269380）"
       },
       {
-        en: "\"Deep Learning-Based Face Recognition Classroom Attendance System\" (Reg. No. 16202857)",
+        en: "“Deep Learning-Based Face Recognition Classroom Attendance System” (Reg. No. 16202857)",
         zh: "《基于深度学习的人脸识别课堂签到系统》（登记号：16202857）"
       },
     ]

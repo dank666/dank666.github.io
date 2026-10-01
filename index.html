@@ -110,10 +110,10 @@
     }
 
     :root {
-      --bg: #ffffff;
-      --text: #16181c;
-      --muted: #666a70;
-      --line: #e6e4e0;
+      --bg: #fbfaf6;
+      --text: #1b1a18;
+      --muted: #6b6862;
+      --line: #e4e0d8;
       --accent: #1f5c8a;
       --accent-soft: #ebf2f8;
       /* --font-display is for headings of 22px and up only; anything smaller
@@ -260,6 +260,12 @@
       text-underline-offset: 2px;
     }
 
+    /* Avoid leaving a single word alone on a paragraph's last line (browsers
+       without support just wrap normally). */
+    p {
+      text-wrap: pretty;
+    }
+
     a:focus-visible,
     button:focus-visible {
       outline: 2px solid var(--accent);
@@ -306,7 +312,7 @@
       top: 0;
       z-index: 20;
       border-bottom: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(251, 250, 246, 0.92);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
     }
@@ -583,7 +589,7 @@
       height: 200px;
       border-radius: 50%;
       overflow: hidden;
-      background: #f4f4f4;
+      background: #f1efea;
       border: 1px solid var(--line);
     }
 
@@ -610,6 +616,23 @@
       font-weight: 600;
     }
 
+    /* Chinese mode only: the romanised name beside the Chinese one, so the
+       display face is not lost when the name itself is in a system font. */
+    .hero-name {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0 18px;
+    }
+
+    .hero-latin {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--muted);
+    }
+
     /* One sentence saying who this is, in the main text colour. */
     .hero-lede {
       margin: 14px 0 0;
@@ -617,23 +640,46 @@
       line-height: 1.6;
     }
 
-    /* Research interests as small tags. They wrap as whole units, so no
-       separator can be left hanging at the end of a line. (Kept as inline
-       blocks: the paragraph itself must stay hideable by the language rules.) */
+    /* In English it is a standfirst in the display face: larger, because that
+       face runs small, and on a shorter measure to keep about 70 characters. */
+    .hero-lede.lang-en {
+      max-width: 29em;
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      line-height: 1.4;
+    }
+
+    /* Research interests as a line of text with a dot between them. Each item
+       carries its dot in padding on its left and is shifted left by that
+       much, so the dot of whichever item starts a line falls outside the
+       paragraph and is clipped: no line begins or ends with a dot, however
+       the items wrap. (Kept as inline blocks: the paragraph itself must stay
+       hideable by the language rules.) */
     .hero-text .subtitle {
       margin: 14px 0 0;
+      overflow: hidden;
       color: var(--accent);
-      font-size: 0.86rem;
+      font-size: 0.9rem;
       font-weight: 500;
       line-height: 1.6;
     }
 
     .subtitle .nw {
       display: inline-block;
-      margin: 0 4px 6px 0;
-      padding: 2px 12px;
-      border-radius: 999px;
-      background: var(--accent-soft);
+      position: relative;
+      left: -1.4em;
+      padding-left: 1.4em;
+    }
+
+    /* Shifted left by half the width of the space that separates two items,
+       so the dot sits midway between them. */
+    .subtitle .nw::before {
+      content: "·";
+      position: absolute;
+      left: -0.14em;
+      width: 1.4em;
+      text-align: center;
+      color: var(--muted);
     }
 
     .hero-contact {
@@ -688,20 +734,19 @@
       color: var(--line);
     }
 
-    /* The CV is the one action in the row, so it leads and looks like a button. */
+    /* The CV is the one action in the row, so it leads: in the accent colour
+       and underlined, like a link in printed text rather than a button. */
     .hero-contact .cv-link {
       order: -1;
-      padding: 4px 16px;
-      border: 1px solid var(--accent);
-      border-radius: 999px;
       color: var(--accent);
       font-weight: 600;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
     }
 
     .hero-contact .cv-link:hover {
-      background: var(--accent);
-      color: var(--bg);
-      text-decoration: none;
+      text-decoration-thickness: 2px;
     }
 
     main {
@@ -747,9 +792,15 @@
     .section > .section-header {
       grid-column: 1;
       grid-row: 1 / span 12;
-      align-self: start;
+      align-self: baseline;
       position: sticky;
       top: 92px;
+    }
+
+    /* The first block of content shares the title's baseline, whatever their
+       two sizes are. */
+    .section > .section-header + * {
+      align-self: baseline;
     }
 
     .section-header {
@@ -767,12 +818,20 @@
       color: var(--muted);
     }
 
-    /* Same size and line height as body text, so the title's baseline lines
-       up with the first line of the content beside it. */
+    /* In the display face, larger than the body text; the grid lines its
+       baseline up with the first line of the content beside it. */
     .section-title {
       margin: 0;
-      font-size: 1rem;
-      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    /* Chinese titles have no display face and look larger at the same size. */
+    [data-lang="zh"] .section-title {
+      font-size: 1.15rem;
       letter-spacing: 0;
     }
 
@@ -884,14 +943,17 @@
       font-size: 0.96rem;
     }
 
-    /* The only two uses of the italic display face: a venue name (written as
-       <em> in a publication's `meta`) and a sentence of the research statement
-       marked with class="statement-quote". Slightly enlarged, because the face
-       has a much smaller x-height than the body text around it; line-height 1
-       keeps that from pushing the lines apart. font-synthesis leaves any
-       Chinese character upright instead of slanting it, and the class does
-       nothing at all inside the Chinese text. */
+    /* The only two uses of the italic display face: the name of a journal or
+       conference (written as <em> in a publication's `meta`, a news item or a
+       project tagline) and a sentence of the research statement marked with
+       class="statement-quote". Slightly enlarged, because the face has a much
+       smaller x-height than the body text around it; line-height 1 keeps that
+       from pushing the lines apart. font-synthesis leaves any Chinese
+       character upright instead of slanting it, and the class does nothing at
+       all inside the Chinese text. */
     .publication-meta em,
+    .timeline-item em,
+    .project-tagline em,
     .lang-en .statement-quote {
       font-family: var(--font-display);
       font-style: italic;
@@ -1079,7 +1141,7 @@
       height: 42px;
       border-radius: 50%;
       border: 1px solid var(--line);
-      background: #ffffff;
+      background: #fbfaf6;
       color: var(--accent);
       font-size: 1.1rem;
       line-height: 1;
@@ -1138,7 +1200,11 @@
       }
 
       .section-title {
-        font-size: 1.2rem;
+        font-size: 1.55rem;
+      }
+
+      [data-lang="zh"] .section-title {
+        font-size: 1.25rem;
       }
 
       /* No gap beside the column for the dots to hang in: indent instead. */
@@ -1306,7 +1372,7 @@
     .pub-status-row {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
+      align-items: baseline;
       gap: 6px 12px;
       margin-top: 8px;
     }
@@ -1315,36 +1381,29 @@
       margin: 0;
     }
 
+    /* Publication status: a small spaced-out label (the class name dates from
+       when it was a pill). The wording says which status it is; colour only
+       separates work that is out or under review from work still in progress. */
     .status-pill {
-      display: inline-block;
-      padding: 1px 10px;
-      border: 1px solid transparent;
-      border-radius: 999px;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       line-height: 1.7;
-    }
-
-    .status-under-review {
-      background: var(--accent-soft);
-      border-color: var(--accent);
       color: var(--accent);
     }
 
+    /* Chinese has no capitals to shrink: keep it a little larger. */
+    .status-pill .lang-zh {
+      font-size: 0.8rem;
+    }
+
     .status-in-preparation {
-      border: 1px dashed var(--muted);
       color: var(--muted);
     }
 
     .status-preprint {
-      background: var(--accent-soft);
       color: var(--text);
-    }
-
-    .status-published {
-      background: var(--accent);
-      color: var(--bg);
     }
 
     .pub-links {
@@ -1726,8 +1785,11 @@
         </div>
 
         <div class="hero-text">
-          <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>
-          <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master's student in Computer Science and Technology advised by <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
+          <div class="hero-name">
+            <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>
+            <span class="hero-latin lang-zh" lang="en">Tejing Wang</span>
+          </div>
+          <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master’s student in Computer Science and Technology advised by <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
           <p class="hero-lede lang-zh">陕西师范大学人工智能专业本科生，将在本校攻读计算机科学与技术学术型硕士，导师为<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>。</p>
           <p class="subtitle lang-en"><span class="nw">Neuro-Symbolic AI</span> <span class="nw">Graph-based Concept Learning</span> <span class="nw">Intelligent Agents</span></p>
           <p class="subtitle lang-zh"><span class="nw">神经符号人工智能</span> <span class="nw">图概念学习</span> <span class="nw">智能体系统</span></p>
@@ -1764,7 +1826,7 @@
         <div class="card">
           <p class="lang-en">
             I am a student in Artificial Intelligence at <a href="https://www.snnu.edu.cn/" target="_blank">Shaanxi Normal University</a>, continuing on to
-            an academic master's program there in the <a href="https://ccs.snnu.edu.cn/" target="_blank">School of Artificial Intelligence and Computer
+            an academic master’s program there in the <a href="https://ccs.snnu.edu.cn/" target="_blank">School of Artificial Intelligence and Computer
             Science</a>, advised by Prof. Fei Hao.
           </p>
           <p class="lang-zh">
@@ -1779,7 +1841,7 @@
             我的研究兴趣集中在神经符号智能与图概念认知学习，同时也关注形式概念分析、可解释人工智能、大语言模型赋能教育、数字孪生与具身智能。
           </p>
           <p class="lang-en">
-            My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master's.
+            My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master’s.
           </p>
           <p class="lang-zh">
             我的长期目标是在硕士毕业后赴海外攻读人工智能博士学位。
@@ -1803,7 +1865,7 @@
             grounding a black-box model in something a person can inspect and reason about.
           </p>
           <p class="lang-zh">
-            我关心的问题是：结构化的符号知识如何能让大语言模型系统变得更可解释、更可控。在本科阶段的地理自动解题研究中，我把大语言模型与三支概念分析结合起来，把教材中隐含的知识转化为显式的决策规则——这是我第一次尝试让一个"黑箱"模型的推理过程变得可以被人检查和追问。
+            我关心的问题是：结构化的符号知识如何能让大语言模型系统变得更可解释、更可控。在本科阶段的地理自动解题研究中，我把大语言模型与三支概念分析结合起来，把教材中隐含的知识转化为显式的决策规则——这是我第一次尝试让一个“黑箱”模型的推理过程变得可以被人检查和追问。
           </p>
           <p class="lang-en">
             This concern with structure carries into my current work: a survey of neuro-symbolic
@@ -1815,7 +1877,7 @@
             such as Unity.
           </p>
           <p class="lang-zh">
-            这种对"结构"的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。此外，我还曾用半年时间在数字孪生与具身系统方向担任科研助理，这段经历拓宽了我的领域知识，也让我接触并用上了 Unity 等新工具。
+            这种对“结构”的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。此外，我还曾用半年时间在数字孪生与具身系统方向担任科研助理，这段经历拓宽了我的领域知识，也让我接触并用上了 Unity 等新工具。
           </p>
           <p class="lang-en">
             Going forward, I want to bring these threads together in a Ph.D.: building agentic systems
@@ -1882,7 +1944,7 @@
         <div class="timeline-item">
           <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
           <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
-          <p class="lang-en">Continuing as an academic master's student at Shaanxi Normal University, now advised by Prof. Fei Hao.</p>
+          <p class="lang-en">Continuing as an academic master’s student at Shaanxi Normal University, now advised by Prof. Fei Hao.</p>
           <p class="lang-zh">确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。</p>
         </div>
         <div class="timeline-item">
@@ -1942,9 +2004,9 @@
             <span>陕西师范大学</span>
             <span>预计 2030 年</span>
           </div>
-          <h3 class="lang-en">M.S. in Computer Science and Technology (Academic Master's)</h3>
+          <h3 class="lang-en">M.S. in Computer Science and Technology (Academic Master’s)</h3>
           <h3 class="lang-zh">计算机科学与技术学术型硕士</h3>
-          <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi'an, China</p>
+          <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi’an, China</p>
           <p class="lang-zh">人工智能与计算机科学学院 · 中国西安</p>
           <p class="lang-en">Advisor: Prof. Fei Hao · Research direction: Graph Learning, Concept Learning, Neuro-Symbolic AI</p>
           <p class="lang-zh">导师：郝飞教授 · 研究方向：图学习、概念学习、神经符号人工智能</p>
@@ -1961,7 +2023,7 @@
           </div>
           <h3 class="lang-en">B.Eng. in Artificial Intelligence</h3>
           <h3 class="lang-zh">人工智能工学学士</h3>
-          <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi'an, China</p>
+          <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi’an, China</p>
           <p class="lang-zh">人工智能与计算机科学学院 · 中国西安</p>
         </div>
       </div>
@@ -1980,7 +2042,7 @@
           </div>
           <div class="timeline-meta lang-zh">
             <span>陕西师范大学</span>
-            <span>2025 年 6 月 - 2027 年 6 月</span>
+            <span>2025 年 6 月 – 2027 年 6 月</span>
           </div>
           <p class="lang-en">
             Undergraduate Research Assistant · Supervised by
@@ -2163,8 +2225,8 @@
           <h3 class="lang-en">Software Copyrights</h3>
           <h3 class="lang-zh">软件著作权</h3>
           <ul class="award-list lang-en">
-            <li>"Weather Teaching Assistant Platform" (Reg. No. 16269380)</li>
-            <li>"Deep Learning-Based Face Recognition Classroom Attendance System" (Reg. No. 16202857)</li>
+            <li>“Weather Teaching Assistant Platform” (Reg. No. 16269380)</li>
+            <li>“Deep Learning-Based Face Recognition Classroom Attendance System” (Reg. No. 16202857)</li>
           </ul>
           <ul class="award-list lang-zh">
             <li>《气象教学助手平台》（登记号：16269380）</li>
@@ -2252,7 +2314,7 @@
           <span class="lang-zh">暂无数据</span>
         </p>
         <p class="visitor-error">
-          <span class="lang-en">The visitor map couldn't be loaded — the stats service may not be reachable from your network.</span>
+          <span class="lang-en">The visitor map couldn’t be loaded — the stats service may not be reachable from your network.</span>
           <span class="lang-zh">访客地图暂时无法加载，当前网络可能无法访问统计服务。</span>
         </p>
       </div>
