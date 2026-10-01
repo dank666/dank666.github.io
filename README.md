@@ -703,7 +703,7 @@ sips -g pixelWidth -g pixelHeight images/my-project-screenshot.webp
 ### 8.4 头像
 
 - 头像有**两个文件**：`images/avatar.webp`（主用）和 `images/avatar.jpg`（给不支持 WebP 的老浏览器，也**用作微信/邮件里链接预览图**），是同一张照片。**换头像要两个都换。**
-- 目前是 700×525（4:3）。头像显示在一个圆形框里，中间会被裁切，所以**把脸放在照片中间**。
+- 目前是 700×700（1:1）。头像显示在一个圆形框里，四角会被裁切，所以**把脸放在照片中间**。
 - 命令：
 
 ```bash
@@ -713,7 +713,7 @@ cwebp -q 82 images/avatar.jpg -o images/avatar.webp
 sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 ```
 
-- 如果新照片的尺寸不是 700×525，去 `index.html` 里搜 `class="avatar"`，把那个 `<img>` 的 `width`、`height` 改成实际尺寸。
+- 如果新照片的尺寸不是 700×700，去 `index.html` 里搜 `class="avatar"`，把那个 `<img>` 的 `width`、`height` 改成实际尺寸。
 - **想让头像显示得更大或更小**：在 `index.html` 的样式里搜 `.avatar-wrap`，改 `width` 和 `height`（桌面是 `200px`，手机端在文件靠后的 `@media (max-width: 640px)` 里，是 `116px`）；同时把上面的 `.hero-card` 的 `grid-template-columns` 第一列改成同样的数字（桌面 `200px 1fr`，手机 `116px 1fr`），否则文字和头像之间的间距会不对。
 
 ### 8.5 网站图标
