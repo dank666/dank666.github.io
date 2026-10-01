@@ -174,7 +174,6 @@
 
     .page-header { padding: 52px 0 8px; }
     .page-header h1 { margin: 0; font-size: clamp(1.8rem, 3.4vw, 2.3rem); letter-spacing: -0.02em; font-weight: 700; }
-    .page-header .intro { margin: 12px 0 0; color: var(--muted); max-width: 62ch; }
 
     /* ---- Constellation panel -------------------------------------------
        The night sky is deliberately always dark, independent of the site's
@@ -211,7 +210,6 @@
     }
     .constellation-tip[hidden] { display: none; }
 
-    .constellation-hint { margin: 10px 0 0; color: var(--muted); font-size: 0.86rem; }
     .constellation-empty, .constellation-error {
       display: none; margin: 0; padding: 40px 20px; text-align: center;
       color: #9199a1; font-style: italic;
@@ -327,14 +325,6 @@
   <main class="container" id="main-content">
     <div class="page-header">
       <h1 data-i18n data-lang-en="Constellation" data-lang-zh="星座">Constellation</h1>
-      <p class="intro lang-en">
-        One star for every day the plan got done. No day is ever taken away for being missed —
-        a gap is just a gap, never a broken star — so the sky only ever grows. It's a slow,
-        public way of keeping myself honest.
-      </p>
-      <p class="intro lang-zh">
-        每完成一天计划中的事，就点亮一颗星星。漏掉的一天不会摘掉任何星星——只是那天没有新的星光，从不惩罚——所以这片天空只会越来越绚烂。这是我用来监督自己的一种慢办法。
-      </p>
     </div>
 
     <div class="constellation-wrap">
@@ -358,10 +348,6 @@
           <span class="lang-zh">星图暂时无法加载。</span>
         </p>
       </div>
-      <p class="constellation-hint">
-        <span class="lang-en">Hover a star for its date and note. Bigger, warmer stars mark milestones (7, 30, 100, 365 days…).</span>
-        <span class="lang-zh">把鼠标移到星星上可以看到日期和备注。更大更暖的星星是里程碑（第 7、30、100、365 天……）。</span>
-      </p>
 
       <div class="checkin-panel" id="checkinPanel">
         <div class="checkin-locked" id="checkinLocked">
