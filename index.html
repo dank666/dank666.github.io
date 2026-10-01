@@ -633,8 +633,12 @@
       color: var(--muted);
     }
 
-    /* One sentence saying who this is, in the main text colour. */
+    /* One sentence saying who this is, in the main text colour. As a display
+       line it keeps a short measure (in em, so it does not move when the web
+       font swaps in); the paragraphs below run the full width of the column,
+       so their right edge is the one the rules, cards and figures share. */
     .hero-lede {
+      max-width: 34em;
       margin: 14px 0 0;
       font-size: 1.06rem;
       line-height: 1.6;
@@ -925,15 +929,28 @@
       margin-top: 0;
     }
 
-    /* Running text is held to about 70 characters a line (34 in Chinese).
-       In em, so it holds at every text size and does not move when the web
-       font swaps in. Boxes, figures and rows of facts keep the full column. */
-    .hero-lede,
-    .card p:not(.project-tagline),
-    .timeline-item p,
-    .award-list li,
-    .contact-open {
-      max-width: 34em;
+    /* Paragraphs are justified, so the column has a clean right edge as well
+       as a left one. English needs hyphenation (long words only) to do that
+       without wide gaps between words, and on a phone its lines are too short
+       for it even so: there it goes back to a ragged right edge. Chinese
+       justifies well at any width. Lines are filled in order (text-wrap:
+       wrap, not the "pretty" set on p): pulling a word down to keep the last
+       line company would leave the line above it visibly stretched. */
+    :is(.card p:not(.project-tagline, .project-links), .timeline-item p, .contact-open) {
+      text-align: justify;
+      text-wrap: wrap;
+      -webkit-hyphens: auto;
+      hyphens: auto;
+      hyphenate-limit-chars: 8 3 3;
+    }
+
+    @media (max-width: 640px) {
+      [data-lang="en"] :is(.card p:not(.project-tagline, .project-links), .timeline-item p, .contact-open) {
+        text-align: start;
+        text-wrap: pretty;
+        -webkit-hyphens: manual;
+        hyphens: manual;
+      }
     }
 
     .contact-value,
@@ -2008,8 +2025,10 @@
           <h3 class="lang-zh">计算机科学与技术学术型硕士</h3>
           <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi’an, China</p>
           <p class="lang-zh">人工智能与计算机科学学院 · 中国西安</p>
-          <p class="lang-en">Advisor: Prof. Fei Hao · Research direction: Graph Learning, Concept Learning, Neuro-Symbolic AI</p>
-          <p class="lang-zh">导师：郝飞教授 · 研究方向：图学习、概念学习、神经符号人工智能</p>
+          <p class="lang-en">Advisor: Prof. Fei Hao</p>
+          <p class="lang-zh">导师：郝飞教授</p>
+          <p class="lang-en">Research direction: Graph Learning, Concept Learning, Neuro-Symbolic AI</p>
+          <p class="lang-zh">研究方向：图学习、概念学习、神经符号人工智能</p>
         </div>
 
         <div class="timeline-item">
