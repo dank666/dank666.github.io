@@ -435,7 +435,9 @@ node tools/build.mjs
 - **名字**：`<h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>`——改名字要改**两个属性和中间的文字**共三处。名字还出现在很多别的地方（导航栏左上角、网页标题、分享预览、结构化数据、页脚版权、`reading.html` 和 `lattice.html`），改名后在整个仓库里搜 `Tejing Wang` 和 `王特警`，把所有出现的地方一起改。
 - **一句话身份介绍**：`<p class="hero-lede lang-en">` 和 `<p class="hero-lede lang-zh">` 各一份，写"我是谁、在哪里、跟谁读"。身份变了（比如正式入学）要记得改这里。
 - **研究方向标签**：`<p class="subtitle lang-en">` 和 `<p class="subtitle lang-zh">` 各一份，每个方向包在一个 `<span class="nw">…</span>` 里，显示成一个小标签。加一个方向就加一个这样的 `<span>`，标签之间**不要**再写 `·`。
-- **联系方式那一行** `class="hero-contact"`：学校邮箱（显示地址）、Gmail 和 GitHub（只显示名字，点击跳转）、下载简历（邮箱的写法见 6.6）。
+- **联系方式那一行** `class="hero-contact"`：下载简历、学校邮箱、GitHub、ORCID、Google Scholar，每一项是"小图标 + 名字"（邮箱的写法见 6.6）。
+  - 图标是直接写在 HTML 里的 `<svg class="hero-icon">`，颜色跟着文字走（不用品牌色），深色模式和鼠标悬停时会自动变色。**加一项时照着旁边的写法抄一份**，换掉链接、名字和 `<svg>` 里的图形；图标要用**单色**的，尺寸由样式统一成 16px。
+  - **Google Scholar 现在是占位**（灰色、点不了，写在一个 `<span class="hero-soon">` 里）。有了主页之后：把 `<span class="hero-soon" title="…">` 改成 `<a href="你的主页网址" target="_blank" rel="noopener">`，结尾的 `</span>` 改成 `</a>`，里面的图标和文字不动。Contact 板块里还有一处 "Coming soon"，见 6.6。
 - **"欢迎合作"那句话** `class="hero-open"`：想改措辞或暂时去掉，直接改或删这一整段 `<p>`。Contact 里还有一句同样的 `class="contact-open"`，要一起改。
 
 ### 6.3 About 和 Research
@@ -534,7 +536,7 @@ node tools/build.mjs
 
 例如 `wtejing@gmail.com` 是 `data-u="wtejing" data-d="gmail.com"`。要改邮箱，就改这三处：`data-u`、`data-d`，和中间显示的 `[at] [dot]` 版本。
 
-**不想把地址显示出来，只显示一个名字**（首屏的 Gmail 就是这样）：加一个 `data-label` 属性，中间的文字写成要显示的名字。点击仍然是发邮件，但页面上看不到地址：
+**不想把地址显示出来，只显示一个名字**（目前没有用到，留着备用）：加一个 `data-label` 属性，中间的文字写成要显示的名字。点击仍然是发邮件，但页面上看不到地址：
 
 ```html
 <a class="email-link" href="#contact" data-u="name" data-d="gmail.com" data-label="Gmail">Gmail</a>
