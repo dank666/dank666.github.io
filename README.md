@@ -771,6 +771,7 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 - `link` 没有的话留空字符串 `''`，标题就不会变成链接。
 - `project` 必须是 `PROJECTS` 里某一项的 `id`。
 - `topics` 是自己起的标签，用来筛选，用英文小写加短横线。
+- `note_en` / `note_zh` 是可选的：还没写阅读笔记的论文可以两行都不写，页面上就不显示"阅读笔记"那一块。
 
 ### 10.3 加一篇短文笔记
 
