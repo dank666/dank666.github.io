@@ -74,7 +74,8 @@
         color: #0e1014;
       }
 
-      :root:not([data-theme="light"]) .paper-tag.project-tag {
+      :root:not([data-theme="light"]) .paper-tag.project-tag,
+      :root:not([data-theme="light"]) .paper-tag[aria-pressed="true"] {
         color: #0e1014;
       }
 
@@ -107,7 +108,8 @@
       color: #0e1014;
     }
 
-    :root[data-theme="dark"] .paper-tag.project-tag {
+    :root[data-theme="dark"] .paper-tag.project-tag,
+    :root[data-theme="dark"] .paper-tag[aria-pressed="true"] {
       color: #0e1014;
     }
 
@@ -346,7 +348,22 @@
     .filter-row {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
+    }
+
+    /* Names the project whose categories the buttons after it filter by. */
+    .filter-label {
+      margin-right: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .filter-count {
+      margin-left: 6px;
+      opacity: 0.65;
+      font-variant-numeric: tabular-nums;
     }
 
     .filter-btn {
@@ -372,13 +389,32 @@
     }
 
     .paper-list {
-      display: grid;
-      gap: 26px;
-      padding: 28px 0 8px;
+      padding: 8px 0;
+    }
+
+    .paper-group {
+      padding-top: 28px;
+    }
+
+    .group-heading {
+      margin: 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--accent);
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .group-count {
+      margin-left: 8px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
     }
 
     .paper-item {
-      padding-bottom: 26px;
+      padding: 18px 0;
       border-bottom: 1px solid var(--line);
     }
 
@@ -388,15 +424,18 @@
 
     .paper-title {
       margin: 0;
-      max-width: 68ch;
       font-size: 1.05rem;
       font-weight: 600;
       line-height: 1.4;
     }
 
+    /* A title is a whole-line link, not one inline in running text, so it
+       doesn't need the always-on underline that `p a` adds. */
+    .paper-title a { text-decoration: none; }
+    .paper-title a:hover { text-decoration: underline; }
+
     .paper-authors {
       margin: 6px 0 0;
-      max-width: 68ch;
       color: var(--text);
       font-size: 0.92rem;
     }
@@ -415,6 +454,7 @@
     }
 
     .paper-tag {
+      font: inherit;
       font-size: 0.78rem;
       padding: 2px 9px;
       border-radius: 999px;
@@ -422,10 +462,10 @@
       color: var(--accent);
       cursor: pointer;
       border: 0;
-      font: inherit;
     }
 
-    .paper-tag.project-tag {
+    .paper-tag.project-tag,
+    .paper-tag[aria-pressed="true"] {
       background: var(--accent);
       color: #fff;
     }
@@ -522,6 +562,7 @@
     .back-to-top:hover { border-color: var(--accent); }
 
     @media (max-width: 640px) {
+      .filter-label { flex-basis: 100%; }
       .nav-inner { display: block; }
       .nav-right { margin-top: 10px; justify-content: space-between; }
     }
@@ -557,11 +598,10 @@
       <h1 data-i18n data-lang-en="Notes" data-lang-zh="笔记">Notes</h1>
       <p class="intro lang-en">
         Short notes from my research, together with a library of the papers I've read — organized by
-        project and topic. It's a working notebook that I add to as I read; some paper entries are
-        still placeholders while I fill in full bibliographic details.
+        project and topic. It's a working notebook that I add to as I read.
       </p>
       <p class="intro lang-zh">
-        我在研究中写下的短文笔记，以及读过的论文库——按项目与主题分类。这是一个边读边补充的工作笔记本，部分论文条目的完整信息我还在补充中。
+        我在研究中写下的短文笔记，以及读过的论文库——按项目与主题分类。这是一个边读边补充的工作笔记本。
       </p>
     </div>
 
@@ -576,6 +616,7 @@
       />
       <div class="filter-row" id="typeFilters" role="group" aria-label="Filter by type" hidden></div>
       <div class="filter-row" id="projectFilters" role="group" aria-label="Filter by project"></div>
+      <div class="filter-row" id="groupFilters" role="group" aria-label="Filter by category" hidden></div>
       <div class="result-count" id="resultCount"></div>
     </div>
 
@@ -597,16 +638,26 @@
 
   <script>
   // ---- Data -------------------------------------------------------------
-  // Each entry: title (title unknown for surname+year-only refs is left as
-  // a placeholder — fill in the real title/venue/link once you have them).
+  // A project can split its entries into groups: an entry belongs to a group
+  // when its `topics` include the group's id. The groups become the filter
+  // buttons under the search box and the section headings in the list.
   var PROJECTS = [
-    { id: 'agent-survey', label_en: 'Neuro-Symbolic Agent Survey', label_zh: '神经符号智能体综述' }
+    {
+      id: 'agent-survey',
+      label_en: 'Neuro-Symbolic Agent Survey',
+      label_zh: '神经符号智能体综述',
+      groups: [
+        { id: 'planning', label_en: 'Planning', label_zh: '规划' },
+        { id: 'memory', label_en: 'Memory', label_zh: '记忆' },
+        { id: 'verification', label_en: 'Verification', label_zh: '验证' },
+        { id: 'competing-survey', label_en: 'Existing surveys', label_zh: '已有综述' }
+      ]
+    }
   ];
 
   var PAPERS = [
     {
       title_en: 'Neuro-symbolic agentic AI: Architectures, integration patterns, applications, open challenges and future research directions',
-      title_zh: '《Neuro-symbolic agentic AI: Architectures, integration patterns, applications, open challenges and future research directions》（Computer Science Review，2026）',
       authors: 'Safayat Bin Hakim, Muhammad Adil, Alvaro Velasquez, Houbing Herbert Song',
       year: 2026,
       venue: 'Computer Science Review',
@@ -618,7 +669,6 @@
     },
     {
       title_en: 'Agentic AI systems: A systematic survey of multi-agent architectures, cognitive foundations, interaction, explainability, security, and performance evaluation',
-      title_zh: '《Agentic AI systems: A systematic survey of multi-agent architectures, cognitive foundations, interaction, explainability, security, and performance evaluation》（Neurocomputing，2026）',
       authors: 'Smita Khapre, Melkamu Abay Mersha, Zainab Olalekan, Hassan Shakil, Samer Iskander, Asser Moustafa, Jugal Kalita',
       year: 2026,
       venue: 'Neurocomputing',
@@ -632,7 +682,6 @@
     // (planning, then memory, then verification). No reading notes yet.
     {
       title_en: 'JARVIS: A Neuro-Symbolic Commonsense Reasoning Framework for Conversational Embodied Agents',
-      title_zh: '《JARVIS: A Neuro-Symbolic Commonsense Reasoning Framework for Conversational Embodied Agents》（arXiv，2022）',
       authors: 'Kaizhi Zheng, Kaiwen Zhou, Jing Gu, Yue Fan, Jialu Wang, Zonglin Di, Xuehai He, Xin Eric Wang',
       year: 2022,
       venue: 'arXiv',
@@ -642,7 +691,6 @@
     },
     {
       title_en: 'Conformal Temporal Logic Planning Using Large Language Models',
-      title_zh: '《Conformal Temporal Logic Planning Using Large Language Models》（ACM Transactions on Cyber-Physical Systems，2023）',
       authors: 'Jun Wang, Jiaming Tong, Kaiyuan Tan, Yevgeniy Vorobeychik, Yiannis Kantaros',
       year: 2023,
       venue: 'ACM Transactions on Cyber-Physical Systems',
@@ -652,7 +700,6 @@
     },
     {
       title_en: 'LLM+P: Empowering Large Language Models with Optimal Planning Proficiency',
-      title_zh: '《LLM+P: Empowering Large Language Models with Optimal Planning Proficiency》（arXiv，2023）',
       authors: 'Bo Liu, Yuqian Jiang, Xiaohan Zhang, Qiang Liu, Shiqi Zhang, Joydeep Biswas, Peter Stone',
       year: 2023,
       venue: 'arXiv',
@@ -662,7 +709,6 @@
     },
     {
       title_en: 'Dynamic Planning with a LLM',
-      title_zh: '《Dynamic Planning with a LLM》（arXiv，2023）',
       authors: 'Gautier Dagan, Frank Keller, Alex Lascarides',
       year: 2023,
       venue: 'arXiv',
@@ -672,7 +718,6 @@
     },
     {
       title_en: 'Anticipate & Act: Integrating LLMs and Classical Planning for Efficient Task Execution in Household Environments',
-      title_zh: '《Anticipate & Act: Integrating LLMs and Classical Planning for Efficient Task Execution in Household Environments》（Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)，2024）',
       authors: 'Raghav Arora, Shivam Singh, Karthik Swaminathan, Ahana Datta, Snehasis Banerjee, Brojeshwar Bhowmick, Krishna Murthy Jatavallabhula, Mohan Sridharan, Madhava Krishna',
       year: 2024,
       venue: 'Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)',
@@ -682,7 +727,6 @@
     },
     {
       title_en: 'Formal-LLM: Integrating Formal Language and Natural Language for Controllable LLM-based Agents',
-      title_zh: '《Formal-LLM: Integrating Formal Language and Natural Language for Controllable LLM-based Agents》（arXiv，2024）',
       authors: 'Zelong Li, Wenyue Hua, Hao Wang, He Zhu, Yongfeng Zhang',
       year: 2024,
       venue: 'arXiv',
@@ -692,7 +736,6 @@
     },
     {
       title_en: 'A Framework for Neurosymbolic Robot Action Planning Using Large Language Models',
-      title_zh: '《A Framework for Neurosymbolic Robot Action Planning Using Large Language Models》（Frontiers in Neurorobotics，2024）',
       authors: 'Alessio Capitanelli, Fulvio Mastrogiovanni',
       year: 2024,
       venue: 'Frontiers in Neurorobotics',
@@ -702,7 +745,6 @@
     },
     {
       title_en: 'TwoStep: Multi-agent Task Planning Using Classical Planners and Large Language Models',
-      title_zh: '《TwoStep: Multi-agent Task Planning Using Classical Planners and Large Language Models》（arXiv，2024）',
       authors: 'David Bai, Ishika Singh, David Traum, Jesse Thomason',
       year: 2024,
       venue: 'arXiv',
@@ -712,7 +754,6 @@
     },
     {
       title_en: 'Classical Planning with LLM-Generated Heuristics: Challenging the State of the Art with Python Code',
-      title_zh: '《Classical Planning with LLM-Generated Heuristics: Challenging the State of the Art with Python Code》（Advances in Neural Information Processing Systems (NeurIPS)，2025）',
       authors: 'Augusto B. Corrêa, André G. Pereira, Jendrik Seipp',
       year: 2025,
       venue: 'Advances in Neural Information Processing Systems (NeurIPS)',
@@ -722,7 +763,6 @@
     },
     {
       title_en: 'LaMMA-P: Generalizable Multi-Agent Long-Horizon Task Allocation and Planning with LM-Driven PDDL Planner',
-      title_zh: '《LaMMA-P: Generalizable Multi-Agent Long-Horizon Task Allocation and Planning with LM-Driven PDDL Planner》（Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)，2025）',
       authors: 'Xiaopan Zhang, Hao Qin, Fuquan Wang, Yue Dong, Jiachen Li',
       year: 2025,
       venue: 'Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)',
@@ -732,7 +772,6 @@
     },
     {
       title_en: 'Automated Generation of MDPs Using Logic Programming and LLMs for Robotic Applications',
-      title_zh: '《Automated Generation of MDPs Using Logic Programming and LLMs for Robotic Applications》（arXiv，2025）',
       authors: 'Enrico Saccon, Davide De Martini, Matteo Saveriano, Edoardo Lamon, Luigi Palopoli, Marco Roveri',
       year: 2025,
       venue: 'arXiv',
@@ -742,7 +781,6 @@
     },
     {
       title_en: 'Fast and Accurate Task Planning Using Neuro-Symbolic Language Models and Multi-level Goal Decomposition',
-      title_zh: '《Fast and Accurate Task Planning Using Neuro-Symbolic Language Models and Multi-level Goal Decomposition》（Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)，2025）',
       authors: 'Minseo Kwon, Yaesol Kim, Young J. Kim',
       year: 2025,
       venue: 'Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)',
@@ -752,7 +790,6 @@
     },
     {
       title_en: 'Bridging LLM Planning Agents and Formal Methods: A Case Study in Plan Verification',
-      title_zh: '《Bridging LLM Planning Agents and Formal Methods: A Case Study in Plan Verification》（Proceedings of the AgenticSE Workshop at ASE，2025）',
       authors: 'Keshav Ramani, Vali Tawosi, Salwa Alamir, Daniel Borrajo',
       year: 2025,
       venue: 'Proceedings of the AgenticSE Workshop at ASE',
@@ -762,7 +799,6 @@
     },
     {
       title_en: 'Procedural Knowledge Improves Agentic LLM Workflows',
-      title_zh: '《Procedural Knowledge Improves Agentic LLM Workflows》（arXiv，2025）',
       authors: 'Vincent Hsiao, Mark Roberts, Leslie Smith',
       year: 2025,
       venue: 'arXiv',
@@ -772,7 +808,6 @@
     },
     {
       title_en: 'Large Language Models Can Solve Real-World Planning Rigorously with Formal Verification Tools',
-      title_zh: '《Large Language Models Can Solve Real-World Planning Rigorously with Formal Verification Tools》（Proceedings of the Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics (NAACL)，2025）',
       authors: 'Yilun Hao, Yongchao Chen, Yang Zhang, Chuchu Fan',
       year: 2025,
       venue: 'Proceedings of the Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics (NAACL)',
@@ -782,7 +817,6 @@
     },
     {
       title_en: 'ANNEAL: Adapting LLM Agents via Governed Symbolic Patch Learning',
-      title_zh: '《ANNEAL: Adapting LLM Agents via Governed Symbolic Patch Learning》（arXiv，2026）',
       authors: 'Safayat Bin Hakim, Keyan Guo, Wenkai Tan, Alvaro Velasquez, Shouhuai Xu, Houbing Herbert Song',
       year: 2026,
       venue: 'arXiv',
@@ -792,7 +826,6 @@
     },
     {
       title_en: 'An LLM-Based Assistance System for Intuitive and Flexible Capability-Based Planning',
-      title_zh: '《An LLM-Based Assistance System for Intuitive and Flexible Capability-Based Planning》（arXiv，2026）',
       authors: 'Luis Miguel Vieira da Silva, Nicolas König, Felix Gehlhoff',
       year: 2026,
       venue: 'arXiv',
@@ -802,7 +835,6 @@
     },
     {
       title_en: 'LLM-Evolved Domain-Independent Heuristics for Symbolic AI Planning',
-      title_zh: '《LLM-Evolved Domain-Independent Heuristics for Symbolic AI Planning》（arXiv，2026）',
       authors: 'Elliot Gestrin, Jendrik Seipp',
       year: 2026,
       venue: 'arXiv',
@@ -812,7 +844,6 @@
     },
     {
       title_en: 'Embodied Task Planning via Graph-Informed Action Generation with Large Language Models',
-      title_zh: '《Embodied Task Planning via Graph-Informed Action Generation with Large Language Models》（arXiv，2026）',
       authors: 'Xiang Li, Ning Yan, Masood Mortazavi',
       year: 2026,
       venue: 'arXiv',
@@ -822,7 +853,6 @@
     },
     {
       title_en: 'Hierarchical Task Network Planning with LLM-Generated Heuristics',
-      title_zh: '《Hierarchical Task Network Planning with LLM-Generated Heuristics》（arXiv，2026）',
       authors: 'Felipe Meneguzzi, Alexandre Buchweitz, Augusto B. Corrêa, Victor Scherer Putrich, André Grahl Pereira',
       year: 2026,
       venue: 'arXiv',
@@ -832,7 +862,6 @@
     },
     {
       title_en: 'KGLAMP: Knowledge Graph-guided Language Model for Adaptive Multi-robot Planning',
-      title_zh: '《KGLAMP: Knowledge Graph-guided Language Model for Adaptive Multi-robot Planning》（arXiv，2026）',
       authors: 'Chak Lam Shek, Faizan M. Tariq, Sangjae Bae, David Isele, Piyush Gupta',
       year: 2026,
       venue: 'arXiv',
@@ -842,7 +871,6 @@
     },
     {
       title_en: 'Neurosymbolic Embodied Agents',
-      title_zh: '《Neurosymbolic Embodied Agents》（arXiv，2026）',
       authors: 'Mohammad Albinhassan, Yuming Feng, Alessandra Russo, Pranava Madhyastha',
       year: 2026,
       venue: 'arXiv',
@@ -852,7 +880,6 @@
     },
     {
       title_en: 'PhyNiKCE: A Neurosymbolic Agentic Framework for Autonomous Computational Fluid Dynamics',
-      title_zh: '《PhyNiKCE: A Neurosymbolic Agentic Framework for Autonomous Computational Fluid Dynamics》（arXiv，2026）',
       authors: 'E Fan, Lisong Shi, Zhengtong Li, Chih-yung Wen',
       year: 2026,
       venue: 'arXiv',
@@ -862,7 +889,6 @@
     },
     {
       title_en: 'Agentic LLM Planning via Step-Wise PDDL Simulation: An Empirical Characterisation',
-      title_zh: '《Agentic LLM Planning via Step-Wise PDDL Simulation: An Empirical Characterisation》（arXiv，2026）',
       authors: 'Kai Göbel, Pierrick Lorang, Patrik Zips, Tobias Glück',
       year: 2026,
       venue: 'arXiv',
@@ -872,7 +898,6 @@
     },
     {
       title_en: 'Constrained Natural Language Action Planning for Resilient Embodied Systems',
-      title_zh: '《Constrained Natural Language Action Planning for Resilient Embodied Systems》（npj Artificial Intelligence，2026）',
       authors: 'Grayson Byrd, Corban Rivera, Bethany Kemp, Meghan Booker, Aurora Schmidt, Celso M. de Melo, Lalithkumar Seenivasan, Mathias Unberath',
       year: 2026,
       venue: 'npj Artificial Intelligence',
@@ -882,7 +907,6 @@
     },
     {
       title_en: 'Code-as-Symbolic-Planner: Foundation Model-Based Robot Planning via Symbolic Code Generation',
-      title_zh: '《Code-as-Symbolic-Planner: Foundation Model-Based Robot Planning via Symbolic Code Generation》（Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)，2025）',
       authors: 'Yongchao Chen, Yilun Hao, Yang Zhang, Chuchu Fan',
       year: 2025,
       venue: 'Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)',
@@ -892,7 +916,6 @@
     },
     {
       title_en: 'Achieving Scalable Robot Autonomy via Neurosymbolic Planning Using Lightweight Local LLM',
-      title_zh: '《Achieving Scalable Robot Autonomy via Neurosymbolic Planning Using Lightweight Local LLM》（arXiv，2025）',
       authors: 'Nicholas Attolino, Alessio Capitanelli, Fulvio Mastrogiovanni',
       year: 2025,
       venue: 'arXiv',
@@ -902,7 +925,6 @@
     },
     {
       title_en: 'Teaching LLMs to Plan: Logical Chain-of-Thought Instruction Tuning for Symbolic Planning',
-      title_zh: '《Teaching LLMs to Plan: Logical Chain-of-Thought Instruction Tuning for Symbolic Planning》（arXiv，2025）',
       authors: 'Pulkit Verma, Ngoc La, Anthony Favier, Swaroop Mishra, Julie A. Shah',
       year: 2025,
       venue: 'arXiv',
@@ -912,7 +934,6 @@
     },
     {
       title_en: 'NeSyFS: A Neuro-symbolic Fast-Slow Thinking Framework for LLM Agent under Partial Observability',
-      title_zh: '《NeSyFS: A Neuro-symbolic Fast-Slow Thinking Framework for LLM Agent under Partial Observability》（arXiv，2026）',
       authors: 'Duo Xu, Faramarz Fekri',
       year: 2026,
       venue: 'arXiv',
@@ -922,7 +943,6 @@
     },
     {
       title_en: 'Plan Right, Then Plan Tight: Symbolic RL for Efficient Embodied Reasoning',
-      title_zh: '《Plan Right, Then Plan Tight: Symbolic RL for Efficient Embodied Reasoning》（arXiv，2026）',
       authors: 'Xiangli Shi, Xiaomeng Zhu, Ye Tian, Yuchun Guo, Ziyang Sun, Lujie Yin, Yuxuan Zhou, Yufei Huang',
       year: 2026,
       venue: 'arXiv',
@@ -932,7 +952,6 @@
     },
     {
       title_en: 'Leveraging Pre-trained Large Language Models to Construct and Utilize World Models for Model-based Task Planning',
-      title_zh: '《Leveraging Pre-trained Large Language Models to Construct and Utilize World Models for Model-based Task Planning》（Advances in Neural Information Processing Systems (NeurIPS)，2023）',
       authors: 'Lin Guan, Karthik Valmeekam, Sarath Sreedharan, Subbarao Kambhampati',
       year: 2023,
       venue: 'Advances in Neural Information Processing Systems (NeurIPS)',
@@ -942,7 +961,6 @@
     },
     {
       title_en: 'Learning Adaptive Planning Representations with Natural Language Guidance',
-      title_zh: '《Learning Adaptive Planning Representations with Natural Language Guidance》（Proceedings of the International Conference on Learning Representations (ICLR)，2024）',
       authors: 'Lionel Wong, Jiayuan Mao, Pratyusha Sharma, Zachary S. Siegel, Jiahai Feng, Noa Korneev, Joshua B. Tenenbaum, Jacob Andreas',
       year: 2024,
       venue: 'Proceedings of the International Conference on Learning Representations (ICLR)',
@@ -952,7 +970,6 @@
     },
     {
       title_en: 'AutoTAMP: Autoregressive Task and Motion Planning with LLMs as Translators and Checkers',
-      title_zh: '《AutoTAMP: Autoregressive Task and Motion Planning with LLMs as Translators and Checkers》（Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)，2024）',
       authors: 'Yongchao Chen, Jacob Arkin, Charles Dawson, Yang Zhang, Nicholas Roy, Chuchu Fan',
       year: 2024,
       venue: 'Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)',
@@ -962,7 +979,6 @@
     },
     {
       title_en: 'Generalized Planning in PDDL Domains with Pretrained Large Language Models',
-      title_zh: '《Generalized Planning in PDDL Domains with Pretrained Large Language Models》（Proceedings of the AAAI Conference on Artificial Intelligence，2024）',
       authors: 'Tom Silver, Soham Dan, Kavitha Srinivas, Joshua B. Tenenbaum, Leslie Pack Kaelbling, Michael Katz',
       year: 2024,
       venue: 'Proceedings of the AAAI Conference on Artificial Intelligence',
@@ -972,7 +988,6 @@
     },
     {
       title_en: 'Recover: A Neuro-Symbolic Framework for Failure Detection and Recovery',
-      title_zh: '《Recover: A Neuro-Symbolic Framework for Failure Detection and Recovery》（Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)，2024）',
       authors: 'Cristina Cornelio, Mohammed Diab',
       year: 2024,
       venue: 'Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)',
@@ -982,7 +997,6 @@
     },
     {
       title_en: 'Agent2World: Learning to Generate Symbolic World Models via Adaptive Multi-Agent Feedback',
-      title_zh: '《Agent2World: Learning to Generate Symbolic World Models via Adaptive Multi-Agent Feedback》（arXiv，2025）',
       authors: 'Mengkang Hu, Bowei Xia, Yuran Wu, Ailing Yu, Yude Zou, Qiguang Chen, Shijian Wang, Jiarui Jin, Kexin Li, Wenxiang Jiao, Yuan Lu, Ping Luo',
       year: 2025,
       venue: 'arXiv',
@@ -992,7 +1006,6 @@
     },
     {
       title_en: 'End-to-end PDDL Planning with Hardcoded and Dynamic Agents',
-      title_zh: '《End-to-end PDDL Planning with Hardcoded and Dynamic Agents》（arXiv，2025）',
       authors: 'Emanuele La Malfa, Ping Zhu, Samuele Marro, Sara Bernardini, Michael Wooldridge',
       year: 2025,
       venue: 'arXiv',
@@ -1002,7 +1015,6 @@
     },
     {
       title_en: 'Hierarchical Planning for Complex Tasks with Knowledge Graph-RAG and Symbolic Verification',
-      title_zh: '《Hierarchical Planning for Complex Tasks with Knowledge Graph-RAG and Symbolic Verification》（arXiv，2025）',
       authors: 'Cristina Cornelio, Flavio Petruzzellis, Pietro Liò',
       year: 2025,
       venue: 'arXiv',
@@ -1012,7 +1024,6 @@
     },
     {
       title_en: 'LLM-KGPlan: Long-Horizon Task Planning via Knowledge-Guided Reasoning',
-      title_zh: '《LLM-KGPlan: Long-Horizon Task Planning via Knowledge-Guided Reasoning》（Proceedings of the Pacific Rim International Conference on Artificial Intelligence (PRICAI)，2025）',
       authors: 'Wei Fang, Dingyu Yang, Niansheng Chen, Guangyu Fan, Lei Rao, Songlin Cheng, Xiaoyong Song, Yingzhou Yu',
       year: 2025,
       venue: 'Proceedings of the Pacific Rim International Conference on Artificial Intelligence (PRICAI)',
@@ -1022,7 +1033,6 @@
     },
     {
       title_en: 'Metagent-P: A Neuro-Symbolic Planning Agent with Metacognition for Open Worlds',
-      title_zh: '《Metagent-P: A Neuro-Symbolic Planning Agent with Metacognition for Open Worlds》（Findings of the Association for Computational Linguistics，2025）',
       authors: 'Yanfang Zhou, Yuntao Liu, Xiaodong Li, Yongqiang Zhao, Xintong Wang, Jinlong Tian, Zhenyu Li, Xinhai Xu',
       year: 2025,
       venue: 'Findings of the Association for Computational Linguistics',
@@ -1032,7 +1042,6 @@
     },
     {
       title_en: 'Neuro-Symbolic Task Replanning Using Large Language Models',
-      title_zh: '《Neuro-Symbolic Task Replanning Using Large Language Models》（Journal of Korea Robotics Society，2025）',
       authors: 'Minseo Kwon, Young J. Kim',
       year: 2025,
       venue: 'Journal of Korea Robotics Society',
@@ -1042,7 +1051,6 @@
     },
     {
       title_en: 'Breaking the Self-Evaluation Barrier: Reinforced Neuro-Symbolic Planning with Large Language Models',
-      title_zh: '《Breaking the Self-Evaluation Barrier: Reinforced Neuro-Symbolic Planning with Large Language Models》（Proceedings of the International Joint Conference on Artificial Intelligence (IJCAI)，2025）',
       authors: 'Jie-Jing Shao, Hong-Jie You, Guohao Cai, Quanyu Dai, Zhenhua Dong, Lan-Zhe Guo',
       year: 2025,
       venue: 'Proceedings of the International Joint Conference on Artificial Intelligence (IJCAI)',
@@ -1052,7 +1060,6 @@
     },
     {
       title_en: 'SPAR: Scalable LLM-based PDDL Domain Generation for Aerial Robotics',
-      title_zh: '《SPAR: Scalable LLM-based PDDL Domain Generation for Aerial Robotics》（arXiv，2025）',
       authors: 'Songhao Huang, Yuwei Wu, Guangyao Shi, Gaurav S. Sukhatme, Vijay Kumar',
       year: 2025,
       venue: 'arXiv',
@@ -1062,7 +1069,6 @@
     },
     {
       title_en: 'WALL-E 2.0: World Alignment by NeuroSymbolic Learning improves World Model-based LLM Agents',
-      title_zh: '《WALL-E 2.0: World Alignment by NeuroSymbolic Learning improves World Model-based LLM Agents》（arXiv，2025）',
       authors: 'Siyu Zhou, Tianyi Zhou, Yijun Yang, Guodong Long, Deheng Ye, Jing Jiang, Chengqi Zhang',
       year: 2025,
       venue: 'arXiv',
@@ -1072,7 +1078,6 @@
     },
     {
       title_en: 'As You Wish: Mission Planning with Formal Verification Using LLMs in Precision Agriculture',
-      title_zh: '《As You Wish: Mission Planning with Formal Verification Using LLMs in Precision Agriculture》（Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)，2026）',
       authors: 'Marcos Abel Zuzuárregui, Stefano Carpin',
       year: 2026,
       venue: 'Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)',
@@ -1082,7 +1087,6 @@
     },
     {
       title_en: 'DUPLEX: Agentic Dual-System Planning via LLM-Driven Information Extraction',
-      title_zh: '《DUPLEX: Agentic Dual-System Planning via LLM-Driven Information Extraction》（arXiv，2026）',
       authors: 'Keru Hua, Ding Wang, Yaoying Gu, Xiaoguang Ma',
       year: 2026,
       venue: 'arXiv',
@@ -1092,7 +1096,6 @@
     },
     {
       title_en: 'GraphThink: Graph-Enhanced LLM Thinking for Long-Horizon Embodied Task Planning',
-      title_zh: '《GraphThink: Graph-Enhanced LLM Thinking for Long-Horizon Embodied Task Planning》（arXiv，2026）',
       authors: 'Chen Li, Sijie Cheng, Yuelin Zhang, Junxi Li, Maozhi Huang, Yang Liu, Wenbing Huang',
       year: 2026,
       venue: 'arXiv',
@@ -1102,7 +1105,6 @@
     },
     {
       title_en: 'Hierarchical LLM-Based Multi-Agent Framework with Prompt Optimization for Multi-Robot Task Planning',
-      title_zh: '《Hierarchical LLM-Based Multi-Agent Framework with Prompt Optimization for Multi-Robot Task Planning》（arXiv，2026）',
       authors: 'Tomoya Kawabe, Rin Takano',
       year: 2026,
       venue: 'arXiv',
@@ -1112,7 +1114,6 @@
     },
     {
       title_en: 'Agentic Neuro-Symbolic Planning and Commissioning for Human-in-the-Loop Industrial Robotics with Digital Twins',
-      title_zh: '《Agentic Neuro-Symbolic Planning and Commissioning for Human-in-the-Loop Industrial Robotics with Digital Twins》（arXiv，2026）',
       authors: 'Zhihao Liu, Victor Nan Fernandez-Ayala, Tianyu Wang, Qiang Qin, Xi Vincent Wang, Dimos V. Dimarogonas, Lihui Wang',
       year: 2026,
       venue: 'arXiv',
@@ -1122,7 +1123,6 @@
     },
     {
       title_en: 'LLM-Flax: Generalizable Robotic Task Planning via Neuro-Symbolic Approaches with Large Language Models',
-      title_zh: '《LLM-Flax: Generalizable Robotic Task Planning via Neuro-Symbolic Approaches with Large Language Models》（arXiv，2026）',
       authors: 'Seongmin Kim, Daegyu Lee',
       year: 2026,
       venue: 'arXiv',
@@ -1132,7 +1132,6 @@
     },
     {
       title_en: 'Neuro-symbolic Hierarchical Learning for Long-Horizon Robotic Tasks',
-      title_zh: '《Neuro-symbolic Hierarchical Learning for Long-Horizon Robotic Tasks》（Proceedings of the ACM on Programming Languages，2026）',
       authors: 'Yu Huang, Ziji Wu, Zhengyi Ma, Kexin Ma, Ji Wang',
       year: 2026,
       venue: 'Proceedings of the ACM on Programming Languages',
@@ -1142,7 +1141,6 @@
     },
     {
       title_en: 'Novelty Adaptation Through Hybrid Large Language Model (LLM)-Symbolic Planning and LLM-guided Reinforcement Learning',
-      title_zh: '《Novelty Adaptation Through Hybrid Large Language Model (LLM)-Symbolic Planning and LLM-guided Reinforcement Learning》（arXiv，2026）',
       authors: 'Hong Lu, Pierrick Lorang, Timothy R. Duggan, Jivko Sinapov, Matthias Scheutz',
       year: 2026,
       venue: 'arXiv',
@@ -1152,7 +1150,6 @@
     },
     {
       title_en: 'OPINE-World: Programmatic World Modeling with Ontology-error-Prioritized Interactive Exploration for ARC-AGI-3',
-      title_zh: '《OPINE-World: Programmatic World Modeling with Ontology-error-Prioritized Interactive Exploration for ARC-AGI-3》（arXiv，2026）',
       authors: 'David Courtis, Wenhao Li, Scott Sanner',
       year: 2026,
       venue: 'arXiv',
@@ -1162,7 +1159,6 @@
     },
     {
       title_en: 'PDDLCoder: Agentic PDDL Generation for LLM-Assisted Symbolic Planning',
-      title_zh: '《PDDLCoder: Agentic PDDL Generation for LLM-Assisted Symbolic Planning》（arXiv，2026）',
       authors: 'Veit Laule, Jiangtao Shuai, Manfred Hauswirth, Sonja Schimmler',
       year: 2026,
       venue: 'arXiv',
@@ -1172,7 +1168,6 @@
     },
     {
       title_en: 'Toward Secure and Reliable PDDL Formalization of Large Language Models with Planner-in-the-Loop Feedback',
-      title_zh: '《Toward Secure and Reliable PDDL Formalization of Large Language Models with Planner-in-the-Loop Feedback》（Proceedings of the IEEE International Conference on Intelligence and Security Informatics (ISI)，2026）',
       authors: 'Jiamei Jiang, Jiajing Zhang, Feifei Mo, Linjing Li, Daniel Zeng',
       year: 2026,
       venue: 'Proceedings of the IEEE International Conference on Intelligence and Security Informatics (ISI)',
@@ -1182,7 +1177,6 @@
     },
     {
       title_en: 'Robot Planning via LLM Proposals and Symbolic Verification',
-      title_zh: '《Robot Planning via LLM Proposals and Symbolic Verification》（Machine Learning and Knowledge Extraction，2026）',
       authors: 'Drejc Pesjak, Jure Žabkar',
       year: 2026,
       venue: 'Machine Learning and Knowledge Extraction',
@@ -1192,7 +1186,6 @@
     },
     {
       title_en: 'Towards Reliable and Robust LLM Planning: A Symbolic Feedback-Driven Iterative Self-Refinement Framework',
-      title_zh: '《Towards Reliable and Robust LLM Planning: A Symbolic Feedback-Driven Iterative Self-Refinement Framework》（Proceedings of the IEEE International Conference on Intelligence and Security Informatics (ISI)，2026）',
       authors: 'Jiajing Zhang, Jiamei Jiang, Chenyang Zhang, Feifei Mo, Linjing Li, Daniel Zeng',
       year: 2026,
       venue: 'Proceedings of the IEEE International Conference on Intelligence and Security Informatics (ISI)',
@@ -1202,7 +1195,6 @@
     },
     {
       title_en: 'Training the Orchestrator: A Supervised Approach to End-to-End PDDL Planning with LLM Agents',
-      title_zh: '《Training the Orchestrator: A Supervised Approach to End-to-End PDDL Planning with LLM Agents》（arXiv，2026）',
       authors: 'Rajesh Mangannavar, Zachary Coalson, Pranay Dugar, Prasad Tadepalli',
       year: 2026,
       venue: 'arXiv',
@@ -1212,7 +1204,6 @@
     },
     {
       title_en: 'Executable Agentic Memory for GUI Agent',
-      title_zh: '《Executable Agentic Memory for GUI Agent》（arXiv，2026）',
       authors: 'Zerui Qin, Sheng Yue, Xingyuan Hua, Yongjian Fu, Ju Ren',
       year: 2026,
       venue: 'arXiv',
@@ -1222,7 +1213,6 @@
     },
     {
       title_en: 'Seeing, Saying, Solving: An LLM-to-TL Framework for Cooperative Robots',
-      title_zh: '《Seeing, Saying, Solving: An LLM-to-TL Framework for Cooperative Robots》（arXiv，2025）',
       authors: 'Dan BW Choe, Sundhar Vinodh Sangeetha, Steven Emanuel, Chih-Yuan Chiu, Samuel Coogan, Shreyas Kousik',
       year: 2025,
       venue: 'arXiv',
@@ -1232,7 +1222,6 @@
     },
     {
       title_en: 'Linear Temporal Logic Translation via Human-Inspired Self-Constrained Reasoning for Robot Task Specification',
-      title_zh: '《Linear Temporal Logic Translation via Human-Inspired Self-Constrained Reasoning for Robot Task Specification》（arXiv，2026）',
       authors: 'Haofei Hou, Fanxu Meng, Shunyi Zhao, Kairui Yang, Mengchen Cai, Lecheng Ruan, Qining Wang',
       year: 2026,
       venue: 'arXiv',
@@ -1242,7 +1231,6 @@
     },
     {
       title_en: 'SymAgent: A Neural-Symbolic Self-Learning Agent Framework for Complex Reasoning over Knowledge Graphs',
-      title_zh: '《SymAgent: A Neural-Symbolic Self-Learning Agent Framework for Complex Reasoning over Knowledge Graphs》（Proceedings of the ACM Web Conference (WWW)，2025）',
       authors: 'Ben Liu, Jihai Zhang, Fangquan Lin, Cheng Yang, Min Peng, Wotao Yin',
       year: 2025,
       venue: 'Proceedings of the ACM Web Conference (WWW)',
@@ -1252,7 +1240,6 @@
     },
     {
       title_en: 'Toward Effective and Reliable LLM Agents via Dynamic Ontology',
-      title_zh: '《Toward Effective and Reliable LLM Agents via Dynamic Ontology》（arXiv，2026）',
       authors: 'Xiaohui Zhang, Zequn Sun, Chengyuan Yang, Yuanning Cui, Lingbing Guo, Wei Hu',
       year: 2026,
       venue: 'arXiv',
@@ -1262,7 +1249,6 @@
     },
     {
       title_en: 'KG-Agent: An Efficient Autonomous Agent Framework for Complex Reasoning over Knowledge Graph',
-      title_zh: '《KG-Agent: An Efficient Autonomous Agent Framework for Complex Reasoning over Knowledge Graph》（Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)，2024）',
       authors: 'Jinhao Jiang, Kun Zhou, Wayne Xin Zhao, Yang Song, Chen Zhu, Hengshu Zhu, Ji-Rong Wen',
       year: 2024,
       venue: 'Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)',
@@ -1272,7 +1258,6 @@
     },
     {
       title_en: 'Optimus-1: Hybrid Multimodal Memory Empowered Agents Excel in Long-Horizon Tasks',
-      title_zh: '《Optimus-1: Hybrid Multimodal Memory Empowered Agents Excel in Long-Horizon Tasks》（Advances in Neural Information Processing Systems (NeurIPS)，2024）',
       authors: 'Zaijing Li, Yuquan Xie, Rui Shao, Gongwei Chen, Dongmei Jiang, Liqiang Nie',
       year: 2024,
       venue: 'Advances in Neural Information Processing Systems (NeurIPS)',
@@ -1282,7 +1267,6 @@
     },
     {
       title_en: 'Reasoning on Graphs: Faithful and Interpretable Large Language Model Reasoning',
-      title_zh: '《Reasoning on Graphs: Faithful and Interpretable Large Language Model Reasoning》（Proceedings of the International Conference on Learning Representations (ICLR)，2024）',
       authors: 'Linhao Luo, Yuan-Fang Li, Gholamreza Haffari, Shirui Pan',
       year: 2024,
       venue: 'Proceedings of the International Conference on Learning Representations (ICLR)',
@@ -1292,7 +1276,6 @@
     },
     {
       title_en: 'Think-on-Graph: Deep and Responsible Reasoning of Large Language Model on Knowledge Graph',
-      title_zh: '《Think-on-Graph: Deep and Responsible Reasoning of Large Language Model on Knowledge Graph》（Proceedings of the International Conference on Learning Representations (ICLR)，2024）',
       authors: 'Jiashuo Sun, Chengjin Xu, Lumingyuan Tang, Saizhuo Wang, Chen Lin, Yeyun Gong, Lionel M. Ni, Heung-Yeung Shum, Jian Guo',
       year: 2024,
       venue: 'Proceedings of the International Conference on Learning Representations (ICLR)',
@@ -1302,7 +1285,6 @@
     },
     {
       title_en: 'CoEx – Co-evolving World-model and Exploration',
-      title_zh: '《CoEx – Co-evolving World-model and Exploration》（arXiv，2025）',
       authors: 'Minsoo Kim, Seung-won Hwang',
       year: 2025,
       venue: 'arXiv',
@@ -1312,7 +1294,6 @@
     },
     {
       title_en: 'Exemplar-Guided Planing: Enhanced LLM Agent for KGQA',
-      title_zh: '《Exemplar-Guided Planing: Enhanced LLM Agent for KGQA》（arXiv，2025）',
       authors: 'Jingao Xu, Shuoyoucheng Ma, Xin Song, Rong Jiang, Hongkui Tu, Bin Zhou',
       year: 2025,
       venue: 'arXiv',
@@ -1322,7 +1303,6 @@
     },
     {
       title_en: 'Memory-augmented Query Reconstruction for LLM-based Knowledge Graph Reasoning',
-      title_zh: '《Memory-augmented Query Reconstruction for LLM-based Knowledge Graph Reasoning》（Findings of the Association for Computational Linguistics，2025）',
       authors: 'Mufan Xu, Gewen Liang, Kehai Chen, Wei Wang, Xun Zhou, Muyun Yang, Tiejun Zhao, Min Zhang',
       year: 2025,
       venue: 'Findings of the Association for Computational Linguistics',
@@ -1332,7 +1312,6 @@
     },
     {
       title_en: 'MemoTime: Memory-Augmented Temporal Knowledge Graph Enhanced Large Language Model Reasoning',
-      title_zh: '《MemoTime: Memory-Augmented Temporal Knowledge Graph Enhanced Large Language Model Reasoning》（arXiv，2025）',
       authors: 'Xingyu Tan, Xiaoyang Wang, Qing Liu, Xiwei Xu, Xin Yuan, Liming Zhu, Wenjie Zhang',
       year: 2025,
       venue: 'arXiv',
@@ -1342,7 +1321,6 @@
     },
     {
       title_en: 'SEAL: Self-Evolving Agentic Learning for Conversational Question Answering over Knowledge Graphs',
-      title_zh: '《SEAL: Self-Evolving Agentic Learning for Conversational Question Answering over Knowledge Graphs》（arXiv，2025）',
       authors: 'Hao Wang, Jialun Zhong, Changcheng Wang, Zhujun Nie, Zheng Li, Shunyu Yao, Yanzeng Li, Xinchi Li',
       year: 2025,
       venue: 'arXiv',
@@ -1352,7 +1330,6 @@
     },
     {
       title_en: 'SimGRAG: Leveraging Similar Subgraphs for Knowledge Graph-Driven Retrieval-Augmented Generation',
-      title_zh: '《SimGRAG: Leveraging Similar Subgraphs for Knowledge Graph-Driven Retrieval-Augmented Generation》（Findings of the Association for Computational Linguistics，2025）',
       authors: 'Yuzheng Cai, Zhenyue Guo, YiWen Pei, WanRui Bian, Weiguo Zheng',
       year: 2025,
       venue: 'Findings of the Association for Computational Linguistics',
@@ -1362,7 +1339,6 @@
     },
     {
       title_en: 'APEX-MEM: Agentic Semi-Structured Memory with Temporal Reasoning for Long-Term Conversational AI',
-      title_zh: '《APEX-MEM: Agentic Semi-Structured Memory with Temporal Reasoning for Long-Term Conversational AI》（Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)，2026）',
       authors: 'Pratyay Banerjee, Masud Moshtaghi, Shivashankar Subramanian, Amita Misra, Ankit Chadha',
       year: 2026,
       venue: 'Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)',
@@ -1372,7 +1348,6 @@
     },
     {
       title_en: 'CLAUSE: Agentic Neuro-Symbolic Knowledge Graph Reasoning via Dynamic Learnable Context Engineering',
-      title_zh: '《CLAUSE: Agentic Neuro-Symbolic Knowledge Graph Reasoning via Dynamic Learnable Context Engineering》（Proceedings of the International Conference on Learning Representations (ICLR)，2026）',
       authors: 'Yang Zhao, Chengxiao Dai, Wei Zhuo, Yue Xiu, Dusit Niyato',
       year: 2026,
       venue: 'Proceedings of the International Conference on Learning Representations (ICLR)',
@@ -1382,7 +1357,6 @@
     },
     {
       title_en: 'CoTPR: Chain-of-Thought-Enhanced Path Planning and Retrieval for Faithful Knowledge Graph Question Answering',
-      title_zh: '《CoTPR: Chain-of-Thought-Enhanced Path Planning and Retrieval for Faithful Knowledge Graph Question Answering》（IEEE Internet of Things Journal，2026）',
       authors: 'Yijie Chen, Shijun Li, Bin Liu, Shixin Huo, Kunying Xu, Zeshen Zhang, Yong Xie',
       year: 2026,
       venue: 'IEEE Internet of Things Journal',
@@ -1392,7 +1366,6 @@
     },
     {
       title_en: 'Less Context, More Accuracy: A Bi-Temporal Memory Engine for LLM Agents Where a Lean Retrieved Context Beats the Full History',
-      title_zh: '《Less Context, More Accuracy: A Bi-Temporal Memory Engine for LLM Agents Where a Lean Retrieved Context Beats the Full History》（arXiv，2026）',
       authors: 'Liuyin Wang',
       year: 2026,
       venue: 'arXiv',
@@ -1402,7 +1375,6 @@
     },
     {
       title_en: 'MARS: Multi-hop Adaptive Retrieval and SPARQL Generation for KGQA',
-      title_zh: '《MARS: Multi-hop Adaptive Retrieval and SPARQL Generation for KGQA》（arXiv，2026）',
       authors: 'Nikit Srivastava, Daniel Vollmers, René Speck, Nikolaos Karalis, Hamada M. Zahera, Axel-Cyrille Ngonga Ngomo',
       year: 2026,
       venue: 'arXiv',
@@ -1412,7 +1384,6 @@
     },
     {
       title_en: 'Ontology-Grounded Project Memory for Coding Agents',
-      title_zh: '《Ontology-Grounded Project Memory for Coding Agents》（Proceedings of the International Conference on Neural-Symbolic Learning and Reasoning (NeSy), Industry Track，2026）',
       authors: 'James Adam',
       year: 2026,
       venue: 'Proceedings of the International Conference on Neural-Symbolic Learning and Reasoning (NeSy), Industry Track',
@@ -1422,7 +1393,6 @@
     },
     {
       title_en: 'MemGraphRAG: Memory-based Multi-Agent System for Graph Retrieval-Augmented Generation',
-      title_zh: '《MemGraphRAG: Memory-based Multi-Agent System for Graph Retrieval-Augmented Generation》（Proceedings of the ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD)，2026）',
       authors: 'Chuanjie Wu, Zhishang Xiang, Yunbo Tang, Zerui Chen, Qinggang Zhang, Jinsong Su',
       year: 2026,
       venue: 'Proceedings of the ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD)',
@@ -1432,7 +1402,6 @@
     },
     {
       title_en: 'NeuSymMS: A Hybrid Neuro-Symbolic Memory System for LLM Agents',
-      title_zh: '《NeuSymMS: A Hybrid Neuro-Symbolic Memory System for LLM Agents》（arXiv，2026）',
       authors: 'Mujahid Sultan, Sri Thuraisamy, Daya Rajaratnam',
       year: 2026,
       venue: 'arXiv',
@@ -1442,7 +1411,6 @@
     },
     {
       title_en: 'PortfoliQA: An Agentic RAG Framework for Knowledge Graph Question Answering via Structured Evidence Portfolios',
-      title_zh: '《PortfoliQA: An Agentic RAG Framework for Knowledge Graph Question Answering via Structured Evidence Portfolios》（Proceedings of the 25th International Conference on Autonomous Agents and Multiagent Systems (AAMAS)，2026）',
       authors: 'Weina Zhang, Junsheng Huang, Zhongqin Bi, Dan Dai',
       year: 2026,
       venue: 'Proceedings of the 25th International Conference on Autonomous Agents and Multiagent Systems (AAMAS)',
@@ -1452,7 +1420,6 @@
     },
     {
       title_en: 'Towards Researcher Agents for Knowledge-Graph Question Answering',
-      title_zh: '《Towards Researcher Agents for Knowledge-Graph Question Answering》（arXiv，2026）',
       authors: 'Tommaso Soru, Abdulsobur Oyewale',
       year: 2026,
       venue: 'arXiv',
@@ -1462,7 +1429,6 @@
     },
     {
       title_en: 'SCAIR: Schema-Conditioned Agentic Iterative Reasoning for Enterprise Knowledge Graphs',
-      title_zh: '《SCAIR: Schema-Conditioned Agentic Iterative Reasoning for Enterprise Knowledge Graphs》（arXiv，2026）',
       authors: 'Prateek Chaturvedi, Yuqicheng Zhu, Hongkuan Zhou, Dongzhuoran Zhou, Yunjie He, Steffen Staab, Fei Du, Jie Tang, Evgeny Kharlamov',
       year: 2026,
       venue: 'arXiv',
@@ -1472,7 +1438,6 @@
     },
     {
       title_en: 'Selective Forgetting: A Graph-Based Memory Framework for Long-Term LLM Agents',
-      title_zh: '《Selective Forgetting: A Graph-Based Memory Framework for Long-Term LLM Agents》（arXiv，2026）',
       authors: 'Theo Rusu, Sourena Khanzadeh, Manar Alalfi',
       year: 2026,
       venue: 'arXiv',
@@ -1482,7 +1447,6 @@
     },
     {
       title_en: 'TRiM-KG: A Temporal Memory Knowledge Graph for Network Management Reasoning in LLM Agents',
-      title_zh: '《TRiM-KG: A Temporal Memory Knowledge Graph for Network Management Reasoning in LLM Agents》（2026 International Conference on Networking and Network Applications (NaNA)，2026）',
       authors: 'Ming Li, Tao Xue',
       year: 2026,
       venue: '2026 International Conference on Networking and Network Applications (NaNA)',
@@ -1492,7 +1456,6 @@
     },
     {
       title_en: 'WorldDB: A Vector Graph-of-Worlds Memory Engine with Ontology-Aware Write-Time Reconciliation',
-      title_zh: '《WorldDB: A Vector Graph-of-Worlds Memory Engine with Ontology-Aware Write-Time Reconciliation》（arXiv，2026）',
       authors: 'Harish Santhanalakshmi Ganesan',
       year: 2026,
       venue: 'arXiv',
@@ -1502,7 +1465,6 @@
     },
     {
       title_en: 'Voyager: An Open-Ended Embodied Agent with Large Language Models',
-      title_zh: '《Voyager: An Open-Ended Embodied Agent with Large Language Models》（arXiv，2023）',
       authors: 'Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, Anima Anandkumar',
       year: 2023,
       venue: 'arXiv',
@@ -1512,7 +1474,6 @@
     },
     {
       title_en: 'Crafting Personalized Agents through Retrieval-Augmented Generation on Editable Memory Graphs',
-      title_zh: '《Crafting Personalized Agents through Retrieval-Augmented Generation on Editable Memory Graphs》（Proceedings of the Conference on Empirical Methods in Natural Language Processing (EMNLP)，2024）',
       authors: 'Zheng Wang, Zhongyang Li, Zeren Jiang, Dandan Tu, Wei Shi',
       year: 2024,
       venue: 'Proceedings of the Conference on Empirical Methods in Natural Language Processing (EMNLP)',
@@ -1522,7 +1483,6 @@
     },
     {
       title_en: 'AriGraph: Learning Knowledge Graph World Models with Episodic Memory for LLM Agents',
-      title_zh: '《AriGraph: Learning Knowledge Graph World Models with Episodic Memory for LLM Agents》（Proceedings of the International Joint Conference on Artificial Intelligence (IJCAI)，2025）',
       authors: 'Petr Anokhin, Nikita Semenov, Artyom Sorokin, Dmitry Evseev, Andrey Kravchenko, Mikhail Burtsev, Evgeny Burnaev',
       year: 2025,
       venue: 'Proceedings of the International Joint Conference on Artificial Intelligence (IJCAI)',
@@ -1532,7 +1492,6 @@
     },
     {
       title_en: 'Cognitive Weave: Synthesizing Abstracted Knowledge with a Spatio-Temporal Resonance Graph',
-      title_zh: '《Cognitive Weave: Synthesizing Abstracted Knowledge with a Spatio-Temporal Resonance Graph》（arXiv，2025）',
       authors: 'Akash Vishwakarma, Hojin Lee, Mohith Suresh, Priyam Shankar Sharma, Rahul Vishwakarma, Sparsh Gupta, Yuvraj Anupam Chauhan',
       year: 2025,
       venue: 'arXiv',
@@ -1542,7 +1501,6 @@
     },
     {
       title_en: 'D-SMART: Enhancing LLM Dialogue Consistency via Dynamic Structured Memory and Reasoning Tree',
-      title_zh: '《D-SMART: Enhancing LLM Dialogue Consistency via Dynamic Structured Memory and Reasoning Tree》（arXiv，2025）',
       authors: 'Xiang Lei, Qin Li, Min Zhang, Min Zhang',
       year: 2025,
       venue: 'arXiv',
@@ -1552,7 +1510,6 @@
     },
     {
       title_en: 'LLM-Powered Decentralized Generative Agents with Adaptive Hierarchical Knowledge Graph for Cooperative Planning',
-      title_zh: '《LLM-Powered Decentralized Generative Agents with Adaptive Hierarchical Knowledge Graph for Cooperative Planning》（arXiv，2025）',
       authors: 'Hanqing Yang, Jingdi Chen, Marie Siew, Tania Lorido-Botran, Carlee Joe-Wong',
       year: 2025,
       venue: 'arXiv',
@@ -1562,7 +1519,6 @@
     },
     {
       title_en: 'G-Memory: Tracing Hierarchical Memory for Multi-Agent Systems',
-      title_zh: '《G-Memory: Tracing Hierarchical Memory for Multi-Agent Systems》（Advances in Neural Information Processing Systems (NeurIPS)，2025）',
       authors: 'Guibin Zhang, Muxin Fu, Guancheng Wan, Miao Yu, Kun Wang, Shuicheng Yan',
       year: 2025,
       venue: 'Advances in Neural Information Processing Systems (NeurIPS)',
@@ -1572,7 +1528,6 @@
     },
     {
       title_en: 'A Grounded Memory System For Smart Personal Assistants',
-      title_zh: '《A Grounded Memory System For Smart Personal Assistants》（arXiv，2025）',
       authors: 'Felix Ocker, Jörg Deigmöller, Pavel Smirnov, Julian Eggert',
       year: 2025,
       venue: 'arXiv',
@@ -1582,7 +1537,6 @@
     },
     {
       title_en: 'HyperGraphRAG: Retrieval-Augmented Generation via Hypergraph-Structured Knowledge Representation',
-      title_zh: '《HyperGraphRAG: Retrieval-Augmented Generation via Hypergraph-Structured Knowledge Representation》（Advances in Neural Information Processing Systems (NeurIPS)，2025）',
       authors: 'Haoran Luo, Haihong E, Guanting Chen, Yandan Zheng, Xiaobao Wu, Yikai Guo, Qika Lin, Yu Feng, Zemin Kuang, Meina Song, Yifan Zhu, Luu Anh Tuan',
       year: 2025,
       venue: 'Advances in Neural Information Processing Systems (NeurIPS)',
@@ -1592,7 +1546,6 @@
     },
     {
       title_en: 'LiCoMemory: Lightweight and Cognitive Agentic Memory for Efficient Long-Term Reasoning',
-      title_zh: '《LiCoMemory: Lightweight and Cognitive Agentic Memory for Efficient Long-Term Reasoning》（Findings of the Association for Computational Linguistics，2025）',
       authors: 'Zhengjun Huang, Zhoujin Tian, Qintian Guo, Fangyuan Zhang, Yingli Zhou, Di Jiang, Zeying Xie, Xiaofang Zhou',
       year: 2025,
       venue: 'Findings of the Association for Computational Linguistics',
@@ -1602,7 +1555,6 @@
     },
     {
       title_en: 'Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory',
-      title_zh: '《Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory》（Proceedings of the European Conference on Artificial Intelligence (ECAI)，2025）',
       authors: 'Prateek Chhikara, Dev Khant, Saket Aryan, Taranjeet Singh, Deshraj Yadav',
       year: 2025,
       venue: 'Proceedings of the European Conference on Artificial Intelligence (ECAI)',
@@ -1612,7 +1564,6 @@
     },
     {
       title_en: 'MemLLM: Finetuning LLMs to Use an Explicit Read-Write Memory',
-      title_zh: '《MemLLM: Finetuning LLMs to Use an Explicit Read-Write Memory》（Transactions on Machine Learning Research，2025）',
       authors: 'Ali Modarressi, Abdullatif Köksal, Ayyoob Imani, Mohsen Fayyaz, Hinrich Schütze',
       year: 2025,
       venue: 'Transactions on Machine Learning Research',
@@ -1622,7 +1573,6 @@
     },
     {
       title_en: 'Memoria: A Scalable Agentic Memory Framework for Personalized Conversational AI',
-      title_zh: '《Memoria: A Scalable Agentic Memory Framework for Personalized Conversational AI》（arXiv，2025）',
       authors: 'Samarth Sarin, Lovepreet Singh, Bhaskarjit Sarmah, Dhagash Mehta',
       year: 2025,
       venue: 'arXiv',
@@ -1632,7 +1582,6 @@
     },
     {
       title_en: 'PersonalAI: A Systematic Comparison of Knowledge Graph Storage and Retrieval Approaches for Personalized LLM Agents',
-      title_zh: '《PersonalAI: A Systematic Comparison of Knowledge Graph Storage and Retrieval Approaches for Personalized LLM Agents》（IEEE Access，2025）',
       authors: 'Mikhail Menschikov, Dmitry Evseev, Victoria Dochkina, Ruslan Kostoev, Ilia Perepechkin, Petr Anokhin, Nikita Semenov, Evgeny Burnaev',
       year: 2025,
       venue: 'IEEE Access',
@@ -1642,7 +1591,6 @@
     },
     {
       title_en: 'TReMu: Neuro-Symbolic Temporal Reasoning for LLM-Agents with Memory in Multi-Session Dialogues',
-      title_zh: '《TReMu: Neuro-Symbolic Temporal Reasoning for LLM-Agents with Memory in Multi-Session Dialogues》（Findings of the Association for Computational Linguistics，2025）',
       authors: 'Yubin Ge, Salvatore Romeo, Jason Cai, Raphael Shu, Monica Sunkara, Yassine Benajiba, Yi Zhang',
       year: 2025,
       venue: 'Findings of the Association for Computational Linguistics',
@@ -1652,7 +1600,6 @@
     },
     {
       title_en: 'From Experience to Strategy: Empowering LLM Agents with Trainable Graph Memory',
-      title_zh: '《From Experience to Strategy: Empowering LLM Agents with Trainable Graph Memory》（arXiv，2025）',
       authors: 'Siyu Xia, Zekun Xu, Jiajun Chai, Wentian Fan, Yan Song, Xiaohan Wang, Guojun Yin, Wei Lin, Haifeng Zhang, Jun Wang',
       year: 2025,
       venue: 'arXiv',
@@ -1662,7 +1609,6 @@
     },
     {
       title_en: 'Zep: A Temporal Knowledge Graph Architecture for Agent Memory',
-      title_zh: '《Zep: A Temporal Knowledge Graph Architecture for Agent Memory》（arXiv，2025）',
       authors: 'Preston Rasmussen, Pavlo Paliychuk, Travis Beauvais, Jack Ryan, Daniel Chalef',
       year: 2025,
       venue: 'arXiv',
@@ -1672,7 +1618,6 @@
     },
     {
       title_en: 'APEX-EM: Non-Parametric Online Learning for Autonomous Agents via Structured Procedural-Episodic Experience Replay',
-      title_zh: '《APEX-EM: Non-Parametric Online Learning for Autonomous Agents via Structured Procedural-Episodic Experience Replay》（arXiv，2026）',
       authors: 'Pratyay Banerjee, Masud Moshtaghi, Ankit Chadha',
       year: 2026,
       venue: 'arXiv',
@@ -1682,7 +1627,6 @@
     },
     {
       title_en: 'ARIS: Agentic and Relationship Intelligence System for Social Robots',
-      title_zh: '《ARIS: Agentic and Relationship Intelligence System for Social Robots》（arXiv，2026）',
       authors: 'Stavya Datta, Fucai Ke, Leimin Tian, Hamid Rezatofighi',
       year: 2026,
       venue: 'arXiv',
@@ -1692,7 +1636,6 @@
     },
     {
       title_en: 'Choosing How to Remember: Adaptive Memory Structures for LLM Agents',
-      title_zh: '《Choosing How to Remember: Adaptive Memory Structures for LLM Agents》（arXiv，2026）',
       authors: 'Mingfei Lu, Mengjia Wu, Feng Liu, Jiawei Xu, Weikai Li, Haoyang Wang, Zhengdong Hu, Ying Ding, Yizhou Sun, Jie Lu, Yi Zhang',
       year: 2026,
       venue: 'arXiv',
@@ -1702,7 +1645,6 @@
     },
     {
       title_en: 'Agent Zero Memory: Provenance-Aware Long-Term Memory for LLM Agents',
-      title_zh: '《Agent Zero Memory: Provenance-Aware Long-Term Memory for LLM Agents》（arXiv，2026）',
       authors: 'Ming Wu, Pengyuan Zhu',
       year: 2026,
       venue: 'arXiv',
@@ -1712,7 +1654,6 @@
     },
     {
       title_en: 'From Atom to Community: Structured and Evolving Agent Memory for User Behavior Modeling',
-      title_zh: '《From Atom to Community: Structured and Evolving Agent Memory for User Behavior Modeling》（arXiv，2026）',
       authors: 'Yuxin Liao, Le Wu, Min Hou, Yu Wang, Han Wu, Meng Wang',
       year: 2026,
       venue: 'arXiv',
@@ -1722,7 +1663,6 @@
     },
     {
       title_en: 'CraniMem: Cranial Inspired Gated and Bounded Memory for Agentic Systems',
-      title_zh: '《CraniMem: Cranial Inspired Gated and Bounded Memory for Agentic Systems》（arXiv，2026）',
       authors: 'Pearl Mody, Mihir Panchal, Rishit Kar, Kiran Bhowmick, Ruhina Karani',
       year: 2026,
       venue: 'arXiv',
@@ -1732,7 +1672,6 @@
     },
     {
       title_en: 'ECHO: A Locally-Deployable Agentic Health Assistant with Temporal Memory, Safety Guardrails, and Speech Assessment',
-      title_zh: '《ECHO: A Locally-Deployable Agentic Health Assistant with Temporal Memory, Safety Guardrails, and Speech Assessment》（arXiv，2026）',
       authors: 'Abdulkadir Külçe, Alihan Esen, Çağla Fikir, Berke Kurt, Kuzey Arar, Gökhan Ercan, Faik Boray Tek',
       year: 2026,
       venue: 'arXiv',
@@ -1742,7 +1681,6 @@
     },
     {
       title_en: 'The EpisTwin: A Knowledge Graph-Grounded Neuro-Symbolic Architecture for Personal AI',
-      title_zh: '《The EpisTwin: A Knowledge Graph-Grounded Neuro-Symbolic Architecture for Personal AI》（arXiv，2026）',
       authors: 'Giovanni Servedio, Potito Aghilar, Alessio Mattiace, Gianni Carmosino, Francesco Musicco, Gabriele Conte, Vito Walter Anelli, Tommaso Di Noia, Francesco Maria Donini',
       year: 2026,
       venue: 'arXiv',
@@ -1752,7 +1690,6 @@
     },
     {
       title_en: 'GAM: Hierarchical Graph-based Agentic Memory for LLM Agents',
-      title_zh: '《GAM: Hierarchical Graph-based Agentic Memory for LLM Agents》（Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)，2026）',
       authors: 'Zhaofen Wu, Hanrong Zhang, Fulin Lin, Wujiang Xu, Xinran Xu, Yankai Chen, Henry Peng Zou, Shaowen Chen, Weizhi Zhang, Xue Liu, Philip S. Yu, Hongwei Wang',
       year: 2026,
       venue: 'Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)',
@@ -1762,7 +1699,6 @@
     },
     {
       title_en: 'MAGMA: A Multi-Graph based Agentic Memory Architecture for AI Agents',
-      title_zh: '《MAGMA: A Multi-Graph based Agentic Memory Architecture for AI Agents》（arXiv，2026）',
       authors: 'Dongming Jiang, Yi Li, Guanpeng Li, Bingzhe Li',
       year: 2026,
       venue: 'arXiv',
@@ -1772,7 +1708,6 @@
     },
     {
       title_en: 'Memory-Orchestrated Semantic System (MOSS): An Auditable Agentic Memory Architecture',
-      title_zh: '《Memory-Orchestrated Semantic System (MOSS): An Auditable Agentic Memory Architecture》（arXiv，2026）',
       authors: 'Serge Lacasse, Jérémie Hatier, Alex Baker',
       year: 2026,
       venue: 'arXiv',
@@ -1782,7 +1717,6 @@
     },
     {
       title_en: 'Memory is Reconstructed, Not Retrieved: Graph Memory for LLM Agents',
-      title_zh: '《Memory is Reconstructed, Not Retrieved: Graph Memory for LLM Agents》（Proceedings of the International Conference on Machine Learning (ICML)，2026）',
       authors: 'Shuo Ji, Yibo Li, Bryan Hooi',
       year: 2026,
       venue: 'Proceedings of the International Conference on Machine Learning (ICML)',
@@ -1792,7 +1726,6 @@
     },
     {
       title_en: 'Advancing Multimodal Agent Reasoning with Long-Term Neuro-Symbolic Memory',
-      title_zh: '《Advancing Multimodal Agent Reasoning with Long-Term Neuro-Symbolic Memory》（Proceedings of the ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD)，2026）',
       authors: 'Rongjie Jiang, Jianwei Wang, Gengda Zhao, Chengyang Luo, Kai Wang, Wenjie Zhang',
       year: 2026,
       venue: 'Proceedings of the ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD)',
@@ -1802,7 +1735,6 @@
     },
     {
       title_en: 'Lifting Traces to Logic: Programmatic Skill Induction with Neuro-Symbolic Learning for Long-Horizon Agentic Tasks',
-      title_zh: '《Lifting Traces to Logic: Programmatic Skill Induction with Neuro-Symbolic Learning for Long-Horizon Agentic Tasks》（arXiv，2026）',
       authors: 'Jie-Jing Shao, Haiyan Yin, Yueming Lyu, Xingrui Yu, Lan-Zhe Guo, Ivor Tsang, James Kwok, Yu-Feng Li',
       year: 2026,
       venue: 'arXiv',
@@ -1812,7 +1744,6 @@
     },
     {
       title_en: 'OmegaClaw: A Continually Operating Agentic Architecture Under Bounded Resources',
-      title_zh: '《OmegaClaw: A Continually Operating Agentic Architecture Under Bounded Resources》（Artificial General Intelligence (AGI 2026)，2026）',
       authors: 'Max Botnick, Patrick Hammer, Peter Isaev, Ben Goertzel, Khellar Crawford',
       year: 2026,
       venue: 'Artificial General Intelligence (AGI 2026)',
@@ -1822,7 +1753,6 @@
     },
     {
       title_en: 'Time is Not a Label: Continuous Phase Rotation for Temporal Knowledge Graphs and Agentic Memory',
-      title_zh: '《Time is Not a Label: Continuous Phase Rotation for Temporal Knowledge Graphs and Agentic Memory》（arXiv，2026）',
       authors: 'Weixian Waylon Li, Jiaxin Zhang, Xianan Jim Yang, Tiejun Ma, Yiwen Guo',
       year: 2026,
       venue: 'arXiv',
@@ -1832,7 +1762,6 @@
     },
     {
       title_en: 'SYNAPSE: Empowering LLM Agents with Episodic-Semantic Memory via Spreading Activation',
-      title_zh: '《SYNAPSE: Empowering LLM Agents with Episodic-Semantic Memory via Spreading Activation》（arXiv，2026）',
       authors: 'Hanqi Jiang, Junhao Chen, Yi Pan, Ling Chen, Weihang You, Yifan Zhou, Ruidong Zhang, Andrea Sikora, Lin Zhao, Yohannes Abate, Tianming Liu',
       year: 2026,
       venue: 'arXiv',
@@ -1842,7 +1771,6 @@
     },
     {
       title_en: 'OASA-KGQA: Ontology-Aware Semantic Agent for Knowledge Graph Question Answering',
-      title_zh: '《OASA-KGQA: Ontology-Aware Semantic Agent for Knowledge Graph Question Answering》（2026 IEEE 12th International Conference on Big Data Computing Service and Machine Learning Applications (BigDataService)，2026）',
       authors: 'Zahra Fereidooni, Marco Fanfani, Gianni Pantaleo, Paolo Nesi',
       year: 2026,
       venue: '2026 IEEE 12th International Conference on Big Data Computing Service and Machine Learning Applications (BigDataService)',
@@ -1852,7 +1780,6 @@
     },
     {
       title_en: 'Grounding Generative Planners in Verifiable Logic: A Hybrid Architecture for Trustworthy Embodied AI',
-      title_zh: '《Grounding Generative Planners in Verifiable Logic: A Hybrid Architecture for Trustworthy Embodied AI》（Proceedings of the International Conference on Learning Representations (ICLR)，2026）',
       authors: 'Feiyu Wu, Xu Zheng, Yue Qu, Zhuocheng Wang, Zicheng Feng, Hui Li',
       year: 2026,
       venue: 'Proceedings of the International Conference on Learning Representations (ICLR)',
@@ -1862,7 +1789,6 @@
     },
     {
       title_en: 'Aligning Progress and Feasibility: A Neuro-Symbolic Dual Memory Framework for Long-Horizon LLM Agents',
-      title_zh: '《Aligning Progress and Feasibility: A Neuro-Symbolic Dual Memory Framework for Long-Horizon LLM Agents》（arXiv，2026）',
       authors: 'Bin Wen, Ruoxuan Zhang, Yang Chen, Hongxia Xie, Lan-Zhe Guo',
       year: 2026,
       venue: 'arXiv',
@@ -1872,7 +1798,6 @@
     },
     {
       title_en: 'NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications with Programmable Rails',
-      title_zh: '《NeMo Guardrails: A Toolkit for Controllable and Safe LLM Applications with Programmable Rails》（Proceedings of EMNLP: System Demonstrations，2023）',
       authors: 'Traian Rebedea, Razvan Dinu, Makesh Sreedhar, Christopher Parisien, Jonathan Cohen',
       year: 2023,
       venue: 'Proceedings of EMNLP: System Demonstrations',
@@ -1882,7 +1807,6 @@
     },
     {
       title_en: 'GuardAgent: Safeguard LLM Agents via Knowledge-Enabled Reasoning',
-      title_zh: '《GuardAgent: Safeguard LLM Agents via Knowledge-Enabled Reasoning》（arXiv，2024）',
       authors: 'Zhen Xiang, Linzhi Zheng, Yanjie Li, Junyuan Hong, Qinbin Li, Han Xie, Jiawei Zhang, Zidi Xiong, Chulin Xie, Carl Yang, Dawn Song, Bo Li',
       year: 2024,
       venue: 'arXiv',
@@ -1892,7 +1816,6 @@
     },
     {
       title_en: 'Enforcing Temporal Constraints for LLM Agents',
-      title_zh: '《Enforcing Temporal Constraints for LLM Agents》（arXiv，2025）',
       authors: 'Adharsh Kamath, Sishen Zhang, Calvin Xu, Shubham Ugare, Gagandeep Singh, Sasa Misailovic',
       year: 2025,
       venue: 'arXiv',
@@ -1902,7 +1825,6 @@
     },
     {
       title_en: 'AgentGuard: Runtime Verification of AI Agents',
-      title_zh: '《AgentGuard: Runtime Verification of AI Agents》（arXiv，2025）',
       authors: 'Roham Koohestani',
       year: 2025,
       venue: 'arXiv',
@@ -1912,7 +1834,6 @@
     },
     {
       title_en: 'Defeating Prompt Injections by Design',
-      title_zh: '《Defeating Prompt Injections by Design》（Proceedings of the IEEE Conference on Secure and Trustworthy Machine Learning (SaTML)，2025）',
       authors: 'Edoardo Debenedetti, Ilia Shumailov, Tianqi Fan, Jamie Hayes, Nicholas Carlini, Daniel Fabian, Christoph Kern, Chongyang Shi, Andreas Terzis, Florian Tramèr',
       year: 2025,
       venue: 'Proceedings of the IEEE Conference on Secure and Trustworthy Machine Learning (SaTML)',
@@ -1922,7 +1843,6 @@
     },
     {
       title_en: 'Graph-Symbolic Policy Enforcement and Control (G-SPEC): A Neuro-Symbolic Framework for Safe Agentic AI in 5G Autonomous Networks',
-      title_zh: '《Graph-Symbolic Policy Enforcement and Control (G-SPEC): A Neuro-Symbolic Framework for Safe Agentic AI in 5G Autonomous Networks》（arXiv，2025）',
       authors: 'Divya Vijay, Vignesh Ethiraj',
       year: 2025,
       venue: 'arXiv',
@@ -1932,7 +1852,6 @@
     },
     {
       title_en: 'Establishing Guardrails for AI Tool Use: Formal Safety Constraints Using MCP Schemas',
-      title_zh: '《Establishing Guardrails for AI Tool Use: Formal Safety Constraints Using MCP Schemas》（International Journal of Innovative Research in Engineering & Multidisciplinary Physical Sciences，2025）',
       authors: 'Gaurav Rohatgi',
       year: 2025,
       venue: 'International Journal of Innovative Research in Engineering & Multidisciplinary Physical Sciences',
@@ -1942,7 +1861,6 @@
     },
     {
       title_en: 'PRISM-AI: A Dual-Stage Neuro-Symbolic Agentic Framework for Privacy Risk Mitigation in LLMs',
-      title_zh: '《PRISM-AI: A Dual-Stage Neuro-Symbolic Agentic Framework for Privacy Risk Mitigation in LLMs》（2025 IEEE/ACS 22nd International Conference on Computer Systems and Applications (AICCSA)，2025）',
       authors: 'Sabrine Amri, Nora Boulahia-Cuppens, Frédéric Cuppens',
       year: 2025,
       venue: '2025 IEEE/ACS 22nd International Conference on Computer Systems and Applications (AICCSA)',
@@ -1952,7 +1870,6 @@
     },
     {
       title_en: 'Pro2Guard: Proactive Runtime Enforcement of LLM Agent Safety via Probabilistic Model Checking',
-      title_zh: '《Pro2Guard: Proactive Runtime Enforcement of LLM Agent Safety via Probabilistic Model Checking》（arXiv，2025）',
       authors: 'Haoyu Wang, Christopher M. Poskitt, Jiali Wei, Jun Sun',
       year: 2025,
       venue: 'arXiv',
@@ -1962,7 +1879,6 @@
     },
     {
       title_en: 'SELP: Generating Safe and Efficient Task Plans for Robot Agents with Large Language Models',
-      title_zh: '《SELP: Generating Safe and Efficient Task Plans for Robot Agents with Large Language Models》（Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)，2025）',
       authors: 'Yi Wu, Zikang Xiong, Yiran Hu, Shreyash S. Iyengar, Nan Jiang, Aniket Bera, Lin Tan, Suresh Jagannathan',
       year: 2025,
       venue: 'Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)',
@@ -1972,7 +1888,6 @@
     },
     {
       title_en: 'ShieldAgent: Shielding Agents via Verifiable Safety Policy Reasoning',
-      title_zh: '《ShieldAgent: Shielding Agents via Verifiable Safety Policy Reasoning》（Proceedings of the International Conference on Machine Learning (ICML)，2025）',
       authors: 'Zhaorun Chen, Mintong Kang, Bo Li',
       year: 2025,
       venue: 'Proceedings of the International Conference on Machine Learning (ICML)',
@@ -1982,7 +1897,6 @@
     },
     {
       title_en: 'An Approach to Checking Correctness for Agentic Systems',
-      title_zh: '《An Approach to Checking Correctness for Agentic Systems》（arXiv，2025）',
       authors: 'Thomas J. Sheffler',
       year: 2025,
       venue: 'arXiv',
@@ -1992,7 +1906,6 @@
     },
     {
       title_en: 'Towards Verified Code Reasoning by LLMs',
-      title_zh: '《Towards Verified Code Reasoning by LLMs》（Proceedings of the ACM SIGPLAN International Workshop on Principles of Agentic Engineering (PAgE)，2025）',
       authors: 'Meghana Sistla, Gogul Balakrishnan, Pat Rondon, José Cambronero, Michele Tufano, Satish Chandra',
       year: 2025,
       venue: 'Proceedings of the ACM SIGPLAN International Workshop on Principles of Agentic Engineering (PAgE)',
@@ -2002,7 +1915,6 @@
     },
     {
       title_en: 'AgentLTL: A Trace-Verification Framework for Measuring, Enforcing, and Training Procedural Compliance in Tool-Using LLM Agents',
-      title_zh: '《AgentLTL: A Trace-Verification Framework for Measuring, Enforcing, and Training Procedural Compliance in Tool-Using LLM Agents》（arXiv，2026）',
       authors: 'Laïla Elkoussy, Julien Perez',
       year: 2026,
       venue: 'arXiv',
@@ -2012,7 +1924,6 @@
     },
     {
       title_en: 'AgentSpec: Customizable Runtime Enforcement for Safe and Reliable LLM Agents',
-      title_zh: '《AgentSpec: Customizable Runtime Enforcement for Safe and Reliable LLM Agents》（Proceedings of the IEEE/ACM International Conference on Software Engineering (ICSE)，2026）',
       authors: 'Haoyu Wang, Christopher M. Poskitt, Jun Sun',
       year: 2026,
       venue: 'Proceedings of the IEEE/ACM International Conference on Software Engineering (ICSE)',
@@ -2022,7 +1933,6 @@
     },
     {
       title_en: 'AutoSpec: Safety Rule Evolution for LLM Agents via Inductive Logic Programming',
-      title_zh: '《AutoSpec: Safety Rule Evolution for LLM Agents via Inductive Logic Programming》（arXiv，2026）',
       authors: 'Pingchuan Ma, Zhaoyu Wang, Zimo Ji, Yuguang Zhou, Zhantong Xue, Zongjie Li, Shuai Wang, Xiaoqin Zhang',
       year: 2026,
       venue: 'arXiv',
@@ -2032,7 +1942,6 @@
     },
     {
       title_en: 'Causal Past Logic for Runtime Verification of Distributed LLM Agent Workflows',
-      title_zh: '《Causal Past Logic for Runtime Verification of Distributed LLM Agent Workflows》（arXiv，2026）',
       authors: 'Benedikt Bollig',
       year: 2026,
       venue: 'arXiv',
@@ -2042,7 +1951,6 @@
     },
     {
       title_en: 'Containment Verification: AI Safety Guarantees Independent of Alignment',
-      title_zh: '《Containment Verification: AI Safety Guarantees Independent of Alignment》（arXiv，2026）',
       authors: 'Royce Moon, Lav R. Varshney',
       year: 2026,
       venue: 'arXiv',
@@ -2052,7 +1960,6 @@
     },
     {
       title_en: 'Symbolic Temporal Supervision of LLM Agents Using Contracts',
-      title_zh: '《Symbolic Temporal Supervision of LLM Agents Using Contracts》（arXiv，2026）',
       authors: 'Yifeng Xiao, Pierluigi Nuzzo',
       year: 2026,
       venue: 'arXiv',
@@ -2062,7 +1969,6 @@
     },
     {
       title_en: 'Contract2Tool: Learning Preconditions and Effects for Reliable Tool-Augmented LLM Agents',
-      title_zh: '《Contract2Tool: Learning Preconditions and Effects for Reliable Tool-Augmented LLM Agents》（arXiv，2026）',
       authors: 'Rahul Suresh Babu, Laxmipriya Ganesh Iyer',
       year: 2026,
       venue: 'arXiv',
@@ -2072,7 +1978,6 @@
     },
     {
       title_en: 'Formal Policy Enforcement for Real-World Agentic Systems',
-      title_zh: '《Formal Policy Enforcement for Real-World Agentic Systems》（arXiv，2026）',
       authors: 'Nils Palumbo, Sarthak Choudhary, Jihye Choi, Guy Amir, Prasad Chalasani, Somesh Jha',
       year: 2026,
       venue: 'arXiv',
@@ -2082,7 +1987,6 @@
     },
     {
       title_en: 'Formal Methods Meet LLMs: Auditing, Monitoring, and Intervention',
-      title_zh: '《Formal Methods Meet LLMs: Auditing, Monitoring, and Intervention》（Proceedings of the ACM Conference on Fairness, Accountability, and Transparency (FAccT)，2026）',
       authors: 'Parand A. Alamdari, Toryn Q. Klassen, Sheila A. McIlraith',
       year: 2026,
       venue: 'Proceedings of the ACM Conference on Fairness, Accountability, and Transparency (FAccT)',
@@ -2092,7 +1996,6 @@
     },
     {
       title_en: 'FormalJudge: A Neuro-Symbolic Paradigm for Agentic Oversight',
-      title_zh: '《FormalJudge: A Neuro-Symbolic Paradigm for Agentic Oversight》（arXiv，2026）',
       authors: 'Jiayi Zhou, Yang Sheng, Hantao Lou, Yaodong Yang, Jie Fu',
       year: 2026,
       venue: 'arXiv',
@@ -2102,7 +2005,6 @@
     },
     {
       title_en: 'Runtime Policy Enforcement for MCP-Based LLM Agents',
-      title_zh: '《Runtime Policy Enforcement for MCP-Based LLM Agents》（Electronics，2026）',
       authors: 'Shanshan Wang, Sizheng Zhu, Rende Li',
       year: 2026,
       venue: 'Electronics',
@@ -2112,7 +2014,6 @@
     },
     {
       title_en: 'Agentic AI-based Framework for Mitigating Premature Diagnostic Handoff and Silent Hallucination in Healthcare Applications',
-      title_zh: '《Agentic AI-based Framework for Mitigating Premature Diagnostic Handoff and Silent Hallucination in Healthcare Applications》（arXiv，2026）',
       authors: 'Divyansh Srivastava, Shreya Ghosh, Anshul Verma, Rajkumar Buyya',
       year: 2026,
       venue: 'arXiv',
@@ -2122,7 +2023,6 @@
     },
     {
       title_en: 'Provably Auditable and Safe LLM Agents from Human-Authored Ontologies',
-      title_zh: '《Provably Auditable and Safe LLM Agents from Human-Authored Ontologies》（arXiv，2026）',
       authors: 'Aaron Sterling',
       year: 2026,
       venue: 'arXiv',
@@ -2132,7 +2032,6 @@
     },
     {
       title_en: 'Structural Enforcement of Goal Integrity in AI Agents via Separation-of-Powers Architecture',
-      title_zh: '《Structural Enforcement of Goal Integrity in AI Agents via Separation-of-Powers Architecture》（arXiv，2026）',
       authors: 'Rong Xiang',
       year: 2026,
       venue: 'arXiv',
@@ -2142,7 +2041,6 @@
     },
     {
       title_en: 'Provably Secure Agent Guardrail',
-      title_zh: '《Provably Secure Agent Guardrail》（arXiv，2026）',
       authors: 'Benlong Wu, Weiming Zhang, Kejiang Chen, Han Fang, Nenghai Yu',
       year: 2026,
       venue: 'arXiv',
@@ -2152,7 +2050,6 @@
     },
     {
       title_en: 'Formal Verification of Agentic Systems over Operational Data',
-      title_zh: '《Formal Verification of Agentic Systems over Operational Data》（arXiv，2026）',
       authors: 'Alejandro J. Mercado, Alessio Lomuscio',
       year: 2026,
       venue: 'arXiv',
@@ -2162,7 +2059,6 @@
     },
     {
       title_en: 'Policy-Invisible Violations in LLM-Based Agents',
-      title_zh: '《Policy-Invisible Violations in LLM-Based Agents》（arXiv，2026）',
       authors: 'Jie Wu, Ming Gong',
       year: 2026,
       venue: 'arXiv',
@@ -2172,7 +2068,6 @@
     },
     {
       title_en: 'Temporal Guardrails for LLM Conversations: A Runtime Verification Framework',
-      title_zh: '《Temporal Guardrails for LLM Conversations: A Runtime Verification Framework》（AI Verification，2026）',
       authors: 'Itay Cohen, Klaus Havelund, Moran Omer, Doron Peled',
       year: 2026,
       venue: 'AI Verification',
@@ -2182,7 +2077,6 @@
     },
     {
       title_en: 'ToolGate: Contract-Grounded and Verified Tool Execution for LLMs',
-      title_zh: '《ToolGate: Contract-Grounded and Verified Tool Execution for LLMs》（Findings of the Association for Computational Linguistics，2026）',
       authors: 'Yanming Liu, Xinyue Peng, Jiannan Cao, Xinyi Wang, Songhang Deng, Jintao Chen, Jianwei Yin, Xuhong Zhang',
       year: 2026,
       venue: 'Findings of the Association for Computational Linguistics',
@@ -2192,7 +2086,6 @@
     },
     {
       title_en: 'TriCEGAR: A Trace-Driven Abstraction Mechanism for Agentic AI',
-      title_zh: '《TriCEGAR: A Trace-Driven Abstraction Mechanism for Agentic AI》（arXiv，2026）',
       authors: 'Roham Koohestani, Ateş Görpelioğlu, Egor Klimov, Burcu Kulahcioglu Ozkan, Maliheh Izadi',
       year: 2026,
       venue: 'arXiv',
@@ -2202,7 +2095,6 @@
     },
     {
       title_en: 'VerAct: A Two-Layer Architecture for Provably Safe LLM Agent Planning',
-      title_zh: '《VerAct: A Two-Layer Architecture for Provably Safe LLM Agent Planning》（ICLR 2026 Workshop on Agentic AI in the Wild: From Hallucinations to Reliable Autonomy，2026）',
       authors: 'Nguyen Vu Nguyen',
       year: 2026,
       venue: 'ICLR 2026 Workshop on Agentic AI in the Wild: From Hallucinations to Reliable Autonomy',
@@ -2212,7 +2104,6 @@
     },
     {
       title_en: 'Executable Governance for AI: Translating Policies into Rules Using LLMs',
-      title_zh: '《Executable Governance for AI: Translating Policies into Rules Using LLMs》（arXiv，2025）',
       authors: 'Gautam Varma Datla, Anudeep Vurity, Tejaswani Dash, Tazeem Ahmad, Mohd Adnan, Saima Rafi',
       year: 2025,
       venue: 'arXiv',
@@ -2222,7 +2113,6 @@
     },
     {
       title_en: 'Plug in the Safety Chip: Enforcing Constraints for LLM-driven Robot Agents',
-      title_zh: '《Plug in the Safety Chip: Enforcing Constraints for LLM-driven Robot Agents》（Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)，2024）',
       authors: 'Ziyi Yang, Shreyas S. Raman, Ankit Shah, Stefanie Tellex',
       year: 2024,
       venue: 'Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)',
@@ -2232,7 +2122,6 @@
     },
     {
       title_en: 'LogicGuard: Improving Embodied LLM Agents through Temporal Logic Based Critics',
-      title_zh: '《LogicGuard: Improving Embodied LLM Agents through Temporal Logic Based Critics》（arXiv，2025）',
       authors: 'Anand Gokhale, Vaibhav Srivastava, Francesco Bullo',
       year: 2025,
       venue: 'arXiv',
@@ -2242,7 +2131,6 @@
     },
     {
       title_en: 'PAT-Agent: Autoformalization for Model Checking',
-      title_zh: '《PAT-Agent: Autoformalization for Model Checking》（Proceedings of the IEEE/ACM International Conference on Automated Software Engineering (ASE)，2025）',
       authors: 'Xinyue Zuo, Yifan Zhang, Hongshu Wang, Yufan Cai, Zhe Hou, Jing Sun, Jin Song Dong',
       year: 2025,
       venue: 'Proceedings of the IEEE/ACM International Conference on Automated Software Engineering (ASE)',
@@ -2252,7 +2140,6 @@
     },
     {
       title_en: 'VeriGuard: Enhancing LLM Agent Safety via Verified Code Generation',
-      title_zh: '《VeriGuard: Enhancing LLM Agent Safety via Verified Code Generation》（arXiv，2025）',
       authors: 'Lesly Miculicich, Mihir Parmar, Hamid Palangi, Krishnamurthy Dj Dvijotham, Mirko Montanari, Tomas Pfister, Long T. Le',
       year: 2025,
       venue: 'arXiv',
@@ -2262,7 +2149,6 @@
     },
     {
       title_en: 'VeriPlan: Integrating Formal Verification and LLMs into End-User Planning',
-      title_zh: '《VeriPlan: Integrating Formal Verification and LLMs into End-User Planning》（Proceedings of the CHI Conference on Human Factors in Computing Systems，2025）',
       authors: 'Christine P. Lee, David Porfirio, Xinyu Jessica Wang, Kevin Chenkai Zhao, Bilge Mutlu',
       year: 2025,
       venue: 'Proceedings of the CHI Conference on Human Factors in Computing Systems',
@@ -2272,7 +2158,6 @@
     },
     {
       title_en: 'Agentic Model Checking',
-      title_zh: '《Agentic Model Checking》（arXiv，2026）',
       authors: 'Youcheng Sun, Jiawen Liu, Daniel Kroening, Jason Xue',
       year: 2026,
       venue: 'arXiv',
@@ -2282,7 +2167,6 @@
     },
     {
       title_en: 'Solver-Aided Verification of Policy Compliance in Tool-Augmented LLM Agents',
-      title_zh: '《Solver-Aided Verification of Policy Compliance in Tool-Augmented LLM Agents》（arXiv，2026）',
       authors: 'Cailin Winston, Claris Winston, René Just',
       year: 2026,
       venue: 'arXiv',
@@ -2339,10 +2223,26 @@
     return PROJECTS.filter(function (p) { return p.id === id; })[0];
   }
 
+  // The project whose groups are on offer: the selected one, or the only one.
+  function activeProject() {
+    if (state.project !== 'all') return projectOf(state.project) || null;
+    return PROJECTS.length === 1 ? PROJECTS[0] : null;
+  }
+
+  function groupsOf(project) {
+    return (project && project.groups) || [];
+  }
+
+  function inGroup(entry, project, group) {
+    return entry.data.project === project.id && (entry.data.topics || []).indexOf(group.id) !== -1;
+  }
+
   // ---- Filters -------------------------------------------------------------
   function renderProjectFilters() {
     var wrap = document.getElementById('projectFilters');
     wrap.innerHTML = '';
+    // With a single project "All" and that project show the same thing.
+    wrap.hidden = PROJECTS.length < 2;
     var all = document.createElement('button');
     all.className = 'filter-btn';
     all.type = 'button';
@@ -2359,6 +2259,7 @@
     wrap.querySelectorAll('.filter-btn').forEach(function (b) {
       b.addEventListener('click', function () {
         state.project = b.dataset.project;
+        state.topic = null;
         render();
       });
     });
@@ -2413,11 +2314,77 @@
     });
   }
 
-  function matches(entry) {
+  // Category buttons for the active project: "All" plus one per group, each
+  // with the number of entries it would show. `pool` is every entry matching
+  // the other filters. A topic picked from a card's tag that isn't one of the
+  // groups shows up as an extra button that clears it.
+  function renderGroupFilters(pool, lang) {
+    var wrap = document.getElementById('groupFilters');
+    var project = activeProject();
+    var groups = groupsOf(project);
+    var focusedKey = wrap.contains(document.activeElement) ? document.activeElement.dataset.key : null;
+    wrap.innerHTML = '';
+    wrap.hidden = groups.length === 0 && !state.topic;
+    if (wrap.hidden) return;
+
+    function add(key, label, count, pressed, onClick) {
+      var b = document.createElement('button');
+      b.className = 'filter-btn';
+      b.type = 'button';
+      b.dataset.key = key;
+      b.setAttribute('aria-pressed', String(pressed));
+      b.appendChild(document.createTextNode(label));
+      if (count !== null) {
+        var c = document.createElement('span');
+        c.className = 'filter-count';
+        c.textContent = count;
+        b.appendChild(c);
+      }
+      b.addEventListener('click', onClick);
+      wrap.appendChild(b);
+      return b;
+    }
+
+    function clearTopic() {
+      state.topic = null;
+      render();
+    }
+
+    if (groups.length) {
+      if (PROJECTS.length === 1) {
+        var name = document.createElement('span');
+        name.className = 'filter-label';
+        name.textContent = lang === 'zh' ? project.label_zh : project.label_en;
+        wrap.appendChild(name);
+      }
+      add('all', lang === 'zh' ? '全部' : 'All', pool.length, !state.topic, clearTopic);
+      groups.forEach(function (g) {
+        var n = pool.filter(function (e) { return inGroup(e, project, g); }).length;
+        add(g.id, lang === 'zh' ? g.label_zh : g.label_en, n, state.topic === g.id, function () {
+          state.topic = g.id;
+          render();
+        });
+      });
+    }
+
+    var isGroup = groups.some(function (g) { return g.id === state.topic; });
+    if (state.topic && !isGroup) {
+      var extra = add('topic', state.topic + ' ×', null, true, clearTopic);
+      extra.setAttribute('aria-label', (lang === 'zh' ? '取消主题筛选：' : 'Clear topic filter: ') + state.topic);
+    }
+
+    // The buttons were rebuilt; keep keyboard focus where it was.
+    if (focusedKey) {
+      var again = wrap.querySelector('[data-key="' + focusedKey + '"]') || wrap.querySelector('.filter-btn');
+      if (again) again.focus();
+    }
+  }
+
+  function matches(entry, ignoreTopic) {
     var d = entry.data;
     if (NOTES.length && state.type !== 'all' && entry.kind !== state.type) return false;
     if (state.project !== 'all' && d.project !== state.project) return false;
-    if (state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
+    if (!ignoreTopic && state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
     if (state.query) {
       var q = state.query.toLowerCase();
       var parts = entry.kind === 'paper'
@@ -2444,24 +2411,30 @@
     var tags = document.createElement('div');
     tags.className = 'paper-tags';
 
+    // The project pill only says something when there is more than one project.
     var proj = projectOf(d.project);
-    if (proj) {
+    if (proj && PROJECTS.length > 1) {
       var projTag = document.createElement('button');
       projTag.className = 'paper-tag project-tag';
       projTag.type = 'button';
       projTag.textContent = lang === 'zh' ? proj.label_zh : proj.label_en;
       projTag.addEventListener('click', function () {
         state.project = proj.id;
+        state.topic = null;
         render();
       });
       tags.appendChild(projTag);
     }
 
+    // Group topics are already shown as the section heading / filter button.
+    var groupIds = groupsOf(activeProject()).map(function (g) { return g.id; });
     (d.topics || []).forEach(function (t) {
+      if (groupIds.indexOf(t) !== -1) return;
       var tag = document.createElement('button');
       tag.className = 'paper-tag';
       tag.type = 'button';
       tag.textContent = t;
+      tag.setAttribute('aria-pressed', String(state.topic === t));
       tag.addEventListener('click', function () {
         state.topic = state.topic === t ? null : t;
         render();
@@ -2478,7 +2451,7 @@
     // Title
     var title = document.createElement('p');
     title.className = 'paper-title';
-    var titleText = lang === 'zh' ? paper.title_zh : paper.title_en;
+    var titleText = lang === 'zh' ? (paper.title_zh || paper.title_en) : paper.title_en;
     if (paper.link) {
       var a = document.createElement('a');
       a.href = paper.link;
@@ -2507,7 +2480,8 @@
     item.appendChild(secondary);
 
     // Tags: project (solid pill, clickable to filter) + topics
-    item.appendChild(buildTags(paper, lang));
+    var tags = buildTags(paper, lang);
+    if (tags.childNodes.length) item.appendChild(tags);
 
     // Note, set off in its own bordered block (skipped for entries without one)
     var noteText = lang === 'zh' ? paper.note_zh : paper.note_en;
@@ -2562,7 +2536,8 @@
       item.appendChild(about);
     }
 
-    item.appendChild(buildTags(note, lang));
+    var tags = buildTags(note, lang);
+    if (tags.childNodes.length) item.appendChild(tags);
 
     var body = document.createElement('div');
     body.className = 'note-body';
@@ -2578,7 +2553,10 @@
   function renderList() {
     var lang = currentLang();
     var list = document.getElementById('paperList');
-    var filtered = allEntries().filter(matches).sort(function (a, b) { return b.sortKey - a.sortKey; });
+    var pool = allEntries().filter(function (e) { return matches(e, true); });
+    var filtered = pool.filter(function (e) { return matches(e); })
+      .sort(function (a, b) { return b.sortKey - a.sortKey; });
+    renderGroupFilters(pool, lang);
     list.innerHTML = '';
 
     document.getElementById('emptyEn').hidden = filtered.length !== 0;
@@ -2586,9 +2564,44 @@
 
     document.getElementById('resultCount').textContent = countText(filtered.length, lang);
 
-    filtered.forEach(function (entry) {
-      list.appendChild(entry.kind === 'paper' ? buildPaperItem(entry.data, lang) : buildNoteItem(entry.data, lang));
+    function addItems(parent, entries) {
+      entries.forEach(function (entry) {
+        parent.appendChild(entry.kind === 'paper' ? buildPaperItem(entry.data, lang) : buildNoteItem(entry.data, lang));
+      });
+    }
+
+    // With a category picked (or no groups to split by) it is one flat list;
+    // otherwise one section per group, in the order the project lists them.
+    var project = activeProject();
+    var groups = state.topic ? [] : groupsOf(project);
+    if (!groups.length) {
+      addItems(list, filtered);
+      return;
+    }
+
+    function addSection(label, entries) {
+      if (!entries.length) return;
+      var section = document.createElement('section');
+      section.className = 'paper-group';
+      var heading = document.createElement('h2');
+      heading.className = 'group-heading';
+      heading.appendChild(document.createTextNode(label));
+      var count = document.createElement('span');
+      count.className = 'group-count';
+      count.textContent = entries.length;
+      heading.appendChild(count);
+      section.appendChild(heading);
+      addItems(section, entries);
+      list.appendChild(section);
+    }
+
+    var rest = filtered;
+    groups.forEach(function (g) {
+      var mine = rest.filter(function (e) { return inGroup(e, project, g); });
+      rest = rest.filter(function (e) { return !inGroup(e, project, g); });
+      addSection(lang === 'zh' ? g.label_zh : g.label_en, mine);
     });
+    addSection(lang === 'zh' ? '其他' : 'Other', rest);
   }
 
   function render() {

@@ -737,17 +737,22 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 
 ## 10. Notes 页（论文库和短文笔记）
 
-`reading.html`（页面显示名称是 **Notes / 笔记**）里有两种条目：**论文**（读过的论文，每篇带自己的阅读笔记）和**短文笔记**（自己写的短文）。它们的数据都在文件里的 JavaScript 数组中，不用碰 HTML。
+`reading.html`（页面显示名称是 **Notes / 笔记**）里有两种条目：**论文**（读过的论文，可以附上自己的阅读笔记）和**短文笔记**（自己写的短文）。它们的数据都在文件里的 JavaScript 数组中，不用碰 HTML。
 
 ### 10.1 结构
 
 在文件里搜这三个：
 
-- `var PROJECTS = [` ——项目分类（页面上方的筛选按钮）
+- `var PROJECTS = [` ——项目，以及每个项目下面的分类（`groups`）
 - `var PAPERS = [` ——论文条目
 - `var NOTES = [` ——短文笔记条目
 
-`NOTES` 里只要有一条，页面就会自动出现"全部 / 笔记 / 论文"的类型筛选；论文和笔记混排，按时间从新到旧。
+页面是"项目 → 分类 → 条目"三层：
+
+- **分类**：搜索框下面那排按钮（全部 / 规划 / 记忆 / 验证 / 已有综述，后面的数字是篇数）。选"全部"时列表按分类分成几段，每段一个小标题，段内按年份从新到旧；点某个分类就只看那一类。
+- **一篇论文属于哪个分类**，看它的 `topics` 里有没有那个分类的 `id`（比如 `topics: ['planning']`）。属于某个分类的标签不会再显示在卡片上，其余标签照常显示，点一下可以按它筛选。
+- **项目**只有一个的时候，不显示项目筛选按钮，也不在每张卡片上重复项目名，只在分类按钮前面写一次项目名。有两个以上项目时，这些会自动出现。
+- `NOTES` 里只要有一条，页面就会自动出现"全部 / 笔记 / 论文"的类型筛选。
 
 ### 10.2 加一篇论文
 
@@ -756,7 +761,6 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 ```js
     {
       title_en: 'Paper title in English',
-      title_zh: '《论文中文标题》（期刊/会议，年份）',
       authors: 'Author One, Author Two',
       year: 2026,
       venue: 'Journal or Conference Name',
@@ -770,7 +774,8 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 
 - `link` 没有的话留空字符串 `''`，标题就不会变成链接。
 - `project` 必须是 `PROJECTS` 里某一项的 `id`。
-- `topics` 是自己起的标签，用来筛选，用英文小写加短横线。
+- `topics` 是自己起的标签，用来筛选，用英文小写加短横线。其中要有一个是所属项目某个分类的 `id`（见 [10.4](#104-加一个新的项目或分类)），否则这篇会落到列表最后的"其他"里。
+- `title_zh` 是可选的：论文有正式的中文标题时才加这一行（`title_zh: '中文标题',`）；不写的话中文模式下也显示英文标题。不用再把期刊和年份写进标题，下面那行已经有了。
 - `note_en` / `note_zh` 是可选的：还没写阅读笔记的论文可以两行都不写，页面上就不显示"阅读笔记"那一块。
 
 ### 10.3 加一篇短文笔记
@@ -794,13 +799,24 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 - `project` 也是可选的。
 - `body_en` / `body_zh` 是**字符串数组**，每个字符串是一段，段与段之间用逗号隔开。**两个数组的段数最好一样。**
 
-### 10.4 加一个新的项目分类
+### 10.4 加一个新的项目或分类
 
 先在 `PROJECTS` 里加一项，论文或笔记里才能用它的 `id`：
 
 ```js
-    { id: 'new-project-id', label_en: 'Project Name', label_zh: '项目中文名' },
+    {
+      id: 'new-project-id',
+      label_en: 'Project Name',
+      label_zh: '项目中文名',
+      groups: [
+        { id: 'some-topic', label_en: 'Some Topic', label_zh: '某个分类' },
+        { id: 'another-topic', label_en: 'Another Topic', label_zh: '另一个分类' }
+      ]
+    },
 ```
+
+- `groups` 是可选的；不写的话这个项目的条目就是一个不分段的列表。
+- **给现有项目加一个分类**：在它的 `groups` 里加一行，再把这个 `id` 写进相应论文的 `topics`。`groups` 里的顺序就是页面上按钮和分段的顺序。
 
 ### 10.5 写 JavaScript 数据时的几个陷阱
 
