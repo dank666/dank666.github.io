@@ -198,15 +198,6 @@ export const projects = [
     description: {
       en: "A survey of neuro-symbolic agentic AI, organized around planning, memory, and safety/verification. To position it, I am reviewing the existing surveys to map what the literature already covers.",
       zh: "一篇神经符号智能体综述，围绕规划、记忆与安全/验证三部分展开。为了确定它的定位，我正在梳理已有的综述，看清这个领域已经覆盖了什么。"
-    },
-    figure: {
-      type: "scope",
-      title: { en: "Neuro-symbolic agentic AI", zh: "神经符号智能体" },
-      items: [
-        { en: "Planning", zh: "规划" },
-        { en: "Memory", zh: "记忆" },
-        { en: "Safety &amp; verification", zh: "安全与验证" }
-      ]
     }
   },
   {

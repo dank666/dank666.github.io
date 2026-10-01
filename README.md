@@ -4,7 +4,7 @@ Live at **[dank666.github.io](https://dank666.github.io)** · Source: [github.co
 
 我的个人学术主页，用于展示教育背景、科研经历、项目与论文，主要面向未来的博士申请。
 
-A personal academic homepage for **Tejing Wang (王特警)** — AI student at Shaanxi Normal University, School of Artificial Intelligence and Computer Science. Built to support future PhD applications abroad.
+A personal academic homepage for **Tejing Wang (王特警)** — an Artificial Intelligence undergraduate at Shaanxi Normal University, School of Artificial Intelligence and Computer Science. Built to support future PhD applications abroad.
 
 > **这份 README 有两个读者：** 路过的人（看"这是什么"，读下面的 *What it is*）和未来的我自己（看"怎么维护"）。
 > 如果你是未来的我：**直接跳到 [2. 速查表](#2-速查表我想做某件事)**，找到你要做的事，照着做就行。忘了怎么发布就看 [3. 标准流程](#3-每次修改的标准流程)。改错了不要慌，[3.4](#34-改错了怎么办) 里有补救办法。
@@ -551,7 +551,7 @@ ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、L
 
 - **"Last updated"是自动的**：页面加载时向服务器询问这个页面的最后修改时间（在 GitHub Pages 上就是最近一次推送发布的时间），不用手改。`node tools/build.mjs` 每次运行也会把 HTML 里的兜底文字刷新成当月，只在页面拿不到服务器时间时才会看到它。
 - **隐私说明**：页脚有两句，平时显示"仅统计城市级别的匿名访问次数"，**统计脚本（第 12 节）启用后**会自动换成"同时包含页面浏览统计"那一句，不用手动切换。
-- 版权年份、"View source" 链接在 `class="footer"` 里，每年手动改一下年份。
+- 版权年份在 `class="footer"` 里，每年手动改一下。
 
 ### 6.8 结构化数据（搜索引擎看的）
 
@@ -641,6 +641,8 @@ ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、L
 
 链接可以指向本页板块（`href="#id"`）或别的页面（`href="reading.html"`）。
 
+**子页面的导航**（`reading.html`、`lattice.html`、`constellation.html`）是另一套：顶部列出所有页面（主页、笔记、概念格演示、星座），可以直接互相跳转，左上角的名字也能点回主页。每个页面里这四行是一样的，只有**当前页面那一行**多了 `class="active" aria-current="page"`（显示成带下划线）。所以加、删、改名一个页面时，三个子页面的这段导航都要改一遍。
+
 ### 7.5 网页标题、描述、分享预览
 
 每个页面（`index.html`、`reading.html`、`lattice.html`）的 `<head>` 里有一组 meta 标签，决定了**浏览器标签页标题、搜索结果里的描述、以及在微信/邮件/Slack 里分享链接时的预览卡片**。搜 `og:title` 就能找到。要改的是这些（每个页面各自独立）：
@@ -666,6 +668,7 @@ ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、L
 - [ ] 中英文内容都成对
 - [ ] 在 `sitemap.xml` 里加一条 `<url><loc>https://dank666.github.io/新页面.html</loc></url>`
 - [ ] 从主页导航（主栏或 More 菜单）链到它
+- [ ] 把它加进**每个子页面**顶部的页面导航（见 [7.4](#74-导航栏) 末尾），新页面自己的那一条带上 `class="active" aria-current="page"`
 - [ ] 本地预览：中英文、深色模式、手机宽度、控制台无报错
 
 ---
