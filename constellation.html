@@ -44,8 +44,8 @@
       --text: #16181c;
       --muted: #666a70;
       --line: #e6e4e0;
-      --accent: #24435c;
-      --accent-soft: #ecf1f4;
+      --accent: #1f5c8a;
+      --accent-soft: #ebf2f8;
       --max-width: 820px;
     }
 
@@ -55,8 +55,8 @@
         --text: #e7e8ea;
         --muted: #9199a1;
         --line: #2a2d33;
-        --accent: #5b90b8;
-        --accent-soft: #1c2530;
+        --accent: #6ea9d8;
+        --accent-soft: #1a2633;
       }
       :root:not([data-theme="light"]) .navbar { background: rgba(20, 22, 26, 0.88); }
       :root:not([data-theme="light"]) .back-to-top { background: #1c1e22; }
@@ -69,8 +69,8 @@
       --text: #e7e8ea;
       --muted: #9199a1;
       --line: #2a2d33;
-      --accent: #5b90b8;
-      --accent-soft: #1c2530;
+      --accent: #6ea9d8;
+      --accent-soft: #1a2633;
     }
     :root[data-theme="dark"] .navbar { background: rgba(20, 22, 26, 0.88); }
     :root[data-theme="dark"] .back-to-top { background: #1c1e22; }
@@ -151,7 +151,7 @@
       -webkit-backdrop-filter: blur(6px);
     }
     .nav-inner {
-      width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding: 16px 0;
+      width: min(var(--max-width), calc(100% - 40px)); margin: 0 auto; padding: 16px 0;
       display: flex; justify-content: space-between; align-items: center; gap: 16px;
     }
     .logo { font-size: 0.95rem; font-weight: 600; color: var(--muted); flex-shrink: 0; }

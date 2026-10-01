@@ -40,7 +40,7 @@ A personal academic homepage for **Tejing Wang (王特警)** — AI student at S
 
 - **Bilingual (EN / 中文)** — a one-click language toggle; the choice is remembered across pages.
 - **Dark mode** — follows the system setting; a toggle button lets a visitor override it.
-- **Sections** — About, Research Statement, Education, Experience, Projects, Publications, News, Skills, Awards, Contact, Visitors.
+- **Sections** — About, Research Statement, Publications, News, Education, Experience, Projects, Skills, Awards, Contact, Visitors.
 - **Content in a data file** — News, Publications, Awards and Projects live in `data/content.mjs` as `{ en, zh }` pairs; a small dependency-free script writes them into `index.html` as plain static HTML and refuses to build if either language is missing.
 - **Publication cards** with status tags and PDF / arXiv / Code / BibTeX buttons; **project cards** with schematic figures and screenshot galleries; **folded awards**.
 - **Notes** (`reading.html`) — short notes plus a searchable library of papers I've read.
@@ -264,7 +264,7 @@ node tools/build.mjs
 
 ### 5.2 Publications（论文发表）
 
-在 `publications` 数组里加一项。每篇论文显示为一张卡片：一个**状态标签**、标题、一行说明，以及下面的 **PDF / arXiv / Code / BibTeX** 四个按钮。
+在 `publications` 数组里加一项。每篇论文显示为一张卡片：一个**状态标签**、标题、一行说明，以及填了链接之后才出现的 **PDF / arXiv / Code / BibTeX** 按钮。
 
 **模板：新增一篇论文（撰写中或审稿中）**
 
@@ -285,7 +285,7 @@ node tools/build.mjs
 
 - **`status`** 只能是这四个值之一：`"in-preparation"`（撰写中）、`"under-review"`（审稿中）、`"preprint"`（预印本）、`"published"`（已发表）。写错了构建会报错并列出可选值。
 - **`meta`** 是状态标签旁边那行小字，可选；没有就删掉这个字段。
-- **`links`**：没填的按钮会显示成**灰色虚线的"占位"**（意思是"论文发表后提供"）。填上之后自动变成可以点的按钮。
+- **`links`**：只有填了的链接才会显示成按钮，没填的不显示；四个都没填时，卡片上就没有按钮这一行。
 
 **论文被录用 / 发表之后**，把这一项改成下面这样（`status` 改成 `"published"`，补上链接）：
 
@@ -319,7 +319,7 @@ node tools/build.mjs
 - **想让标题本身可以点击**：像上面那样，在标题文字外面包一层 `<a href="…">`（中英文两份都要包）。
 - **`pdf`、`arxiv`、`code`** 填网址；**`bibtex`** 直接把整条 BibTeX 文本填进去，读者点 BibTeX 按钮就会把它**复制到剪贴板**。
 - **BibTeX 一定要写成 ``String.raw`…` ``这种形式**（`String.raw` 加一对反引号，可以多行）。BibTeX 里常有反斜杠（`{\"o}`、`\textit`、`\&`、`\url`），而普通的 JavaScript 多行字符串会曲解反斜杠：`\t` 会变成制表符，`\u` 后面不是十六进制数字时甚至直接报 `SyntaxError`。`String.raw` 会把每个字符原样保留。
-- 不想显示灰色占位按钮，只显示已有的：把文件里的 `SHOW_PLACEHOLDER_LINKS` 改成 `false`。
+- 想让没填的链接也显示出来（灰色虚线的"占位"，意思是"论文发表后提供"）：把文件里的 `SHOW_PLACEHOLDER_LINKS` 改成 `true`。
 
 ### 5.3 Awards（获奖）
 
@@ -433,13 +433,16 @@ node tools/build.mjs
 搜 `class="hero"`，里面有：
 
 - **名字**：`<h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>`——改名字要改**两个属性和中间的文字**共三处。名字还出现在很多别的地方（导航栏左上角、网页标题、分享预览、结构化数据、页脚版权、`reading.html` 和 `lattice.html`），改名后在整个仓库里搜 `Tejing Wang` 和 `王特警`，把所有出现的地方一起改。
-- **副标题**：`<p class="subtitle lang-en">` 和 `<p class="subtitle lang-zh">` 各一份。
+- **一句话身份介绍**：`<p class="hero-lede lang-en">` 和 `<p class="hero-lede lang-zh">` 各一份，写"我是谁、在哪里、跟谁读"。身份变了（比如正式入学）要记得改这里。
+- **研究方向标签**：`<p class="subtitle lang-en">` 和 `<p class="subtitle lang-zh">` 各一份，每个方向包在一个 `<span class="nw">…</span>` 里，显示成一个小标签。加一个方向就加一个这样的 `<span>`，标签之间**不要**再写 `·`。
 - **联系方式那一行** `class="hero-contact"`：邮箱、GitHub、下载简历（邮箱的写法见 6.6）。
 - **"欢迎合作"那句话** `class="hero-open"`：想改措辞或暂时去掉，直接改或删这一整段 `<p>`。Contact 里还有一句同样的 `class="contact-open"`，要一起改。
 
 ### 6.3 About 和 Research
 
 搜 `id="about"` / `id="research"`。里面是一个个成对的段落：
+
+**两个板块的分工**（避免写重复）：About 只写**事实**——我是谁、在哪里读书、跟谁读、研究兴趣有哪些、下一步打算；研究陈述写**想法**——我关心什么问题、已经做了什么、接下来想做什么。"为什么关心这个问题"这类话只放在研究陈述里，About 里不要再说一遍。
 
 **模板：新增一段（放在 `<div class="card">` 里面，中英文各一份）**
 
@@ -594,7 +597,7 @@ ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、L
 **这些是自动的，不用你管：**
 
 - 板块标题前面的**编号**（01、02……）按出现顺序自动编。
-- **交替的背景色**（一块白、一块浅灰）自动按位置交替。
+- **版式**自动套用：宽屏上标题在左边一栏、内容在右边一栏，板块之间是一条细线（线头有一小段强调色）；窄于 900px 时标题回到内容上方。
 - **滚动到哪个板块，导航里对应的链接就高亮**（前提是板块有 `id`）。
 - **统计**（第 12 节）会自动给它加上"板块被阅读"的事件。
 
@@ -606,7 +609,7 @@ ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、L
 
 1. 在 `index.html` 里删掉整段 `<section class="section" id="…"> … </section>`。
 2. 在导航栏里删掉对应的 `<a href="#…">…</a>`。
-3. 完成。编号和背景色会自动重排。
+3. 完成。编号会自动重排。
 
 **生成式板块**（News、Publications、Awards、Projects）：除了上面两步，还要**告诉构建脚本别再找它**，否则构建会报错 `index.html has no "GENERATED: xxx" block`：
 
@@ -625,7 +628,7 @@ ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、L
 
 ### 7.3 调整板块顺序
 
-在 `index.html` 里**剪切整段 `<section> … </section>`，粘贴到新位置**即可。编号、背景色自动重排。导航栏里的链接顺序是**独立**的，要顺便调整一下（[7.4](#74-导航栏)）。
+在 `index.html` 里**剪切整段 `<section> … </section>`，粘贴到新位置**即可。编号自动重排。导航栏里的链接顺序是**独立**的，要顺便调整一下（[7.4](#74-导航栏)）。
 
 ### 7.4 导航栏
 
@@ -714,11 +717,14 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 ```
 
 - 如果新照片的尺寸不是 700×700，去 `index.html` 里搜 `class="avatar"`，把那个 `<img>` 的 `width`、`height` 改成实际尺寸。
-- **想让头像显示得更大或更小**：在 `index.html` 的样式里搜 `.avatar-wrap`，改 `width` 和 `height`（桌面是 `200px`，手机端在文件靠后的 `@media (max-width: 640px)` 里，是 `116px`）；同时把上面的 `.hero-card` 的 `grid-template-columns` 第一列改成同样的数字（桌面 `200px 1fr`，手机 `116px 1fr`），否则文字和头像之间的间距会不对。
+- **想让头像显示得更大或更小**：在 `index.html` 的样式里搜 `.avatar-wrap`，改 `width` 和 `height`。一共三档：桌面是 `200px`；文件靠后的 `@media (max-width: 900px)` 里是 `160px`；`@media (max-width: 640px)`（手机）里是 `96px`，这一档头像在名字上方。前两档要同时把 `.hero-card` 的 `grid-template-columns` 第一列改成同样的数字，否则文字和头像之间的间距会不对。桌面这一档最好连 `--label-col` 一起改（见 [15.2](#152-字体和宽度)）：头像和下面各板块的标题共用左边这一栏，宽度一致才对得齐。
 
 ### 8.5 网站图标
 
 `favicon.svg`、`favicon.ico`、`icon-16.png`、`icon-32.png`、`apple-touch-icon.png` 都在仓库根目录，是浏览器标签页和手机主屏幕上的小图标。**换图标时保持文件名和尺寸不变**，直接覆盖就行。
+
+- `favicon.svg` 是源文件：蓝底圆角方块加白色的 "TW"，字母是画出来的图形而不是文字，所以在任何电脑上都长得一样。底色和页面的 `--accent`（浅色模式）是同一个颜色，改了强调色记得把这里也改掉。
+- 其余几个是从它导出的位图：`icon-16.png`、`icon-32.png`（透明圆角）、`apple-touch-icon.png`（180×180，**方形不透明**，因为 iOS 会自己裁圆角，透明处会变黑）、`favicon.ico`（里面是 16、32、48 三个尺寸）。改了 `favicon.svg` 之后这几个要重新导出，可以让 Claude 做。
 
 ### 8.6 删图
 
@@ -1015,10 +1021,10 @@ curl -s https://constellation-log.<你的子域>.workers.dev/checkins -H "Origin
 | `--text` | 正文文字 |
 | `--muted` | 次要文字（灰色的说明） |
 | `--line` | 分隔线、边框 |
-| `--accent` | 强调色（标题竖条、链接、按钮、状态标签） |
-| `--accent-soft` | 强调色的浅底（交替板块的背景、方框底色） |
+| `--accent` | 强调色（链接、按钮、状态标签、板块分隔线的线头、时间线圆点） |
+| `--accent-soft` | 强调色的浅底（研究方向标签、示意图方框、选中项的底色） |
 
-**改强调色**（比如把深蓝换成深绿）：把三个页面里、每个页面三处的 `--accent`（和需要的话 `--accent-soft`）都改掉，一共 9 处。深色模式下的强调色要**更亮**一些，否则在深色背景上看不清。改完在**浅色、深色两种模式下**都检查一遍。
+**改强调色**（比如把蓝色换成深绿）：把四个页面（还有 `constellation.html`）里、每个页面三处的 `--accent`（和需要的话 `--accent-soft`）都改掉，一共 12 处。强调色要和正文的黑色**拉得开**：太深的颜色（比如接近黑的深蓝）在页面上和黑色分不出来，整页看上去就是一片黑灰。深色模式下的强调色要**更亮**一些，否则在深色背景上看不清。改完在**浅色、深色两种模式下**都检查一遍。
 
 **如果改的是背景色 `--bg`，还要检查几处"写死"的颜色**（它们不跟变量走，浅色和深色各有一套，在 `index.html` 的样式里搜 `rgba(` 就能找到）：
 
@@ -1032,6 +1038,9 @@ curl -s https://constellation-log.<你的子域>.workers.dev/checkins -H "Origin
 
 - **字体**：用的是系统自带字体（`font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", …`），所以加载最快。要换的话搜 `font-family`。
 - **正文宽度**：`--max-width` 变量。主页是 `760px`，Notes 页和概念格演示更宽。改大了正文行就更长、更难读，一般不建议超过 820px。
+- **主页的两栏**：宽屏上主页左边多一栏，放头像和各板块的标题，宽度是 `--label-col`（`200px`），和正文之间的间隔是 `--col-gap`（`40px`）。三者相加就是整个页面的宽度，顶部导航栏用的也是这个宽度，所以导航栏、头像、标题、正文左右都对得齐。窄于 900px 时这两个变量变成 0，页面回到单栏。
+- **圆角**：方框（卡片、示意图、截图、地图）统一用 `--radius`（`8px`）；按钮和标签统一是全圆角（`999px`）。新加的样式照这两种来，不要再引入别的圆角数值。
+- **文字只有两种颜色**：正文、事实性内容用 `--text`；日期、项目副标题、图注、备注这类辅助信息用 `--muted`。不要把大段正文设成 `--muted`，那样整页会是一片灰、分不出主次。
 
 ### 15.3 深色模式
 

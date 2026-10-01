@@ -67,9 +67,9 @@ export const news = [
 // `links` holds the buttons under each card. Fill them in once the paper is out:
 //   pdf, arxiv, code   a URL
 //   bibtex             the BibTeX entry itself (the button copies it to the clipboard)
-// A link left empty shows as a quiet "coming soon" placeholder while
-// SHOW_PLACEHOLDER_LINKS is true; set it to false to show only the links you have.
-export const SHOW_PLACEHOLDER_LINKS = true;
+// Only the links you have filled in are shown. Set SHOW_PLACEHOLDER_LINKS to
+// true to show the empty ones too, as quiet "coming soon" placeholders.
+export const SHOW_PLACEHOLDER_LINKS = false;
 
 export const publications = [
   {

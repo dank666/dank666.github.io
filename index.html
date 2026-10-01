@@ -80,9 +80,16 @@
       --text: #16181c;
       --muted: #666a70;
       --line: #e6e4e0;
-      --accent: #24435c;
-      --accent-soft: #ecf1f4;
+      --accent: #1f5c8a;
+      --accent-soft: #ebf2f8;
+      /* --max-width is the content column. On wide screens a label column
+         (section titles, avatar) sits to its left; together they make the
+         page frame that the navbar also uses, so everything shares two edges. */
       --max-width: 760px;
+      --label-col: 200px;
+      --col-gap: 40px;
+      --frame-width: calc(var(--max-width) + var(--label-col) + var(--col-gap));
+      --radius: 8px;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -91,8 +98,8 @@
         --text: #e7e8ea;
         --muted: #9199a1;
         --line: #2a2d33;
-        --accent: #5b90b8;
-        --accent-soft: #1c2530;
+        --accent: #6ea9d8;
+        --accent-soft: #1a2633;
       }
 
       :root:not([data-theme="light"]) .navbar {
@@ -113,8 +120,8 @@
       --text: #e7e8ea;
       --muted: #9199a1;
       --line: #2a2d33;
-      --accent: #5b90b8;
-      --accent-soft: #1c2530;
+      --accent: #6ea9d8;
+      --accent-soft: #1a2633;
     }
 
     :root[data-theme="dark"] .navbar {
@@ -244,7 +251,7 @@
     }
 
     .container {
-      width: min(var(--max-width), calc(100% - 40px));
+      width: min(var(--frame-width), calc(100% - 40px));
       margin: 0 auto;
     }
 
@@ -263,7 +270,7 @@
     }
 
     .nav-inner {
-      width: min(1080px, calc(100% - 40px));
+      width: min(var(--frame-width), calc(100% - 40px));
       margin: 0 auto;
       padding: 16px 0;
       display: flex;
@@ -318,6 +325,9 @@
       overflow-x: auto;
       scrollbar-width: none;
       -ms-overflow-style: none;
+      /* Room for the active link's underline inside the scrolling row. */
+      padding-bottom: 4px;
+      margin-bottom: -4px;
     }
 
     .nav-links::-webkit-scrollbar {
@@ -335,9 +345,15 @@
       text-decoration: none;
     }
 
+    /* The current link is marked by colour and an underline rather than by
+       weight: a bolder word is wider, which made the whole row shift sideways
+       every time the scroll position crossed into another section. */
     .nav-links a.active {
       color: var(--text);
-      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 6px;
     }
 
     .nav-inner {
@@ -374,10 +390,6 @@
       color: var(--text);
     }
 
-    .nav-more-btn.has-active {
-      font-weight: 600;
-    }
-
     .nav-caret {
       width: 6px;
       height: 6px;
@@ -402,7 +414,7 @@
       flex-direction: column;
       background: var(--bg);
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: var(--radius);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
 
@@ -424,6 +436,11 @@
     @media (min-width: 901px) {
       .nav-links {
         overflow: visible;
+      }
+
+      /* In the dropdown the tinted row already marks the current item. */
+      .nav-more-menu a.active {
+        text-decoration: none;
       }
 
       .nav-links-wrap::after {
@@ -492,14 +509,16 @@
     }
 
     .hero {
-      padding: 60px 0 32px;
+      padding: 64px 0 56px;
     }
 
+    /* Same two columns as the sections below: the avatar sits in the label
+       column, the text starts on the content column's left edge. */
     .hero-card {
       display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 34px;
-      align-items: center;
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: var(--col-gap);
+      align-items: start;
     }
 
     .avatar-wrap {
@@ -518,39 +537,49 @@
       border-radius: 50%;
     }
 
-    /* Balance the lines of the subtitle so a single word never wraps alone
+    /* Keep these from leaving a word or two alone on the last line
        (browsers without support just wrap normally). */
-    .hero-text .subtitle,
+    .hero-lede,
     .hero-open {
       text-wrap: balance;
     }
 
-    /* On wide screens keep each "·"-separated phrase in one piece, so a line
-       break never splits a term such as "Graph-based Concept Learning".
-       (Not on phones: the text column is too narrow for that.) */
-    @media (min-width: 641px) {
-      .subtitle .nw {
-        white-space: nowrap;
-      }
-    }
-
     .hero-text h1 {
       margin: 0;
-      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-size: clamp(2.1rem, 4vw, 2.9rem);
       line-height: 1.1;
       letter-spacing: -0.03em;
       font-weight: 700;
     }
 
+    /* One sentence saying who this is, in the main text colour. */
+    .hero-lede {
+      margin: 14px 0 0;
+      font-size: 1.06rem;
+      line-height: 1.6;
+    }
+
+    /* Research interests as small tags. They wrap as whole units, so no
+       separator can be left hanging at the end of a line. (Kept as inline
+       blocks: the paragraph itself must stay hideable by the language rules.) */
     .hero-text .subtitle {
-      margin: 12px 0 0;
+      margin: 14px 0 0;
       color: var(--accent);
-      font-size: 1rem;
+      font-size: 0.86rem;
       font-weight: 500;
+      line-height: 1.6;
+    }
+
+    .subtitle .nw {
+      display: inline-block;
+      margin: 0 4px 6px 0;
+      padding: 2px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
     }
 
     .hero-contact {
-      margin-top: 18px;
+      margin-top: 16px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -566,43 +595,76 @@
     .hero-contact a:hover {
       color: var(--accent);
     }
-    
+
     .hero-contact .sep {
       color: var(--line);
     }
 
-    .section {
-      position: relative;
-      padding: 52px 0;
-      scroll-margin-top: 76px;
+    /* The CV is the one action in the row, so it leads and looks like a button. */
+    .hero-contact .cv-link {
+      order: -1;
+      padding: 4px 16px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      color: var(--accent);
+      font-weight: 600;
     }
 
-    .section + .section {
-      border-top: 1px solid var(--line);
-    }
-
-    .section:nth-of-type(even)::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 100vw;
-      transform: translateX(-50%);
-      background: var(--accent-soft);
-      z-index: -1;
+    .hero-contact .cv-link:hover {
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
     }
 
     main {
       counter-reset: section-counter;
     }
 
+    /* Each section: its title in the label column, everything else in the
+       content column. One hairline (with a short accent mark at its start)
+       separates sections. */
     .section {
+      position: relative;
+      display: grid;
+      grid-template-columns: var(--label-col) minmax(0, 1fr);
+      column-gap: var(--col-gap);
+      padding: 56px 0;
+      border-top: 1px solid var(--line);
+      scroll-margin-top: 76px;
       counter-increment: section-counter;
     }
 
+    /* display: grid above would otherwise override the hidden attribute. */
+    .section[hidden] {
+      display: none;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .section > * {
+      grid-column: 2;
+      min-width: 0;
+    }
+
+    /* Spans every row of its section so it can stay in view (sticky, just
+       below the navbar) while the section's content scrolls past. */
+    .section > .section-header {
+      grid-column: 1;
+      grid-row: 1 / span 12;
+      align-self: start;
+      position: sticky;
+      top: 92px;
+    }
+
     .section-header {
-      margin-bottom: 22px;
       display: flex;
       align-items: baseline;
       gap: 10px;
@@ -610,54 +672,51 @@
 
     .section-header::before {
       content: counter(section-counter, decimal-leading-zero);
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
       color: var(--muted);
     }
 
+    /* Same size and line height as body text, so the title's baseline lines
+       up with the first line of the content beside it. */
     .section-title {
-      position: relative;
       margin: 0;
-      padding-left: 16px;
-      font-size: 1.18rem;
+      font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0;
-    }
-
-    .section-title::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 2px;
-      bottom: 2px;
-      width: 4px;
-      border-radius: 2px;
-      background: var(--accent);
     }
 
     .list,
     .timeline,
     .contact-list {
       display: grid;
-      gap: 20px;
+      gap: 16px;
     }
 
     .timeline {
-      padding-left: 20px;
+      gap: 22px;
+    }
+
+    .contact-list {
+      gap: 10px;
     }
 
     .timeline .timeline-item {
       position: relative;
     }
 
+    /* The dots hang in the gap left of the content column, so timeline text
+       starts on the same edge as every other section. */
     .timeline .timeline-item::before {
       content: "";
+      box-sizing: border-box;
       position: absolute;
-      left: -17px;
-      top: 5px;
-      width: 8px;
-      height: 8px;
+      left: -24px;
+      top: 8px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       background: var(--bg);
       border: 2px solid var(--accent);
@@ -670,11 +729,17 @@
     .timeline .timeline-item:not(:last-child)::after {
       content: "";
       position: absolute;
-      left: -13.5px;
-      top: 13px;
-      bottom: -20px;
+      left: -20px;
+      top: 21px;
+      bottom: -26px;
       width: 1px;
       background: var(--line);
+    }
+
+    /* While the older items are folded away, the last visible one has nothing
+       below it to connect to. */
+    .timeline .timeline-item:has(+ .timeline-more[hidden])::after {
+      display: none;
     }
 
     .card,
@@ -695,11 +760,27 @@
       font-weight: 600;
     }
 
+    /* Two text levels: prose and facts in the main text colour, and only the
+       supporting details (dates, taglines, captions, notes) in the muted one. */
     .card p,
-    .timeline-item p,
+    .timeline-item p {
+      margin: 4px 0 0;
+      color: var(--text);
+    }
+
+    .card p {
+      margin-top: 12px;
+    }
+
+    /* First paragraph of a card, in either language (they sit in pairs). */
+    .card > p:first-child,
+    .card > p.lang-en:first-child + p.lang-zh {
+      margin-top: 0;
+    }
+
     .contact-value,
     .publication-meta {
-      margin: 4px 0 0;
+      margin: 0;
       color: var(--muted);
       font-size: 0.96rem;
     }
@@ -709,38 +790,37 @@
       padding: 0;
       list-style: none;
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .award-list li {
       position: relative;
       padding-left: 16px;
-      color: var(--muted);
-      font-size: 0.96rem;
     }
 
     .award-list li::before {
       content: "";
       position: absolute;
       left: 0;
-      top: 0.62em;
+      top: 0.7em;
       width: 5px;
       height: 5px;
       border-radius: 50%;
       background: var(--accent);
     }
 
-    .timeline-item,
-    .publication-item,
-    .contact-item,
+    /* Cards in a list are divided by a hairline with equal space on both
+       sides. Timeline items are already separated by their dots and line,
+       contact rows by their label column, so those get no rule. */
     .card {
-      padding-bottom: 16px;
+      padding-bottom: 28px;
       border-bottom: 1px solid var(--line);
     }
 
-    .timeline-item:last-child,
-    .publication-item:last-child,
-    .contact-item:last-child,
+    .card + .card {
+      padding-top: 12px;
+    }
+
     .card:last-child {
       padding-bottom: 0;
       border-bottom: 0;
@@ -758,11 +838,11 @@
 
     .timeline-more {
       display: grid;
-      gap: 20px;
+      gap: 22px;
       max-height: 480px;
       overflow-y: auto;
-      margin-left: -20px;
-      padding-left: 20px;
+      margin-left: -24px;
+      padding-left: 24px;
       padding-right: 4px;
     }
 
@@ -787,6 +867,12 @@
       border-color: var(--accent);
     }
 
+    /* Directly in a section the button is a grid item: keep its own width. */
+    .section > .show-more-btn {
+      justify-self: start;
+      margin-top: 18px;
+    }
+
     .show-more-btn[data-state="collapsed"] .label-hide {
       display: none;
     }
@@ -795,25 +881,28 @@
       display: none;
     }
 
+    /* Same label column as the Skills rows, so the two lists line up. */
     .contact-item {
       display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 12px;
-      align-items: start;
+      grid-template-columns: 220px 1fr;
+      gap: 4px 18px;
+      align-items: baseline;
     }
 
     .project-gallery {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
 
+    /* 16:9 is close to the screenshots' own shape, so little gets cropped. */
     .project-gallery img {
       width: 100%;
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 16 / 9;
       object-fit: cover;
       border: 1px solid var(--line);
+      border-radius: var(--radius);
       cursor: zoom-in;
       transition: opacity 0.15s ease;
     }
@@ -850,8 +939,10 @@
       border: none;
     }
 
+    /* Closes the page with the same hairline; its text sits on the content column. */
     .footer {
-      padding: 32px 0 56px;
+      padding: 28px 0 56px calc(var(--label-col) + var(--col-gap));
+      border-top: 1px solid var(--line);
       color: var(--muted);
       font-size: 0.9rem;
     }
@@ -898,6 +989,48 @@
       border-color: var(--accent);
     }
 
+    /* Below 900px there is no room for the label column: one column, with
+       each section title above its content. */
+    @media (max-width: 900px) {
+      :root {
+        --label-col: 0px;
+        --col-gap: 0px;
+      }
+
+      .hero {
+        padding: 48px 0 44px;
+      }
+
+      .hero-card {
+        grid-template-columns: 160px minmax(0, 1fr);
+        gap: 28px;
+      }
+
+      .avatar-wrap {
+        width: 160px;
+        height: 160px;
+      }
+
+      .section {
+        display: block;
+        padding: 44px 0;
+      }
+
+      .section > .section-header {
+        position: static;
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+      }
+
+      /* No gap beside the column for the dots to hang in: indent instead. */
+      .timeline {
+        padding-left: 24px;
+      }
+    }
+
     @media (max-width: 640px) {
       .nav-inner,
       .contact-item {
@@ -914,17 +1047,19 @@
       }
 
       .hero {
-        padding-top: 44px;
+        padding-top: 36px;
       }
 
+      /* Stacked: a small avatar above the name, instead of floating beside
+         a text column several times its height. */
       .hero-card {
-        grid-template-columns: 116px 1fr;
+        grid-template-columns: 1fr;
         gap: 20px;
       }
 
       .avatar-wrap {
-        width: 116px;
-        height: 116px;
+        width: 96px;
+        height: 96px;
       }
     }
   </style>
@@ -1049,7 +1184,7 @@
       padding: 16px 18px;
       background: var(--bg);
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: var(--radius);
     }
 
     .pub-status-row {
@@ -1152,6 +1287,7 @@
     /* Projects: tagline, links, schematic figures */
     .card .project-tagline {
       margin: 2px 0 0;
+      color: var(--muted);
       font-size: 0.9rem;
     }
 
@@ -1199,7 +1335,7 @@
       padding: 12px 14px;
       background: var(--accent-soft);
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: var(--radius);
     }
 
     .flow-step + .flow-step {
@@ -1240,7 +1376,7 @@
       padding: 10px 20px;
       background: var(--accent-soft);
       border: 1px solid var(--accent);
-      border-radius: 10px;
+      border-radius: var(--radius);
       color: var(--accent);
       font-weight: 700;
     }
@@ -1355,7 +1491,7 @@
 
     .skill-row {
       display: grid;
-      grid-template-columns: 236px 1fr;
+      grid-template-columns: 220px 1fr;
       gap: 4px 18px;
       align-items: baseline;
     }
@@ -1366,8 +1502,6 @@
 
     .skill-row dd {
       margin: 0;
-      color: var(--muted);
-      font-size: 0.96rem;
     }
 
     @media (max-width: 640px) {
@@ -1379,28 +1513,31 @@
     /* With two email addresses the contact row wraps; spacing instead of "·"
        separators keeps a wrapped line from starting or ending with a dot. */
     .hero-contact {
-      gap: 6px 20px;
+      gap: 8px 20px;
     }
 
     .hero-contact .sep {
       display: none;
     }
 
-    /* Collaboration note and second email */
+    /* Collaboration note and second email. The dot is a flex item, so a
+       wrapped second line starts under the text rather than under the dot. */
     .hero-open {
-      margin: 14px 0 0;
-      font-size: 0.93rem;
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
     }
 
     .hero-open::before {
       content: "";
-      display: inline-block;
+      flex: none;
       width: 8px;
       height: 8px;
-      margin-right: 9px;
       border-radius: 50%;
       background: var(--accent);
-      vertical-align: middle;
     }
 
     .contact-open {
@@ -1427,10 +1564,10 @@
           <nav class="nav-links">
             <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
             <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span></a>
+            <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></a>
             <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
             <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
             <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
-            <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></a>
             <div class="nav-more">
               <button class="nav-more-btn" id="navMoreBtn" type="button" aria-expanded="false" aria-controls="navMoreMenu">
                 <span class="lang-en">More</span><span class="lang-zh">更多</span><span class="nav-caret" aria-hidden="true"></span>
@@ -1473,8 +1610,10 @@
 
         <div class="hero-text">
           <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>
-          <p class="subtitle lang-en"><span class="nw">Neuro-Symbolic AI</span> · <span class="nw">Graph-based Concept Learning</span> · <span class="nw">Intelligent Agents</span></p>
-          <p class="subtitle lang-zh"><span class="nw">神经符号人工智能</span> · <span class="nw">图概念学习</span> · <span class="nw">智能体系统</span></p>
+          <p class="hero-lede lang-en">AI student at Shaanxi Normal University, continuing there as an academic master's student advised by Prof. Fei Hao.</p>
+          <p class="hero-lede lang-zh">陕西师范大学人工智能专业学生，将继续在本校攻读学术型硕士，导师为郝飞教授。</p>
+          <p class="subtitle lang-en"><span class="nw">Neuro-Symbolic AI</span> <span class="nw">Graph-based Concept Learning</span> <span class="nw">Intelligent Agents</span></p>
+          <p class="subtitle lang-zh"><span class="nw">神经符号人工智能</span> <span class="nw">图概念学习</span> <span class="nw">智能体系统</span></p>
           <div class="hero-contact">
             <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn">42312205 [at] snnu [dot] edu [dot] cn</a>
             <span class="sep" aria-hidden="true">·</span>
@@ -1513,20 +1652,16 @@
           <p class="lang-en">
             My research interests center on neuro-symbolic intelligence and graph-based concept
             cognition learning, alongside formal concept analysis, explainable AI, LLM-empowered
-            education, digital twins, and embodied intelligence. I'm interested in how structured,
-            symbolic knowledge can make large language model systems more interpretable, controllable,
-            and cognitively grounded.
+            education, digital twins, and embodied intelligence.
           </p>
           <p class="lang-zh">
-            我的研究兴趣集中在神经符号智能与图概念认知学习，同时也关注形式概念分析、可解释人工智能、大语言模型赋能教育、数字孪生与具身智能。我关心的问题是：结构化的符号知识如何能让大语言模型系统变得更可解释、更可控、更具认知基础。
+            我的研究兴趣集中在神经符号智能与图概念认知学习，同时也关注形式概念分析、可解释人工智能、大语言模型赋能教育、数字孪生与具身智能。
           </p>
           <p class="lang-en">
-            My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master's,
-            working toward interpretable and trustworthy intelligent systems that bridge symbolic
-            reasoning and modern foundation models.
+            My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master's.
           </p>
           <p class="lang-zh">
-            我的长期目标是在硕士毕业后赴海外攻读人工智能博士学位，致力于构建连接符号推理与现代基础模型的可解释、可信赖智能系统。
+            我的长期目标是在硕士毕业后赴海外攻读人工智能博士学位。
           </p>
         </div>
       </div>
@@ -1586,6 +1721,34 @@
           </p>
         </div>
       </div>
+    </section>
+
+    <section class="section" id="publications">
+      <div class="section-header">
+        <h2 class="section-title"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></h2>
+      </div>
+
+      <!-- BEGIN GENERATED: publications — edit data/content.mjs, then run "node tools/build.mjs" -->
+      <div class="list">
+        <div class="publication-item pub-card">
+          <div class="publication-title lang-en">A Survey of Neuro-Symbolic Agents</div>
+          <div class="publication-title lang-zh">神经符号智能体综述</div>
+          <div class="pub-status-row">
+            <span class="status-pill status-in-preparation"><span class="lang-en">In Preparation</span><span class="lang-zh">撰写中</span></span>
+          </div>
+        </div>
+        <div class="publication-item pub-card">
+          <div class="publication-title lang-en">Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering</div>
+          <div class="publication-title lang-zh">融合大语言模型与三支概念分析的地理多选题自动解答</div>
+          <div class="pub-status-row">
+            <span class="status-pill status-under-review"><span class="lang-en">Under Review</span><span class="lang-zh">审稿中</span></span>
+            <span class="publication-meta lang-en">First author · Applied Soft Computing</span>
+            <span class="publication-meta lang-zh">第一作者 · Applied Soft Computing</span>
+          </div>
+        </div>
+        <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>
+      </div>
+      <!-- END GENERATED: publications -->
     </section>
 
     <section class="section" id="news">
@@ -1811,46 +1974,6 @@
       <!-- END GENERATED: projects -->
     </section>
 
-    <section class="section" id="publications">
-      <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></h2>
-      </div>
-
-      <!-- BEGIN GENERATED: publications — edit data/content.mjs, then run "node tools/build.mjs" -->
-      <div class="list">
-        <div class="publication-item pub-card">
-          <div class="publication-title lang-en">A Survey of Neuro-Symbolic Agents</div>
-          <div class="publication-title lang-zh">神经符号智能体综述</div>
-          <div class="pub-status-row">
-            <span class="status-pill status-in-preparation"><span class="lang-en">In Preparation</span><span class="lang-zh">撰写中</span></span>
-          </div>
-          <div class="pub-links" role="group" aria-label="Paper links / 论文链接">
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">PDF</span>
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">arXiv</span>
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供"><span class="lang-en">Code</span><span class="lang-zh">代码</span></span>
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">BibTeX</span>
-          </div>
-        </div>
-        <div class="publication-item pub-card">
-          <div class="publication-title lang-en">Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering</div>
-          <div class="publication-title lang-zh">融合大语言模型与三支概念分析的地理多选题自动解答</div>
-          <div class="pub-status-row">
-            <span class="status-pill status-under-review"><span class="lang-en">Under Review</span><span class="lang-zh">审稿中</span></span>
-            <span class="publication-meta lang-en">First author · Applied Soft Computing</span>
-            <span class="publication-meta lang-zh">第一作者 · Applied Soft Computing</span>
-          </div>
-          <div class="pub-links" role="group" aria-label="Paper links / 论文链接">
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">PDF</span>
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">arXiv</span>
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供"><span class="lang-en">Code</span><span class="lang-zh">代码</span></span>
-            <span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">BibTeX</span>
-          </div>
-        </div>
-        <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>
-      </div>
-      <!-- END GENERATED: publications -->
-    </section>
-
     <section class="section" id="skills">
       <div class="section-header">
         <h2 class="section-title"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></h2>
@@ -2028,8 +2151,8 @@
         <span class="lang-zh">© 2026 王特警</span>
       </p>
       <p>
-        <span class="lang-en">Last updated: <span class="js-updated-en">September 2026</span> · <a href="https://github.com/dank666/dank666.github.io" target="_blank">View source</a></span>
-        <span class="lang-zh">最后更新：<span class="js-updated-zh">2026 年 9 月</span> · <a href="https://github.com/dank666/dank666.github.io" target="_blank">查看源码</a></span>
+        <span class="lang-en">Last updated: <span class="js-updated-en">October 2026</span> · <a href="https://github.com/dank666/dank666.github.io" target="_blank">View source</a></span>
+        <span class="lang-zh">最后更新：<span class="js-updated-zh">2026 年 10 月</span> · <a href="https://github.com/dank666/dank666.github.io" target="_blank">查看源码</a></span>
       </p>
       <p id="privacyNote">
         <span class="lang-en">Only anonymous, city-level visit counts are collected — no IP addresses are recorded.</span>
