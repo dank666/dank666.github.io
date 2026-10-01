@@ -276,15 +276,15 @@ node tools/build.mjs
       zh: "论文中文标题"
     },
     meta: {
-      en: "First author · Journal or Conference Name",
-      zh: "第一作者 · 期刊或会议名称"
+      en: "First author · <em>Journal or Conference Name</em>",
+      zh: "第一作者 · <em>Journal or Conference Name</em>"
     },
     links: { pdf: "", arxiv: "", code: "", bibtex: "" }
   },
 ```
 
 - **`status`** 只能是这四个值之一：`"in-preparation"`（撰写中）、`"under-review"`（审稿中）、`"preprint"`（预印本）、`"published"`（已发表）。写错了构建会报错并列出可选值。
-- **`meta`** 是状态标签旁边那行小字，可选；没有就删掉这个字段。
+- **`meta`** 是状态标签旁边那行小字，可选；没有就删掉这个字段。**期刊或会议名用 `<em>…</em>` 包起来**，它会用衬线斜体显示（中英文两份都包）。只包拉丁字母写的名字；如果是中文刊名就不要包，中文不用斜体。
 - **`links`**：只有填了的链接才会显示成按钮，没填的不显示；四个都没填时，卡片上就没有按钮这一行。
 
 **论文被录用 / 发表之后**，把这一项改成下面这样（`status` 改成 `"published"`，补上链接）：
@@ -299,8 +299,8 @@ node tools/build.mjs
       zh: "<a href=\"https://doi.org/10.xxxx/xxxxx\" target=\"_blank\">论文中文标题</a>"
     },
     meta: {
-      en: "First author · Journal Name, 2027",
-      zh: "第一作者 · 期刊名，2027"
+      en: "First author · <em>Journal Name</em>, 2027",
+      zh: "第一作者 · <em>Journal Name</em>，2027"
     },
     links: {
       pdf: "https://example.com/paper.pdf",
@@ -458,6 +458,8 @@ node tools/build.mjs
 ```
 
 段落里的链接写法：`<a href="https://…" target="_blank">链接文字</a>`。
+
+**把研究陈述里的某一句标成引言句**（用衬线斜体显示）：在**英文**段落里把那句话包起来，`<span class="statement-quote">That one sentence.</span>`。中文那份不用包，包了也不会有任何变化，因为中文不用斜体（见 [15.2](#152-字体和宽度)）。
 
 ### 6.4 Education 和 Experience
 
@@ -734,9 +736,9 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 
 `favicon.svg`、`favicon.ico`、`icon-16.png`、`icon-32.png`、`apple-touch-icon.png` 都在仓库根目录，是浏览器标签页和手机主屏幕上的小图标。**换图标时保持文件名和尺寸不变**，直接覆盖就行。
 
-- `favicon.svg` 是源文件：蓝底圆角方块加白色的 "TW"，字母是画出来的图形而不是文字，所以在任何电脑上都长得一样。底色和页面的 `--accent`（浅色模式）是同一个颜色，改了强调色记得把这里也改掉。
-- 其余几个是从它导出的位图：`icon-16.png`、`icon-32.png`（透明圆角）、`apple-touch-icon.png`（180×180，**方形不透明**，因为 iOS 会自己裁圆角，透明处会变黑）、`favicon.ico`（里面是 16、32、48 三个尺寸）。改了 `favicon.svg` 之后这几个要重新导出，可以让 Claude 做。
-- **导航栏左上角名字前面的小标**是同一个图形，直接写在四个页面的 HTML 里（搜 `logo-mark`）。它的颜色不是写死的，而是跟着 `--accent` 和 `--bg` 走，所以深色模式下会变成浅蓝底深色字。改了图标的形状，这四处也要一起改。点它（或旁边的名字）：在主页是回到顶部，在子页面是回到主页。
+- `favicon.svg` 是源文件：深蓝色圆底，上面是白色衬线体的 "T" 和浅蓝色斜体的 "w"。字母是画出来的图形而不是文字，所以在任何电脑上都长得一样。它的颜色是写死的（深蓝 `#12355b`、浅蓝 `#6ea9d8`），不跟页面的 `--accent` 走。
+- 其余几个是和它配套的位图：`icon-16.png`、`icon-32.png`（圆形，四周透明）、`apple-touch-icon.png`（180×180，**方形不透明**的白底，因为 iOS 会自己裁圆角，透明处会变黑）、`favicon.ico`（里面是 16、32、48 三个尺寸）。换了 `favicon.svg` 之后这几个要一起换，可以让 Claude 做。
+- **导航栏左上角名字前面的小标**就是 `favicon.svg` 这个文件本身（四个页面里搜 `logo-mark`，是一个 `<img>`），所以换了图标它会自动跟着变，浅色和深色模式下是同一个样子。点它（或旁边的名字）：在主页是回到顶部，在子页面是回到主页。
 
 ### 8.6 删图
 
@@ -1048,8 +1050,15 @@ curl -s https://constellation-log.<你的子域>.workers.dev/checkins -H "Origin
 
 ### 15.2 字体和宽度
 
-- **字体**：用的是系统自带字体（`font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", …`），所以加载最快。要换的话搜 `font-family`。
+- **字体**：英文和数字用两款自己托管的字体，文件在 `fonts/` 里（不走 Google Fonts，大陆打不开）；**中文不加载任何网络字体**，用的是系统自带的（苹方、微软雅黑）。每个页面的 `<style>` 开头有两段 `@font-face` 和两个变量：
+  - `--font-body`（Inter）：正文、导航栏、标签、日期、按钮，以及所有 22px 以下的标题。`body` 用的就是它，其余元素都是继承来的。
+  - `--font-display`（EB Garamond）：**只用于 22px 以上的大标题**，现在就是每个页面的 `h1`（字重 600、字距 `-0.01em`）。板块标题、卡片标题字号小，保持 Inter。
+  - 要换字体：把新的 woff2 放进 `fonts/`，改四个页面里的 `@font-face`、这两个变量，以及 `<head>` 里那行 `<link rel="preload">`。来源、版本和许可见 `fonts/README.md`。
+  - **EB Garamond 的斜体**（另一个文件，只有 500 这一个字重，只在主页和 Notes 页加载）只用在两处：论文列表里的**期刊 / 会议名**（主页是 `.publication-meta em`，Notes 页是 `.paper-venue`），以及研究陈述里用 `class="statement-quote"` 标出来的那句话（见 [6.3](#63-about-和-research)）。它比旁边的正文放大到 `1.15em`，因为这款字的小写字母本来就比 Inter 矮得多。其他地方的斜体（动态和项目副标题里的期刊名、"Coming soon"）还是 Inter，由浏览器把正体倾斜出来。
+  - **中文一律不用斜体**（中文没有斜体，倾斜出来的只是变形的正体）：`.lang-zh { font-style: normal; }` 保证中文不会从外层继承到斜体。所以**不要给中文套 `<em>`**，要强调就用 `<strong>`；`<em>` 只留给拉丁字母写的期刊名这类内容。
+- **字号和行高**：`html { font-size: 106.25% }` 把基准字号定为 17px，页面上所有 `rem` 字号都跟着它等比缩放；`body` 的行高是 `1.65`。
 - **正文宽度**：`--max-width` 变量。主页是 `760px`，Notes 页和概念格演示更宽。改大了正文行就更长、更难读，一般不建议超过 820px。
+- **正文每行的长度**：成段的文字另外限制在 `max-width: 34em`（英文每行约 70 个字符，中文约 34 个字），所以段落比这一栏窄一些；论文卡片、示意图、截图、技能和联系方式这些成行成块的内容仍然占满整栏。单位用 `em`，各种字号下每行的字数都差不多。主页里搜 `34em` 能找到这条规则。
 - **主页的两栏**：宽屏上主页左边多一栏，放头像和各板块的标题，宽度是 `--label-col`（`200px`），和正文之间的间隔是 `--col-gap`（`40px`）。三者相加就是整个页面的宽度，顶部导航栏用的也是这个宽度，所以导航栏、头像、标题、正文左右都对得齐。窄于 900px 时这两个变量变成 0，页面回到单栏。
 - **圆角**：方框（卡片、示意图、截图、地图）统一用 `--radius`（`8px`）；按钮和标签统一是全圆角（`999px`）。新加的样式照这两种来，不要再引入别的圆角数值。
 - **文字只有两种颜色**：正文、事实性内容用 `--text`；日期、项目副标题、图注、备注这类辅助信息用 `--muted`。不要把大段正文设成 `--muted`，那样整页会是一片灰、分不出主次。
@@ -1128,6 +1137,7 @@ node tests/lattice-core.test.js
 ├── .github/workflows/
 │   └── check.yml         GitHub 上的自动检查（不部署）
 ├── images/               头像、项目截图（WebP；头像另有 JPG 备用）
+├── fonts/                自己托管的两款字体 Inter 和 EB Garamond（只含拉丁字符，详见 fonts/README.md）
 ├── vendor/               访客地图用的 D3 模块和世界地图数据（没有 CDN 依赖，详见 vendor/README.md）
 ├── visitor-worker/       访客地图的后端（Cloudflare Worker + D1），单独部署，不随网站发布
 │   ├── src/index.js      Worker 代码

@@ -63,6 +63,8 @@ export const news = [
 // One card per paper. `status` is one of:
 //   'in-preparation' | 'under-review' | 'preprint' | 'published'
 // `meta` (optional) is the short line next to the status, e.g. role and venue.
+// Wrap the journal or conference name in <em>…</em>: that sets it in the italic
+// display face. Only do so for names in Latin letters, never for Chinese ones.
 //
 // `links` holds the buttons under each card. Fill them in once the paper is out:
 //   pdf, arxiv, code   a URL
@@ -87,8 +89,8 @@ export const publications = [
       zh: "融合大语言模型与三支概念分析的地理多选题自动解答"
     },
     meta: {
-      en: "First author · Applied Soft Computing",
-      zh: "第一作者 · Applied Soft Computing"
+      en: "First author · <em>Applied Soft Computing</em>",
+      zh: "第一作者 · <em>Applied Soft Computing</em>"
     },
     links: { pdf: "", arxiv: "", code: "", bibtex: "" }
   },

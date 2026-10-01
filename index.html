@@ -29,6 +29,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <link rel="icon" href="favicon.ico" />
 
+  <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Tejing Wang — Neuro-Symbolic AI, Concept Learning, Agents | SNNU" />
   <meta property="og:description" content="Undergraduate in Artificial Intelligence at Shaanxi Normal University (SNNU).Research on neuro-symbolic AI, graph-based concept learning, and intelligent agents." />
@@ -75,6 +77,38 @@
   </script>
 
   <style>
+    /* Self-hosted fonts, Latin glyphs only: Chinese text falls through to the
+       system fonts further down each stack. One variable file per family
+       covers every weight in use. Sources and licences: fonts/README.md. */
+    @font-face {
+      font-family: "Inter";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url("fonts/inter-latin-wght-normal.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+      font-family: "EB Garamond";
+      font-style: normal;
+      font-weight: 400 800;
+      font-display: swap;
+      src: url("fonts/eb-garamond-latin-wght-normal.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    /* The italic, in one weight. Used only for venue names in the
+       publication list and the marked sentence of the research statement. */
+    @font-face {
+      font-family: "EB Garamond";
+      font-style: italic;
+      font-weight: 500;
+      font-display: swap;
+      src: url("fonts/eb-garamond-latin-500-italic.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
     :root {
       --bg: #ffffff;
       --text: #16181c;
@@ -82,6 +116,10 @@
       --line: #e6e4e0;
       --accent: #1f5c8a;
       --accent-soft: #ebf2f8;
+      /* --font-display is for headings of 22px and up only; anything smaller
+         stays in --font-body. */
+      --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --font-display: "EB Garamond", Georgia, "Times New Roman", "PingFang SC", "Microsoft YaHei", serif;
       /* --max-width is the content column. On wide screens a label column
          (section titles, avatar) sits to its left; together they make the
          page frame that the navbar also uses, so everything shares two edges. */
@@ -185,6 +223,8 @@
     }
 
     html {
+      /* 17px base: every rem size on the page scales with it. */
+      font-size: 106.25%;
       scroll-behavior: smooth;
     }
 
@@ -199,10 +239,10 @@
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
-      line-height: 1.75;
+      line-height: 1.65;
     }
 
     a {
@@ -257,6 +297,10 @@
     [data-lang="en"] .lang-zh { display: none; }
     [data-lang="zh"] .lang-en { display: none; }
 
+    /* Chinese is never set in italic (it has no italic, only a slanted
+       distortion of the upright), even inside an italic parent. */
+    .lang-zh { font-style: normal; }
+
     .navbar {
       position: sticky;
       top: 0;
@@ -277,7 +321,7 @@
       gap: 16px;
     }
 
-    /* The site mark (same drawing as the favicon) followed by the name. */
+    /* The site mark (the favicon itself) followed by the name. */
     .logo {
       display: inline-flex;
       align-items: center;
@@ -298,21 +342,6 @@
       width: 22px;
       height: 22px;
       flex: none;
-    }
-
-    .logo-mark .mark-bg {
-      fill: var(--accent);
-    }
-
-    .logo-mark .mark-t {
-      fill: var(--bg);
-    }
-
-    .logo-mark .mark-w {
-      fill: none;
-      stroke: var(--bg);
-      stroke-width: 5.6;
-      stroke-miterlimit: 10;
     }
 
     .nav-right {
@@ -576,8 +605,9 @@
       margin: 0;
       font-size: clamp(2.1rem, 4vw, 2.9rem);
       line-height: 1.1;
-      letter-spacing: -0.03em;
-      font-weight: 700;
+      font-family: var(--font-display);
+      letter-spacing: -0.01em;
+      font-weight: 600;
     }
 
     /* One sentence saying who this is, in the main text colour. */
@@ -836,11 +866,39 @@
       margin-top: 0;
     }
 
+    /* Running text is held to about 70 characters a line (34 in Chinese).
+       In em, so it holds at every text size and does not move when the web
+       font swaps in. Boxes, figures and rows of facts keep the full column. */
+    .hero-lede,
+    .card p:not(.project-tagline),
+    .timeline-item p,
+    .award-list li,
+    .contact-open {
+      max-width: 34em;
+    }
+
     .contact-value,
     .publication-meta {
       margin: 0;
       color: var(--muted);
       font-size: 0.96rem;
+    }
+
+    /* The only two uses of the italic display face: a venue name (written as
+       <em> in a publication's `meta`) and a sentence of the research statement
+       marked with class="statement-quote". Slightly enlarged, because the face
+       has a much smaller x-height than the body text around it; line-height 1
+       keeps that from pushing the lines apart. font-synthesis leaves any
+       Chinese character upright instead of slanting it, and the class does
+       nothing at all inside the Chinese text. */
+    .publication-meta em,
+    .lang-en .statement-quote {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 1.15em;
+      line-height: 1;
+      font-synthesis: weight;
     }
 
     .award-list {
@@ -1614,7 +1672,7 @@
   <header class="navbar">
     <div class="nav-inner">
       <a class="logo" href="#">
-        <svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect class="mark-bg" width="64" height="64" rx="14"/><clipPath id="logoCaps"><rect y="20" width="64" height="24"/></clipPath><path class="mark-t" d="M6.5 20h17v5.6h-5.7V44h-5.6V25.6H6.5z"/><path class="mark-w" d="M28.3 14 35.9 44 42 20 48.1 44 55.7 14" clip-path="url(#logoCaps)"/></svg>
+        <img class="logo-mark" src="favicon.svg" alt="" width="22" height="22" />
         <span class="lang-en">Tejing Wang</span>
         <span class="lang-zh">王特警</span>
       </a>
@@ -1805,8 +1863,8 @@
           <div class="publication-title lang-zh">融合大语言模型与三支概念分析的地理多选题自动解答</div>
           <div class="pub-status-row">
             <span class="status-pill status-under-review"><span class="lang-en">Under Review</span><span class="lang-zh">审稿中</span></span>
-            <span class="publication-meta lang-en">First author · Applied Soft Computing</span>
-            <span class="publication-meta lang-zh">第一作者 · Applied Soft Computing</span>
+            <span class="publication-meta lang-en">First author · <em>Applied Soft Computing</em></span>
+            <span class="publication-meta lang-zh">第一作者 · <em>Applied Soft Computing</em></span>
           </div>
         </div>
         <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>
@@ -2158,7 +2216,7 @@
           <div class="contact-label">Google Scholar</div>
           <div class="contact-value">
             <span class="lang-en" style="font-style: italic;">Coming soon</span>
-            <span class="lang-zh" style="font-style: italic;">待添加</span>
+            <span class="lang-zh">待添加</span>
           </div>
         </div>
         <div class="contact-item">

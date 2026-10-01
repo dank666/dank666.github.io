@@ -29,6 +29,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
   <link rel="icon" href="favicon.ico" />
 
+  <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Notes | Tejing Wang" />
   <meta property="og:description" content="Research notes and a paper library — reading notes on neuro-symbolic AI and related topics, organized by project and topic." />
@@ -39,6 +41,37 @@
   <meta name="twitter:description" content="Research notes and a paper library — reading notes on neuro-symbolic AI and related topics, organized by project and topic." />
   <meta name="twitter:image" content="https://dank666.github.io/images/avatar.jpg" />
   <style>
+    /* Self-hosted fonts, Latin glyphs only: Chinese text falls through to the
+       system fonts further down each stack. One variable file per family
+       covers every weight in use. Sources and licences: fonts/README.md. */
+    @font-face {
+      font-family: "Inter";
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url("fonts/inter-latin-wght-normal.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+      font-family: "EB Garamond";
+      font-style: normal;
+      font-weight: 400 800;
+      font-display: swap;
+      src: url("fonts/eb-garamond-latin-wght-normal.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    /* The italic, in one weight. Used only for the venue names in the paper list. */
+    @font-face {
+      font-family: "EB Garamond";
+      font-style: italic;
+      font-weight: 500;
+      font-display: swap;
+      src: url("fonts/eb-garamond-latin-500-italic.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
     :root {
       --bg: #ffffff;
       --text: #16181c;
@@ -46,6 +79,10 @@
       --line: #e6e4e0;
       --accent: #1f5c8a;
       --accent-soft: #ebf2f8;
+      /* --font-display is for headings of 22px and up only; anything smaller
+         stays in --font-body. */
+      --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --font-display: "EB Garamond", Georgia, "Times New Roman", "PingFang SC", "Microsoft YaHei", serif;
       --max-width: 820px;
     }
 
@@ -163,7 +200,8 @@
 
     * { box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    /* 17px base: every rem size on the page scales with it. */
+    html { font-size: 106.25%; scroll-behavior: smooth; }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -172,10 +210,10 @@
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
-      line-height: 1.75;
+      line-height: 1.65;
     }
 
     a { color: var(--accent); text-decoration: none; }
@@ -233,7 +271,7 @@
       gap: 16px;
     }
 
-    /* The site mark (same drawing as the favicon) followed by the name. */
+    /* The site mark (the favicon itself) followed by the name. */
     .logo {
       display: inline-flex;
       align-items: center;
@@ -247,9 +285,6 @@
     .logo:hover { color: var(--text); text-decoration: none; }
 
     .logo-mark { width: 22px; height: 22px; flex: none; }
-    .logo-mark .mark-bg { fill: var(--accent); }
-    .logo-mark .mark-t { fill: var(--bg); }
-    .logo-mark .mark-w { fill: none; stroke: var(--bg); stroke-width: 5.6; stroke-miterlimit: 10; }
 
     .nav-right {
       display: flex;
@@ -326,15 +361,16 @@
 
     .page-header h1 {
       margin: 0;
+      font-family: var(--font-display);
       font-size: clamp(1.8rem, 3.4vw, 2.3rem);
-      letter-spacing: -0.02em;
-      font-weight: 700;
+      letter-spacing: -0.01em;
+      font-weight: 600;
     }
 
     .page-header .intro {
       margin: 12px 0 0;
       color: var(--muted);
-      max-width: 62ch;
+      max-width: 34em;
     }
 
     .page-header .back-link {
@@ -469,6 +505,19 @@
       font-size: 0.85rem;
     }
 
+    /* Journal or conference name, in the italic display face. Slightly
+       enlarged, because that face has a much smaller x-height than the text
+       around it; line-height 1 keeps that from pushing the lines apart.
+       font-synthesis leaves any Chinese character upright instead of slanting it. */
+    .paper-venue {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 1.15em;
+      line-height: 1;
+      font-synthesis: weight;
+    }
+
     .paper-tags {
       margin: 12px 0 0;
       display: flex;
@@ -495,7 +544,7 @@
 
     .paper-note-block {
       margin: 14px 0 0;
-      max-width: 68ch;
+      max-width: 33em;
       padding-left: 14px;
       border-left: 2px solid var(--accent-soft);
     }
@@ -521,7 +570,7 @@
 
     .note-body {
       margin: 12px 0 0;
-      max-width: 68ch;
+      max-width: 33em;
     }
 
     .note-body p {
@@ -600,7 +649,7 @@
   <header class="navbar">
     <div class="nav-inner">
       <a class="logo" href="index.html">
-        <svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><rect class="mark-bg" width="64" height="64" rx="14"/><clipPath id="logoCaps"><rect y="20" width="64" height="24"/></clipPath><path class="mark-t" d="M6.5 20h17v5.6h-5.7V44h-5.6V25.6H6.5z"/><path class="mark-w" d="M28.3 14 35.9 44 42 20 48.1 44 55.7 14" clip-path="url(#logoCaps)"/></svg>
+        <img class="logo-mark" src="favicon.svg" alt="" width="22" height="22" />
         <span class="lang-en">Tejing Wang</span>
         <span class="lang-zh">王特警</span>
       </a>
@@ -2502,12 +2551,17 @@
       item.appendChild(authors);
     }
 
-    // Secondary line: year · venue (muted, smaller)
-    var secondaryParts = [paper.year];
-    if (paper.venue) secondaryParts.push(paper.venue);
+    // Secondary line: year · venue (muted, smaller; the venue name in italics)
     var secondary = document.createElement('p');
     secondary.className = 'paper-secondary';
-    secondary.textContent = secondaryParts.join(' · ');
+    secondary.textContent = paper.year == null ? '' : String(paper.year);
+    if (paper.venue) {
+      var venue = document.createElement('span');
+      venue.className = 'paper-venue';
+      venue.textContent = paper.venue;
+      secondary.appendChild(document.createTextNode(' · '));
+      secondary.appendChild(venue);
+    }
     item.appendChild(secondary);
 
     // Tags: project (solid pill, clickable to filter) + topics
