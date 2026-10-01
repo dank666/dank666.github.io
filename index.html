@@ -1608,16 +1608,16 @@
 
         <div class="hero-text">
           <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>
-          <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master's student in Computer Science and Technology advised by Prof. Fei Hao.</p>
-          <p class="hero-lede lang-zh">陕西师范大学人工智能专业本科生，将在本校攻读计算机科学与技术学术型硕士，导师为郝飞教授。</p>
+          <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master's student in Computer Science and Technology advised by <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
+          <p class="hero-lede lang-zh">陕西师范大学人工智能专业本科生，将在本校攻读计算机科学与技术学术型硕士，导师为<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>。</p>
           <p class="subtitle lang-en"><span class="nw">Neuro-Symbolic AI</span> <span class="nw">Graph-based Concept Learning</span> <span class="nw">Intelligent Agents</span></p>
           <p class="subtitle lang-zh"><span class="nw">神经符号人工智能</span> <span class="nw">图概念学习</span> <span class="nw">智能体系统</span></p>
           <div class="hero-contact">
             <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn">42312205 [at] snnu [dot] edu [dot] cn</a>
             <span class="sep" aria-hidden="true">·</span>
-            <a class="email-link" href="#contact" data-u="wtejing" data-d="gmail.com">wtejing [at] gmail [dot] com</a>
+            <a class="email-link" href="#contact" data-u="wtejing" data-d="gmail.com" data-label="Gmail">Gmail</a>
             <span class="sep" aria-hidden="true">·</span>
-            <a href="https://github.com/dank666" target="_blank">github.com/dank666</a>
+            <a href="https://github.com/dank666" target="_blank">GitHub</a>
             <span class="sep" aria-hidden="true">·</span>
             <a href="CV.pdf" id="cvDownload" class="cv-link">
               <span class="lang-en">Download CV</span>
@@ -2323,10 +2323,12 @@
     // Email addresses are assembled here rather than written into the HTML, so
     // simple scrapers that only read the page source don't find them. Without
     // JavaScript the visitor sees "name [at] domain [dot] tld" instead.
+    // A link with data-label keeps that label as its text and only gets the
+    // mailto: address, so the address itself is not shown.
     document.querySelectorAll('.email-link').forEach(function (a) {
       var addr = a.getAttribute('data-u') + '@' + a.getAttribute('data-d');
       a.setAttribute('href', 'mailto:' + addr);
-      a.textContent = addr;
+      if (!a.hasAttribute('data-label')) a.textContent = addr;
     });
 
     // BibTeX buttons copy their entry to the clipboard.
