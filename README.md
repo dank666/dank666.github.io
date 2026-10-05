@@ -38,7 +38,7 @@ A personal academic homepage for **Tejing Wang (王特警)** — an Artificial I
 
 ## What it is
 
-- **Bilingual (EN / 中文)** — a one-click language toggle; the choice is remembered across pages.
+- **Three languages (EN / 中文 / DE)** — a one-click language toggle; the choice is remembered across pages.
 - **Dark mode** — follows the system setting; a toggle button lets a visitor override it.
 - **Sections** — About, Research Statement, Publications, News, Education, Experience, Projects, Skills, Awards, Contact, Visitors.
 - **Content in a data file** — News, Publications, Awards and Projects live in `data/content.mjs` as `{ en, zh }` pairs; a small dependency-free script writes them into `index.html` as plain static HTML and refuses to build if either language is missing.
@@ -210,6 +210,7 @@ git push
 - **数据文件**里用 `{ en: "…", zh: "…" }`，缺任何一边构建都会报错，所以不会漏。
 - **少数例外**：名字（`<h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">`）由脚本切换，两种写法都在属性里；GitHub、ORCID、邮箱这类没有译法的标签只写一份。
 - **JavaScript 生成的文字**（访客地图、概念格、Notes 页的列表）读的是同一个 `data-lang`，在各自的数据里也都是中英成对的。
+- **第三种语言：德语。** 每个页面右上角多一个 DE 按钮，对应 `data-lang="de"`。页面上每处文字在中文那份后面还有第三份 `class="lang-de"`；名字那类由脚本切换的地方多一个 `data-lang-de` 属性；数据文件里是 `{ en: "…", zh: "…", de: "…" }`。**德语是可选的**：数据文件里没写 `de` 的条目在德语模式下显示英文，构建时会列出提醒但不报错；直接写在 HTML 里的文字如果漏了 `lang-de` 那一份，德语模式下那里是空白，所以改这些地方时要三份一起改。Notes 页的数据里德语字段是 `label_de`、`note_de`、`title_de`、`body_de`，概念格示例里是每一项的第三个值（`[英文名, 中文名, 德文名]`），同样都可以不写，不写就显示英文；概念格和星座页脚本里固定的界面文字，德语放在各自文件里的一张对照表中（`lattice.js` 的 `DE`、`constellation.js` 的 `STATUS_DE`），按英文原文查找。
 - **文字里的特殊字符**：HTML 里 `&` 要写成 `&amp;`，`<` 写成 `&lt;`。在 JavaScript 字符串里的引号见 [5.0](#50-写数据时的规则) 和 [10.5](#105-写-javascript-数据时的几个陷阱)。
 
 ---

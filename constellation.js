@@ -44,7 +44,8 @@
   }
 
   function currentLang() {
-    return document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+    var lang = document.documentElement.getAttribute('data-lang');
+    return lang === 'zh' || lang === 'de' ? lang : 'en';
   }
 
   function localDateStr(d) {
@@ -352,11 +353,20 @@
   var checkinUndoBtn = document.getElementById('checkinUndoBtn');
   var checkinStatus = document.getElementById('checkinStatus');
 
+  // German for the status messages, looked up by their English wording.
+  var STATUS_DE = {
+    'Star lit.': 'Stern entzündet.',
+    'Sign-in expired.': 'Anmeldung abgelaufen.',
+    'Could not save — try again.': 'Speichern fehlgeschlagen – bitte erneut versuchen.',
+    'Could not undo — try again.': 'Rückgängig machen fehlgeschlagen – bitte erneut versuchen.'
+  };
+
   function showStatus(en, zh, isError) {
     if (!checkinStatus) return;
     checkinStatus.hidden = false;
     checkinStatus.classList.toggle('is-error', !!isError);
-    checkinStatus.textContent = currentLang() === 'zh' ? zh : en;
+    var lang = currentLang();
+    checkinStatus.textContent = lang === 'zh' ? zh : lang === 'de' ? STATUS_DE[en] || en : en;
   }
 
   function updateCheckinUI() {

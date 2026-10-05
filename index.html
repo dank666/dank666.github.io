@@ -5,7 +5,7 @@
 (function () {
   try {
     var l = localStorage.getItem('site-lang');
-    if (l !== 'zh' && l !== 'en') l = 'en';
+    if (l !== 'zh' && l !== 'en' && l !== 'de') l = 'en';
     document.documentElement.setAttribute('data-lang', l);
   } catch (e) {
     document.documentElement.setAttribute('data-lang', 'en');
@@ -300,8 +300,9 @@
     }
 
     /* language toggle */
-    [data-lang="en"] .lang-zh { display: none; }
-    [data-lang="zh"] .lang-en { display: none; }
+    [data-lang="en"] :is(.lang-zh, .lang-de) { display: none; }
+    [data-lang="zh"] :is(.lang-en, .lang-de) { display: none; }
+    [data-lang="de"] :is(.lang-en, .lang-zh) { display: none; }
 
     /* Chinese is never set in italic (it has no italic, only a slanted
        distortion of the upright), even inside an italic parent. */
@@ -644,9 +645,9 @@
       line-height: 1.6;
     }
 
-    /* In English it is a standfirst in the display face: larger, because that
+    /* In English and German it is a standfirst in the display face: larger, because that
        face runs small, and on a shorter measure to keep about 70 characters. */
-    .hero-lede.lang-en {
+    .hero-lede:is(.lang-en, .lang-de) {
       max-width: 29em;
       font-family: var(--font-display);
       font-size: 1.35rem;
@@ -923,14 +924,15 @@
       margin-top: 12px;
     }
 
-    /* First paragraph of a card, in either language (they sit in pairs). */
+    /* First paragraph of a card, in any language (they sit in groups of three). */
     .card > p:first-child,
-    .card > p.lang-en:first-child + p.lang-zh {
+    .card > p.lang-en:first-child + p.lang-zh,
+    .card > p.lang-en:first-child + p.lang-zh + p.lang-de {
       margin-top: 0;
     }
 
     /* Paragraphs are justified, so the column has a clean right edge as well
-       as a left one. English needs hyphenation (long words only) to do that
+       as a left one. English (and German, treated the same) needs hyphenation (long words only) to do that
        without wide gaps between words, and on a phone its lines are too short
        for it even so: there it goes back to a ragged right edge. Chinese
        justifies well at any width. Lines are filled in order (text-wrap:
@@ -945,7 +947,7 @@
     }
 
     @media (max-width: 640px) {
-      [data-lang="en"] :is(.card p:not(.project-tagline, .project-links), .timeline-item p, .contact-open) {
+      :is([data-lang="en"], [data-lang="de"]) :is(.card p:not(.project-tagline, .project-links), .timeline-item p, .contact-open) {
         text-align: start;
         text-wrap: pretty;
         -webkit-hyphens: manual;
@@ -971,7 +973,7 @@
     .publication-meta em,
     .timeline-item em,
     .project-tagline em,
-    .lang-en .statement-quote {
+    :is(.lang-en, .lang-de) .statement-quote {
       font-family: var(--font-display);
       font-style: italic;
       font-weight: 500;
@@ -1744,36 +1746,37 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
+  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容" data-lang-de="Zum Hauptinhalt springen">Skip to main content</a>
   <header class="navbar">
     <div class="nav-inner">
       <a class="logo" href="#">
         <img class="logo-mark" src="favicon.svg" alt="" width="22" height="22" />
         <span class="lang-en">Tejing Wang</span>
         <span class="lang-zh">王特警</span>
+        <span class="lang-de">Tejing Wang</span>
       </a>
       <div class="nav-right">
         <div class="nav-links-wrap">
           <nav class="nav-links">
-            <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span></a>
-            <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span></a>
-            <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></a>
-            <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></a>
-            <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></a>
-            <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></a>
+            <a href="#about"><span class="lang-en">About</span><span class="lang-zh">关于</span><span class="lang-de">Über mich</span></a>
+            <a href="#research"><span class="lang-en">Research</span><span class="lang-zh">研究陈述</span><span class="lang-de">Forschung</span></a>
+            <a href="#publications"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span><span class="lang-de">Publikationen</span></a>
+            <a href="#education"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span><span class="lang-de">Ausbildung</span></a>
+            <a href="#experience"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span><span class="lang-de">Erfahrung</span></a>
+            <a href="#projects"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span><span class="lang-de">Projekte</span></a>
             <div class="nav-more">
               <button class="nav-more-btn" id="navMoreBtn" type="button" aria-expanded="false" aria-controls="navMoreMenu">
-                <span class="lang-en">More</span><span class="lang-zh">更多</span><span class="nav-caret" aria-hidden="true"></span>
+                <span class="lang-en">More</span><span class="lang-zh">更多</span><span class="lang-de">Mehr</span><span class="nav-caret" aria-hidden="true"></span>
               </button>
               <div class="nav-more-menu" id="navMoreMenu" hidden>
-                <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span></a>
-                <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></a>
-                <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span></a>
-                <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></a>
-                <a href="#visitors"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span></a>
-                <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span></a>
-                <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span></a>
-                <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span></a>
+                <a href="#news"><span class="lang-en">News</span><span class="lang-zh">动态</span><span class="lang-de">Aktuelles</span></a>
+                <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span><span class="lang-de">Kenntnisse</span></a>
+                <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span><span class="lang-de">Auszeichnungen</span></a>
+                <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span><span class="lang-de">Kontakt</span></a>
+                <a href="#visitors"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span><span class="lang-de">Besuche</span></a>
+                <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span><span class="lang-de">Notizen</span></a>
+                <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span><span class="lang-de">Begriffsverband-Demo</span></a>
+                <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span><span class="lang-de">Konstellation</span></a>
               </div>
             </div>
           </nav>
@@ -1782,6 +1785,8 @@
           <button class="lang-btn" data-lang="en" type="button">EN</button>
           <span>/</span>
           <button class="lang-btn" data-lang="zh" type="button">中</button>
+          <span>/</span>
+          <button class="lang-btn" data-lang="de" type="button">DE</button>
         </div>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
           <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -1803,13 +1808,15 @@
 
         <div class="hero-text">
           <div class="hero-name">
-            <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>
+            <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警" data-lang-de="Tejing Wang">Tejing Wang</h1>
             <span class="hero-latin lang-zh" lang="en">Tejing Wang</span>
           </div>
           <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master’s student in Computer Science and Technology advised by <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
           <p class="hero-lede lang-zh">陕西师范大学人工智能专业本科生，将在本校攻读计算机科学与技术学术型硕士，导师为<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>。</p>
+          <p class="hero-lede lang-de">Ich studiere Künstliche Intelligenz im Bachelor an der Shaanxi Normal University und beginne dort demnächst das Masterstudium in Informatik und Technologie, betreut von <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
           <p class="subtitle lang-en"><span class="nw">Neuro-Symbolic AI</span> <span class="nw">Graph-based Concept Learning</span> <span class="nw">Intelligent Agents</span></p>
           <p class="subtitle lang-zh"><span class="nw">神经符号人工智能</span> <span class="nw">图概念学习</span> <span class="nw">智能体系统</span></p>
+          <p class="subtitle lang-de"><span class="nw">Neurosymbolische KI</span> <span class="nw">Graphbasiertes Begriffslernen</span> <span class="nw">Intelligente Agenten</span></p>
           <div class="hero-contact">
             <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn"><svg class="hero-icon is-stroke" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg><span class="email-text">42312205 [at] snnu [dot] edu [dot] cn</span></a>
             <span class="sep" aria-hidden="true">·</span>
@@ -1824,11 +1831,13 @@
             <a href="CV.pdf" id="cvDownload" class="cv-link">
               <span class="lang-en">Download CV</span>
               <span class="lang-zh">下载简历</span>
+              <span class="lang-de">Lebenslauf herunterladen</span>
             </a>
           </div>
           <p class="hero-open">
             <span class="lang-en">Open to remote collaboration and research internships on neuro-symbolic agents and concept learning.</span>
             <span class="lang-zh">欢迎围绕神经符号智能体、概念学习的远程合作或科研实习。</span>
+            <span class="lang-de">Offen für Remote-Zusammenarbeit und Forschungspraktika zu neurosymbolischen Agenten und Begriffslernen.</span>
           </p>
         </div>
       </div>
@@ -1836,7 +1845,7 @@
 
     <section class="section" id="about">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">About</span><span class="lang-zh">关于</span></h2>
+        <h2 class="section-title"><span class="lang-en">About</span><span class="lang-zh">关于</span><span class="lang-de">Über mich</span></h2>
       </div>
 
       <div class="list">
@@ -1849,6 +1858,9 @@
           <p class="lang-zh">
             我是<a href="https://www.snnu.edu.cn/" target="_blank">陕西师范大学</a>人工智能专业的学生，本科毕业后将继续在本校<a href="https://ccs.snnu.edu.cn/" target="_blank">人工智能与计算机科学学院</a>攻读学术型硕士学位，导师为郝飞教授。
           </p>
+          <p class="lang-de">
+            Ich studiere Künstliche Intelligenz an der <a href="https://www.snnu.edu.cn/" target="_blank">Shaanxi Normal University</a> und setze mein Studium dort im forschungsorientierten Masterstudiengang an der <a href="https://ccs.snnu.edu.cn/" target="_blank">Fakultät für Künstliche Intelligenz und Informatik</a> fort, betreut von Prof. Fei Hao.
+          </p>
           <p class="lang-en">
             My research interests center on neuro-symbolic intelligence and graph-based concept
             cognition learning, alongside formal concept analysis, explainable AI, LLM-empowered
@@ -1857,11 +1869,17 @@
           <p class="lang-zh">
             我的研究兴趣集中在神经符号智能与图概念认知学习，同时也关注形式概念分析、可解释人工智能、大语言模型赋能教育、数字孪生与具身智能。
           </p>
+          <p class="lang-de">
+            Meine Forschungsinteressen liegen vor allem in der neurosymbolischen Intelligenz und im graphbasierten kognitiven Begriffslernen, daneben in der Formalen Begriffsanalyse, erklärbarer KI, LLM-gestützter Bildung, digitalen Zwillingen und verkörperter Intelligenz.
+          </p>
           <p class="lang-en">
             My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master’s.
           </p>
           <p class="lang-zh">
             我的长期目标是在硕士毕业后赴海外攻读人工智能博士学位。
+          </p>
+          <p class="lang-de">
+            Mein langfristiges Ziel ist eine Promotion im Bereich Künstliche Intelligenz im Ausland nach dem Masterabschluss.
           </p>
         </div>
       </div>
@@ -1869,7 +1887,7 @@
 
     <section class="section" id="research">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Research Statement</span><span class="lang-zh">研究陈述</span></h2>
+        <h2 class="section-title"><span class="lang-en">Research Statement</span><span class="lang-zh">研究陈述</span><span class="lang-de">Forschungsprofil</span></h2>
       </div>
 
       <div class="list">
@@ -1884,6 +1902,9 @@
           <p class="lang-zh">
             我关心的问题是：结构化的符号知识如何能让大语言模型系统变得更可解释、更可控。在本科阶段的地理自动解题研究中，我把大语言模型与三支概念分析结合起来，把教材中隐含的知识转化为显式的决策规则——这是我第一次尝试让一个“黑箱”模型的推理过程变得可以被人检查和追问。
           </p>
+          <p class="lang-de">
+            Meine Forschung fragt, wie symbolisches, strukturiertes Wissen Systeme auf Basis großer Sprachmodelle interpretierbarer und kontrollierbarer machen kann. In meiner Arbeit im Bachelorstudium zur automatisierten Beantwortung von Geographiefragen habe ich große Sprachmodelle mit der Drei-Wege-Begriffsanalyse (Three-Way Concept Analysis) verbunden, um implizites Lehrbuchwissen in explizite Entscheidungsregeln zu überführen – ein früher Versuch, ein Blackbox-Modell auf etwas zu stützen, das ein Mensch nachprüfen und nachvollziehen kann.
+          </p>
           <p class="lang-en">
             This concern with structure carries into my current work: a survey of neuro-symbolic
             agentic AI, organized around planning, memory, and safety/verification, and a longer-term
@@ -1896,6 +1917,9 @@
           <p class="lang-zh">
             这种对“结构”的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。此外，我还曾用半年时间在数字孪生与具身系统方向担任科研助理，这段经历拓宽了我的领域知识，也让我接触并用上了 Unity 等新工具。
           </p>
+          <p class="lang-de">
+            Dieses Interesse an Struktur prägt auch meine aktuelle Arbeit: einen Übersichtsartikel zu neurosymbolischer agentischer KI, gegliedert nach Planung, Gedächtnis sowie Sicherheit/Verifikation, und mein längerfristiges Interesse am graphbasierten kognitiven Begriffslernen – Graphstrukturen zu nutzen, um Begriffe darzustellen und über sie zu schließen, im selben Geist, in dem die Drei-Wege-Begriffsanalyse formale Kontexte darstellt. Daneben hat eine sechsmonatige Tätigkeit als Forschungshilfskraft zu digitalen Zwillingen und verkörperten Systemen mein Fachwissen erweitert und mich mit neuen Werkzeugen wie Unity vertraut gemacht.
+          </p>
           <p class="lang-en">
             Going forward, I want to bring these threads together in a Ph.D.: building agentic systems
             whose reasoning is not just performant but legible — where structured knowledge constrains
@@ -1904,12 +1928,18 @@
           <p class="lang-zh">
             接下来，我希望在博士阶段把这几条线索汇合起来：构建不仅性能好、而且推理过程可读的智能体系统——让结构化知识去约束和解释模型的行为，而不是事后再补一层解释。
           </p>
+          <p class="lang-de">
+            Künftig möchte ich diese Fäden in einer Promotion zusammenführen: agentische Systeme bauen, deren Schlussfolgerungen nicht nur leistungsfähig, sondern auch nachvollziehbar sind – in denen strukturiertes Wissen das Verhalten eines Modells begrenzt und erklärt, statt nachträglich aufgesetzt zu werden.
+          </p>
           <p class="lang-en">
             You can find the papers behind this work, organized by project with my own reading notes,
             in my <a href="reading.html">Notes</a> section.
           </p>
           <p class="lang-zh">
             这些工作背后阅读过的论文，按项目分类并附有我的阅读笔记，可以在我的<a href="reading.html">笔记</a>栏目中查看。
+          </p>
+          <p class="lang-de">
+            Die Artikel hinter dieser Arbeit, nach Projekten geordnet und mit meinen eigenen Lesenotizen versehen, finden Sie in meinen <a href="reading.html">Notizen</a>.
           </p>
           <p class="lang-en">
             If you would like to see the kind of structure I work with, there is also a small
@@ -1919,13 +1949,16 @@
           <p class="lang-zh">
             如果想直观地看看我所研究的这类结构，还有一个小的<a href="lattice.html">概念格交互演示</a>：输入一个对象与属性的表格，它会实时画出经典概念格和三支概念格。
           </p>
+          <p class="lang-de">
+            Wer die Art von Struktur sehen möchte, mit der ich arbeite, findet außerdem eine kleine <a href="lattice.html">interaktive Begriffsverband-Demo</a>: Geben Sie eine Tabelle aus Gegenständen und Merkmalen ein, und sie zeichnet den klassischen und den Drei-Wege-Begriffsverband live.
+          </p>
         </div>
       </div>
     </section>
 
     <section class="section" id="publications">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span></h2>
+        <h2 class="section-title"><span class="lang-en">Publications</span><span class="lang-zh">论文发表</span><span class="lang-de">Publikationen</span></h2>
       </div>
 
       <!-- BEGIN GENERATED: publications — edit data/content.mjs, then run "node tools/build.mjs" -->
@@ -1933,17 +1966,20 @@
         <div class="publication-item pub-card">
           <div class="publication-title lang-en">A Survey of Neuro-Symbolic Agents</div>
           <div class="publication-title lang-zh">神经符号智能体综述</div>
+          <div class="publication-title lang-de">A Survey of Neuro-Symbolic Agents</div>
           <div class="pub-status-row">
-            <span class="status-pill status-in-preparation"><span class="lang-en">In Preparation</span><span class="lang-zh">撰写中</span></span>
+            <span class="status-pill status-in-preparation"><span class="lang-en">In Preparation</span><span class="lang-zh">撰写中</span><span class="lang-de">In Vorbereitung</span></span>
           </div>
         </div>
         <div class="publication-item pub-card">
           <div class="publication-title lang-en">Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering</div>
           <div class="publication-title lang-zh">融合大语言模型与三支概念分析的地理多选题自动解答</div>
+          <div class="publication-title lang-de">Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering</div>
           <div class="pub-status-row">
-            <span class="status-pill status-under-review"><span class="lang-en">Under Review</span><span class="lang-zh">审稿中</span></span>
+            <span class="status-pill status-under-review"><span class="lang-en">Under Review</span><span class="lang-zh">审稿中</span><span class="lang-de">In Begutachtung</span></span>
             <span class="publication-meta lang-en">First author · <em>Applied Soft Computing</em></span>
             <span class="publication-meta lang-zh">第一作者 · <em>Applied Soft Computing</em></span>
+            <span class="publication-meta lang-de">Erstautorschaft · <em>Applied Soft Computing</em></span>
           </div>
         </div>
         <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>
@@ -1953,7 +1989,7 @@
 
     <section class="section" id="news">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">News</span><span class="lang-zh">动态</span></h2>
+        <h2 class="section-title"><span class="lang-en">News</span><span class="lang-zh">动态</span><span class="lang-de">Aktuelles</span></h2>
       </div>
 
       <!-- BEGIN GENERATED: news — edit data/content.mjs, then run "node tools/build.mjs" -->
@@ -1961,53 +1997,65 @@
         <div class="timeline-item">
           <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
           <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
+          <div class="timeline-meta lang-de"><span>Sept. 2026</span></div>
           <p class="lang-en">Continuing as an academic master’s student at Shaanxi Normal University, now advised by Prof. Fei Hao.</p>
           <p class="lang-zh">确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。</p>
+          <p class="lang-de">Ich setze mein Studium an der Shaanxi Normal University im forschungsorientierten Masterstudiengang fort, nun betreut von Prof. Fei Hao.</p>
         </div>
         <div class="timeline-item">
           <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
           <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
+          <div class="timeline-meta lang-de"><span>Sept. 2026</span></div>
           <p class="lang-en">Concluded my undergraduate research assistantship at Xidian University with Prof. Zhihan Lyu.</p>
           <p class="lang-zh">结束了在西安电子科技大学吕智涵教授课题组的本科生科研助理工作。</p>
+          <p class="lang-de">Meine Tätigkeit als studentische Forschungshilfskraft an der Xidian University bei Prof. Zhihan Lyu ist abgeschlossen.</p>
         </div>
         <div class="timeline-item">
           <div class="timeline-meta lang-en"><span>Aug 2026</span></div>
           <div class="timeline-meta lang-zh"><span>2026 年 8 月</span></div>
+          <div class="timeline-meta lang-de"><span>Aug. 2026</span></div>
           <p class="lang-en">Finalized the research scope for a survey on neuro-symbolic agentic AI, organized around planning, memory, and safety/verification.</p>
           <p class="lang-zh">确定了神经符号智能体综述的研究范围，围绕规划、记忆与安全/验证三部分展开。</p>
+          <p class="lang-de">Den Themenumfang für einen Übersichtsartikel zu neurosymbolischer agentischer KI festgelegt – gegliedert nach Planung, Gedächtnis sowie Sicherheit/Verifikation.</p>
         </div>
         <div class="timeline-more" id="newsMore" hidden>
           <div class="timeline-item">
             <div class="timeline-meta lang-en"><span>Mar 2026</span></div>
             <div class="timeline-meta lang-zh"><span>2026 年 3 月</span></div>
+            <div class="timeline-meta lang-de"><span>März 2026</span></div>
             <p class="lang-en">Started my undergraduate research assistantship at Xidian University, supervised by Prof. Zhihan Lyu.</p>
             <p class="lang-zh">开始在西安电子科技大学吕智涵教授课题组担任本科生科研助理。</p>
+            <p class="lang-de">Beginn meiner Tätigkeit als studentische Forschungshilfskraft an der Xidian University, betreut von Prof. Zhihan Lyu.</p>
           </div>
           <div class="timeline-item">
             <div class="timeline-meta lang-en"><span>Jan 2026</span></div>
             <div class="timeline-meta lang-zh"><span>2026 年 1 月</span></div>
+            <div class="timeline-meta lang-de"><span>Jan. 2026</span></div>
             <p class="lang-en">Submitted my first-author paper on automated geography QA system based on LLM and three-way concept analysis to <em>Applied Soft Computing</em>.</p>
             <p class="lang-zh">以第一作者身份将基于大语言模型与三支概念分析的地理试题自动解答系统的论文投稿至 <em>Applied Soft Computing</em>。</p>
+            <p class="lang-de">Meinen Artikel in Erstautorschaft über ein automatisiertes Frage-Antwort-System für Geographie auf Basis von LLMs und Drei-Wege-Begriffsanalyse bei <em>Applied Soft Computing</em> eingereicht.</p>
           </div>
           <div class="timeline-item">
             <div class="timeline-meta lang-en"><span>Jun 2025</span></div>
             <div class="timeline-meta lang-zh"><span>2025 年 6 月</span></div>
+            <div class="timeline-meta lang-de"><span>Juni 2025</span></div>
             <p class="lang-en">Started work on the automated geography QA system based on LLM and three-way concept analysis, supervised by Prof. Fei Hao.</p>
             <p class="lang-zh">在郝飞教授指导下开始进行基于大语言模型与三支概念分析的地理试题自动解答系统的研发工作。</p>
+            <p class="lang-de">Beginn der Arbeit am automatisierten Frage-Antwort-System für Geographie auf Basis von LLMs und Drei-Wege-Begriffsanalyse, betreut von Prof. Fei Hao.</p>
           </div>
         </div>
       </div>
 
       <button class="show-more-btn" id="newsToggle" type="button" aria-expanded="false" aria-controls="newsMore" data-state="collapsed">
-        <span class="label-show"><span class="lang-en">Show earlier updates</span><span class="lang-zh">显示更早的动态</span></span>
-        <span class="label-hide"><span class="lang-en">Hide earlier updates</span><span class="lang-zh">收起</span></span>
+        <span class="label-show"><span class="lang-en">Show earlier updates</span><span class="lang-zh">显示更早的动态</span><span class="lang-de">Frühere Meldungen anzeigen</span></span>
+        <span class="label-hide"><span class="lang-en">Hide earlier updates</span><span class="lang-zh">收起</span><span class="lang-de">Frühere Meldungen ausblenden</span></span>
       </button>
       <!-- END GENERATED: news -->
     </section>
 
     <section class="section" id="education">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span></h2>
+        <h2 class="section-title"><span class="lang-en">Education</span><span class="lang-zh">教育背景</span><span class="lang-de">Ausbildung</span></h2>
       </div>
 
       <div class="timeline">
@@ -2021,14 +2069,22 @@
             <span>陕西师范大学</span>
             <span>预计 2030 年</span>
           </div>
+          <div class="timeline-meta lang-de">
+            <span>Shaanxi Normal University</span>
+            <span>Voraussichtlich 2030</span>
+          </div>
           <h3 class="lang-en">M.S. in Computer Science and Technology (Academic Master’s)</h3>
           <h3 class="lang-zh">计算机科学与技术学术型硕士</h3>
+          <h3 class="lang-de">M.Sc. in Informatik und Technologie (forschungsorientierter Master)</h3>
           <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi’an, China</p>
           <p class="lang-zh">人工智能与计算机科学学院 · 中国西安</p>
+          <p class="lang-de">Fakultät für Künstliche Intelligenz und Informatik · Xi’an, China</p>
           <p class="lang-en">Advisor: Prof. Fei Hao</p>
           <p class="lang-zh">导师：郝飞教授</p>
+          <p class="lang-de">Betreuung: Prof. Fei Hao</p>
           <p class="lang-en">Research direction: Graph Learning, Concept Learning, Neuro-Symbolic AI</p>
           <p class="lang-zh">研究方向：图学习、概念学习、神经符号人工智能</p>
+          <p class="lang-de">Forschungsrichtung: Graph Learning, Begriffslernen, neurosymbolische KI</p>
         </div>
 
         <div class="timeline-item">
@@ -2040,17 +2096,23 @@
             <span>陕西师范大学</span>
             <span>预计 2027 年</span>
           </div>
+          <div class="timeline-meta lang-de">
+            <span>Shaanxi Normal University</span>
+            <span>Voraussichtlich 2027</span>
+          </div>
           <h3 class="lang-en">B.Eng. in Artificial Intelligence</h3>
           <h3 class="lang-zh">人工智能工学学士</h3>
+          <h3 class="lang-de">B.Eng. in Künstlicher Intelligenz</h3>
           <p class="lang-en">School of Artificial Intelligence and Computer Science · Xi’an, China</p>
           <p class="lang-zh">人工智能与计算机科学学院 · 中国西安</p>
+          <p class="lang-de">Fakultät für Künstliche Intelligenz und Informatik · Xi’an, China</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="experience">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span></h2>
+        <h2 class="section-title"><span class="lang-en">Experience</span><span class="lang-zh">科研经历</span><span class="lang-de">Erfahrung</span></h2>
       </div>
 
       <div class="timeline">
@@ -2063,6 +2125,10 @@
             <span>陕西师范大学</span>
             <span>2025 年 6 月 – 2027 年 6 月</span>
           </div>
+          <div class="timeline-meta lang-de">
+            <span>Shaanxi Normal University</span>
+            <span>Juni 2025 – Juni 2027</span>
+          </div>
           <p class="lang-en">
             Undergraduate Research Assistant · Supervised by
             <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>
@@ -2071,8 +2137,13 @@
             本科生科研助理 · 导师：
             <a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>
           </p>
+          <p class="lang-de">
+            Studentische Forschungshilfskraft · Betreut von
+            <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>
+          </p>
           <p class="lang-en">Research topics: large language models, knowledge-driven intelligent systems, educational AI, and interpretable reasoning.</p>
           <p class="lang-zh">研究方向：大语言模型、知识驱动的智能系统、教育人工智能与可解释推理。</p>
+          <p class="lang-de">Forschungsthemen: große Sprachmodelle, wissensbasierte intelligente Systeme, KI in der Bildung und interpretierbares Schließen.</p>
         </div>
 
         <div class="timeline-item">
@@ -2084,6 +2155,10 @@
             <span>西安电子科技大学</span>
             <span>2026 年 3 月 – 2026 年 9 月</span>
           </div>
+          <div class="timeline-meta lang-de">
+            <span>Xidian University</span>
+            <span>März 2026 – Sept. 2026</span>
+          </div>
           <p class="lang-en">
             Undergraduate Research Assistant · Supervised by
             <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a>
@@ -2092,15 +2167,20 @@
             本科生科研助理 · 导师：
             <a href="http://lvzhihan.com" target="_blank">吕智涵教授</a>
           </p>
+          <p class="lang-de">
+            Studentische Forschungshilfskraft · Betreut von
+            <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a>
+          </p>
           <p class="lang-en">Explored digital twins and embodied cells — how physical entities and virtual models can be linked through sensing, mapping, and interaction. The work was exploratory; what I gained was mainly broader domain knowledge and hands-on experience with new tools such as Unity.</p>
           <p class="lang-zh">接触数字孪生与具身细胞方向：了解物理实体与虚拟模型之间如何通过感知、映射与交互建立联系。这段工作以探索为主，我的收获主要是拓宽了领域知识，并实际用到了 Unity 等新工具。</p>
+          <p class="lang-de">Beschäftigung mit digitalen Zwillingen und Embodied Cells – damit, wie sich physische Objekte und virtuelle Modelle durch Sensorik, Abbildung und Interaktion verknüpfen lassen. Die Arbeit war explorativ; gewonnen habe ich vor allem breiteres Fachwissen und praktische Erfahrung mit neuen Werkzeugen wie Unity.</p>
         </div>
       </div>
     </section>
     
     <section class="section" id="projects">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span></h2>
+        <h2 class="section-title"><span class="lang-en">Projects</span><span class="lang-zh">项目经历</span><span class="lang-de">Projekte</span></h2>
       </div>
 
       <!-- BEGIN GENERATED: projects — edit data/content.mjs, then run "node tools/build.mjs" -->
@@ -2108,41 +2188,49 @@
         <div class="card">
           <h3 class="lang-en">Automated Geography Question Answering with LLMs and Three-Way Concept Analysis</h3>
           <h3 class="lang-zh">融合大语言模型与三支概念分析的地理试题自动解答</h3>
+          <h3 class="lang-de">Automatisierte Beantwortung von Geographiefragen mit LLMs und Drei-Wege-Begriffsanalyse</h3>
           <p class="project-tagline lang-en">First-author research · Under review at <em>Applied Soft Computing</em> · Advisor: <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a></p>
           <p class="project-tagline lang-zh">第一作者研究工作 · <em>Applied Soft Computing</em> 审稿中 · 导师：<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a></p>
+          <p class="project-tagline lang-de">Forschungsarbeit in Erstautorschaft · In Begutachtung bei <em>Applied Soft Computing</em> · Betreuung: <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a></p>
           <p class="lang-en">A system that answers geography multiple-choice questions by combining a large language model with three-way concept analysis. It turns implicit textbook knowledge into explicit decision rules — an attempt to ground a black-box model in reasoning that a person can inspect.</p>
           <p class="lang-zh">一个回答地理选择题的系统，把大语言模型与三支概念分析结合起来，将教材中隐含的知识转化为显式的决策规则——尝试让“黑箱”模型的推理过程变得可以被人检查。</p>
+          <p class="lang-de">Ein System, das Multiple-Choice-Fragen der Geographie beantwortet, indem es ein großes Sprachmodell mit der Drei-Wege-Begriffsanalyse verbindet. Es überführt implizites Lehrbuchwissen in explizite Entscheidungsregeln – ein Versuch, ein Blackbox-Modell auf Schlussfolgerungen zu stützen, die ein Mensch nachprüfen kann.</p>
           <figure class="flow">
             <ol class="flow-steps">
               <li class="flow-step">
-                <span class="flow-kicker"><span class="lang-en">Input</span><span class="lang-zh">输入</span></span>
-                <span class="flow-title"><span class="lang-en">Textbook knowledge + question</span><span class="lang-zh">教材知识 + 题目</span></span>
+                <span class="flow-kicker"><span class="lang-en">Input</span><span class="lang-zh">输入</span><span class="lang-de">Eingabe</span></span>
+                <span class="flow-title"><span class="lang-en">Textbook knowledge + question</span><span class="lang-zh">教材知识 + 题目</span><span class="lang-de">Lehrbuchwissen + Frage</span></span>
               </li>
               <li class="flow-step">
-                <span class="flow-kicker"><span class="lang-en">Method</span><span class="lang-zh">方法</span></span>
-                <span class="flow-title"><span class="lang-en">LLM + three-way concept analysis</span><span class="lang-zh">大语言模型 + 三支概念分析</span></span>
+                <span class="flow-kicker"><span class="lang-en">Method</span><span class="lang-zh">方法</span><span class="lang-de">Methode</span></span>
+                <span class="flow-title"><span class="lang-en">LLM + three-way concept analysis</span><span class="lang-zh">大语言模型 + 三支概念分析</span><span class="lang-de">LLM + Drei-Wege-Begriffsanalyse</span></span>
               </li>
               <li class="flow-step">
-                <span class="flow-kicker"><span class="lang-en">Output</span><span class="lang-zh">输出</span></span>
-                <span class="flow-title"><span class="lang-en">Explicit decision rules → answer</span><span class="lang-zh">显式决策规则 → 作答</span></span>
+                <span class="flow-kicker"><span class="lang-en">Output</span><span class="lang-zh">输出</span><span class="lang-de">Ausgabe</span></span>
+                <span class="flow-title"><span class="lang-en">Explicit decision rules → answer</span><span class="lang-zh">显式决策规则 → 作答</span><span class="lang-de">Explizite Entscheidungsregeln → Antwort</span></span>
               </li>
             </ol>
-            <figcaption><span class="lang-en">Schematic overview of the approach.</span><span class="lang-zh">方法示意图。</span></figcaption>
+            <figcaption><span class="lang-en">Schematic overview of the approach.</span><span class="lang-zh">方法示意图。</span><span class="lang-de">Schematische Übersicht des Ansatzes.</span></figcaption>
           </figure>
         </div>
         <div class="card">
           <h3 class="lang-en">A Survey of Neuro-Symbolic Agents</h3>
           <h3 class="lang-zh">神经符号智能体综述</h3>
+          <h3 class="lang-de">Übersichtsartikel zu neurosymbolischen Agenten</h3>
           <p class="project-tagline lang-en">In preparation</p>
           <p class="project-tagline lang-zh">撰写中</p>
+          <p class="project-tagline lang-de">In Vorbereitung</p>
           <p class="lang-en">A survey of neuro-symbolic agentic AI, organized around planning, memory, and safety/verification. To position it, I am reviewing the existing surveys to map what the literature already covers.</p>
           <p class="lang-zh">一篇神经符号智能体综述，围绕规划、记忆与安全/验证三部分展开。为了确定它的定位，我正在梳理已有的综述，看清这个领域已经覆盖了什么。</p>
+          <p class="lang-de">Ein Übersichtsartikel zu neurosymbolischer agentischer KI, gegliedert nach Planung, Gedächtnis sowie Sicherheit/Verifikation. Um ihn einzuordnen, sichte ich die bestehenden Übersichtsarbeiten und erfasse, was die Literatur bereits abdeckt.</p>
         </div>
         <div class="card">
           <h3 class="lang-en">NextScience — AI Research Platform for Early-Career Scientists</h3>
           <h3 class="lang-zh">NextScience —— 面向早期科研人员的 AI 研究平台</h3>
+          <h3 class="lang-de">NextScience – KI-Forschungsplattform für Nachwuchsforschende</h3>
           <p class="lang-en">An AI-powered academic research platform built solo (Next.js, Supabase, DeepSeek API), featuring an AI Reader for paper summarization, a Literature Map for visualizing citation networks (Semantic Scholar + OpenAlex + React Flow), and Nova, an AI research mentor for personalized research planning. No longer actively maintained, but still live at <a href="https://www.nextscience.space" target="_blank" rel="noopener">nextscience.space</a>.</p>
           <p class="lang-zh">独立设计与开发的 AI 学术研究平台（技术栈：Next.js、Supabase、DeepSeek API），核心功能包括论文智能摘要的 AI Reader、基于 Semantic Scholar 与 OpenAlex 数据构建的文献关系图谱（React Flow 可视化），以及提供个性化科研规划的 AI 导师 Nova。目前已停止运营维护，但网站仍可正常访问：<a href="https://www.nextscience.space" target="_blank" rel="noopener">nextscience.space</a>。</p>
+          <p class="lang-de">Eine im Alleingang entwickelte KI-gestützte Plattform für akademische Forschung (Next.js, Supabase, DeepSeek API) mit einem AI Reader zur Zusammenfassung von Artikeln, einer Literature Map zur Visualisierung von Zitationsnetzwerken (Semantic Scholar + OpenAlex + React Flow) und Nova, einem KI-Mentor für die persönliche Forschungsplanung. Wird nicht mehr aktiv gepflegt, ist aber weiterhin erreichbar unter <a href="https://www.nextscience.space" target="_blank" rel="noopener">nextscience.space</a>.</p>
           <div class="project-gallery">
             <img src="images/nextscience-home-feed.webp" alt="NextScience home feed" width="1280" height="690" loading="lazy" decoding="async">
             <img src="images/nextscience-literature-map.webp" alt="NextScience literature map" width="1280" height="693" loading="lazy" decoding="async">
@@ -2153,10 +2241,13 @@
         <div class="card">
           <h3 class="lang-en">Embodied Cell — Early-Stage Exploration</h3>
           <h3 class="lang-zh">具身细胞——早期探索</h3>
+          <h3 class="lang-de">Embodied Cell – Erkundung in einer frühen Phase</h3>
           <p class="project-tagline lang-en">Research assistantship at Xidian University · Mar – Sep 2026 · Advisor: <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a></p>
           <p class="project-tagline lang-zh">西安电子科技大学科研助理 · 2026 年 3 月至 9 月 · 导师：<a href="http://lvzhihan.com" target="_blank">吕智涵教授</a></p>
+          <p class="project-tagline lang-de">Forschungshilfskraft an der Xidian University · März – Sept. 2026 · Betreuung: <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a></p>
           <p class="lang-en">An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in it for about six months during my research assistantship, and what I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from my time on the project.</p>
           <p class="lang-zh">一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我在科研助理期间参与了它大约半年，从中得到的主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是我参与期间的一些记录。</p>
+          <p class="lang-de">Ein exploratives Projekt zu verkörperten Systemen, die auf ihre Umgebung reagieren. Es verband einen physischen Prototyp auf ESP32-Basis (Licht-, Kraft- und Time-of-Flight-Sensoren steuern RGBW-LEDs; die Struktur wurde in Onshape modelliert) mit einer Digital-Twin-Simulation von Pilzhyphen-Netzwerken und synthetischen Zellen in Unity. Ich habe während meiner Zeit als Forschungshilfskraft etwa sechs Monate daran mitgearbeitet; mitgenommen habe ich vor allem breiteres Fachwissen über digitale Zwillinge und verkörperte Systeme sowie praktische Erfahrung mit neuen Werkzeugen wie Unity und Onshape. Die folgenden Bilder sind Momentaufnahmen aus meiner Zeit im Projekt.</p>
           <div class="project-gallery">
             <img src="images/embodied-cell-top-view.webp" alt="Embodied cell prototype, top view" width="1400" height="1050" loading="lazy" decoding="async">
             <img src="images/embodied-cell-side-view.webp" alt="Embodied cell prototype, side view" width="1400" height="793" loading="lazy" decoding="async">
@@ -2170,40 +2261,40 @@
 
     <section class="section" id="skills">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Skills</span><span class="lang-zh">技能</span></h2>
+        <h2 class="section-title"><span class="lang-en">Skills</span><span class="lang-zh">技能</span><span class="lang-de">Kenntnisse</span></h2>
       </div>
 
       <dl class="skill-list">
         <div class="skill-row">
-          <dt><span class="lang-en">Artificial Intelligence</span><span class="lang-zh">人工智能</span></dt>
-          <dd><span class="lang-en">Formal concept analysis and three-way concept analysis; machine learning and deep learning; LLM application development and agent systems</span><span class="lang-zh">形式概念分析与三支概念分析；机器学习与深度学习；大语言模型应用开发与智能体系统</span></dd>
+          <dt><span class="lang-en">Artificial Intelligence</span><span class="lang-zh">人工智能</span><span class="lang-de">Künstliche Intelligenz</span></dt>
+          <dd><span class="lang-en">Formal concept analysis and three-way concept analysis; machine learning and deep learning; LLM application development and agent systems</span><span class="lang-zh">形式概念分析与三支概念分析；机器学习与深度学习；大语言模型应用开发与智能体系统</span><span class="lang-de">Formale Begriffsanalyse und Drei-Wege-Begriffsanalyse; maschinelles Lernen und Deep Learning; Entwicklung von LLM-Anwendungen und Agentensystemen</span></dd>
         </div>
         <div class="skill-row">
-          <dt><span class="lang-en">Research</span><span class="lang-zh">科研能力</span></dt>
-          <dd><span class="lang-en">Literature review and reproduction; experimental design and comparative analysis; academic writing in Chinese and English; LaTeX</span><span class="lang-zh">文献阅读与复现；实验设计与对比分析；中英文科研写作；LaTeX 排版</span></dd>
+          <dt><span class="lang-en">Research</span><span class="lang-zh">科研能力</span><span class="lang-de">Forschung</span></dt>
+          <dd><span class="lang-en">Literature review and reproduction; experimental design and comparative analysis; academic writing in Chinese and English; LaTeX</span><span class="lang-zh">文献阅读与复现；实验设计与对比分析；中英文科研写作；LaTeX 排版</span><span class="lang-de">Literaturrecherche und Reproduktion von Ergebnissen; Versuchsplanung und vergleichende Analyse; wissenschaftliches Schreiben auf Chinesisch und Englisch; LaTeX</span></dd>
         </div>
         <div class="skill-row">
-          <dt><span class="lang-en">Programming &amp; Engineering</span><span class="lang-zh">编程与工程</span></dt>
-          <dd><span class="lang-en">Python, C++, Linux; full-stack web development (Next.js, FastAPI, Supabase); embedded hardware (ESP32, sensors, LED systems)</span><span class="lang-zh">Python、C++、Linux；全栈 Web 开发（Next.js、FastAPI、Supabase）；嵌入式硬件（ESP32、传感器、LED 系统）</span></dd>
+          <dt><span class="lang-en">Programming &amp; Engineering</span><span class="lang-zh">编程与工程</span><span class="lang-de">Programmierung &amp; Technik</span></dt>
+          <dd><span class="lang-en">Python, C++, Linux; full-stack web development (Next.js, FastAPI, Supabase); embedded hardware (ESP32, sensors, LED systems)</span><span class="lang-zh">Python、C++、Linux；全栈 Web 开发（Next.js、FastAPI、Supabase）；嵌入式硬件（ESP32、传感器、LED 系统）</span><span class="lang-de">Python, C++, Linux; Full-Stack-Webentwicklung (Next.js, FastAPI, Supabase); Embedded-Hardware (ESP32, Sensoren, LED-Systeme)</span></dd>
         </div>
         <div class="skill-row">
-          <dt><span class="lang-en">Design &amp; Modeling</span><span class="lang-zh">设计与建模</span></dt>
-          <dd><span class="lang-en">3D modeling in Onshape; Unity, learned through a digital-twin project</span><span class="lang-zh">Onshape 三维建模；Unity（在数字孪生项目中学习）</span></dd>
+          <dt><span class="lang-en">Design &amp; Modeling</span><span class="lang-zh">设计与建模</span><span class="lang-de">Design &amp; Modellierung</span></dt>
+          <dd><span class="lang-en">3D modeling in Onshape; Unity, learned through a digital-twin project</span><span class="lang-zh">Onshape 三维建模；Unity（在数字孪生项目中学习）</span><span class="lang-de">3D-Modellierung in Onshape; Unity, erlernt in einem Digital-Twin-Projekt</span></dd>
         </div>
         <div class="skill-row">
-          <dt><span class="lang-en">Languages</span><span class="lang-zh">语言</span></dt>
-          <dd><span class="lang-en">Mandarin Chinese (native); English — IELTS score to be added</span><span class="lang-zh">中文（母语）；英语——雅思成绩待补充</span></dd>
+          <dt><span class="lang-en">Languages</span><span class="lang-zh">语言</span><span class="lang-de">Sprachen</span></dt>
+          <dd><span class="lang-en">Mandarin Chinese (native); English — IELTS score to be added</span><span class="lang-zh">中文（母语）；英语——雅思成绩待补充</span><span class="lang-de">Chinesisch (Mandarin, Muttersprache); Englisch – IELTS-Ergebnis wird nachgetragen</span></dd>
         </div>
         <div class="skill-row">
-          <dt><span class="lang-en">LLM tools</span><span class="lang-zh">大模型工具</span></dt>
-          <dd><span class="lang-en">ChatGPT, Claude, Codex for coding and writing</span><span class="lang-zh">ChatGPT、Claude、Codex，用于编程与写作</span></dd>
+          <dt><span class="lang-en">LLM tools</span><span class="lang-zh">大模型工具</span><span class="lang-de">LLM-Werkzeuge</span></dt>
+          <dd><span class="lang-en">ChatGPT, Claude, Codex for coding and writing</span><span class="lang-zh">ChatGPT、Claude、Codex，用于编程与写作</span><span class="lang-de">ChatGPT, Claude, Codex zum Programmieren und Schreiben</span></dd>
         </div>
       </dl>
     </section>
 
     <section class="section" id="awards">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Awards &amp; Honors</span><span class="lang-zh">获奖情况</span></h2>
+        <h2 class="section-title"><span class="lang-en">Awards &amp; Honors</span><span class="lang-zh">获奖情况</span><span class="lang-de">Preise &amp; Auszeichnungen</span></h2>
       </div>
 
       <!-- BEGIN GENERATED: awards — edit data/content.mjs, then run "node tools/build.mjs" -->
@@ -2211,6 +2302,7 @@
         <div class="card">
           <h3 class="lang-en">Competitions</h3>
           <h3 class="lang-zh">竞赛获奖</h3>
+          <h3 class="lang-de">Wettbewerbe</h3>
           <ul class="award-list lang-en">
             <li>National First Prize, China Robot and Artificial Intelligence Competition (2025)</li>
             <li>National First Prize, Geography Teaching AI Innovation Achievement Competition (2025)</li>
@@ -2220,6 +2312,11 @@
             <li>中国机器人及人工智能大赛 · 国家级一等奖（2025）</li>
             <li>地理教学人工智能创新成果评比 · 国家级一等奖（2025）</li>
             <li>全球校园人工智能算法精英大赛 · 国家级三等奖（2025）</li>
+          </ul>
+          <ul class="award-list lang-de">
+            <li>Nationaler erster Preis, China Robot and Artificial Intelligence Competition (2025)</li>
+            <li>Nationaler erster Preis, Geography Teaching AI Innovation Achievement Competition (2025)</li>
+            <li>Nationaler dritter Preis, Global Campus Artificial Intelligence Algorithm Elite Competition (2025)</li>
           </ul>
           <div class="award-more" id="awardsMore0" hidden>
             <ul class="award-list lang-en">
@@ -2234,15 +2331,22 @@
               <li>信息安全与对抗技术竞赛（西北赛区）· 二等奖（2025）</li>
               <li>中国计算机设计大赛（西北地区赛）· 三等奖（2024）</li>
             </ul>
+            <ul class="award-list lang-de">
+              <li>Erster Preis auf Provinzebene (Shaanxi), China Robot and Artificial Intelligence Competition (2025)</li>
+              <li>Zweiter Preis auf Provinzebene (Shaanxi), Global Campus Artificial Intelligence Algorithm Elite Competition (2025)</li>
+              <li>Zweiter Preis, Information Security and Adversarial Technology Competition, Region Nordwest (2025)</li>
+              <li>Dritter Preis, China Collegiate Computing Design Competition, Region Nordwest (2024)</li>
+            </ul>
           </div>
           <button class="show-more-btn" id="awardsToggle0" type="button" aria-expanded="false" aria-controls="awardsMore0" data-state="collapsed">
-            <span class="label-show"><span class="lang-en">Show 4 more</span><span class="lang-zh">再显示 4 项</span></span>
-            <span class="label-hide"><span class="lang-en">Show fewer</span><span class="lang-zh">收起</span></span>
+            <span class="label-show"><span class="lang-en">Show 4 more</span><span class="lang-zh">再显示 4 项</span><span class="lang-de">4 weitere anzeigen</span></span>
+            <span class="label-hide"><span class="lang-en">Show fewer</span><span class="lang-zh">收起</span><span class="lang-de">Weniger anzeigen</span></span>
           </button>
         </div>
         <div class="card">
           <h3 class="lang-en">Software Copyrights</h3>
           <h3 class="lang-zh">软件著作权</h3>
+          <h3 class="lang-de">Software-Urheberrechte</h3>
           <ul class="award-list lang-en">
             <li>“Weather Teaching Assistant Platform” (Reg. No. 16269380)</li>
             <li>“Deep Learning-Based Face Recognition Classroom Attendance System” (Reg. No. 16202857)</li>
@@ -2251,6 +2355,10 @@
             <li>《气象教学助手平台》（登记号：16269380）</li>
             <li>《基于深度学习的人脸识别课堂签到系统》（登记号：16202857）</li>
           </ul>
+          <ul class="award-list lang-de">
+            <li>„Weather Teaching Assistant Platform“ (Reg.-Nr. 16269380)</li>
+            <li>„Deep Learning-Based Face Recognition Classroom Attendance System“ (Reg.-Nr. 16202857)</li>
+          </ul>
         </div>
       </div>
       <!-- END GENERATED: awards -->
@@ -2258,34 +2366,36 @@
 
     <section class="section" id="contact">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span></h2>
+        <h2 class="section-title"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span><span class="lang-de">Kontakt</span></h2>
       </div>
 
       <p class="contact-open">
         <span class="lang-en">Open to remote collaboration and research internships on neuro-symbolic agents and concept learning — feel free to get in touch.</span>
         <span class="lang-zh">欢迎围绕神经符号智能体、概念学习的远程合作或科研实习，欢迎随时联系。</span>
+        <span class="lang-de">Offen für Remote-Zusammenarbeit und Forschungspraktika zu neurosymbolischen Agenten und Begriffslernen – schreiben Sie mir gern.</span>
       </p>
 
       <div class="contact-list">
         <div class="contact-item">
-          <div class="contact-label"><span class="lang-en">Email</span><span class="lang-zh">邮箱</span></div>
+          <div class="contact-label"><span class="lang-en">Email</span><span class="lang-zh">邮箱</span><span class="lang-de">E-Mail</span></div>
           <div class="contact-value">
             <div>
               <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn">42312205 [at] snnu [dot] edu [dot] cn</a>
-              <span class="contact-note"><span class="lang-en">(university)</span><span class="lang-zh">（学校）</span></span>
+              <span class="contact-note"><span class="lang-en">(university)</span><span class="lang-zh">（学校）</span><span class="lang-de">(Universität)</span></span>
             </div>
             <div>
               <a class="email-link" href="#contact" data-u="wtejing" data-d="gmail.com">wtejing [at] gmail [dot] com</a>
-              <span class="contact-note"><span class="lang-en">(personal)</span><span class="lang-zh">（个人）</span></span>
+              <span class="contact-note"><span class="lang-en">(personal)</span><span class="lang-zh">（个人）</span><span class="lang-de">(privat)</span></span>
             </div>
           </div>
         </div>
         <div class="contact-item">
-          <div class="contact-label"><span class="lang-en">CV</span><span class="lang-zh">简历</span></div>
+          <div class="contact-label"><span class="lang-en">CV</span><span class="lang-zh">简历</span><span class="lang-de">Lebenslauf</span></div>
           <div class="contact-value">
             <a href="CV.pdf" id="cvDownloadContact" class="cv-link">
               <span class="lang-en">Download PDF</span>
               <span class="lang-zh">下载 PDF</span>
+              <span class="lang-de">PDF herunterladen</span>
             </a>
           </div>
         </div>
@@ -2298,6 +2408,7 @@
           <div class="contact-value">
             <span class="lang-en" style="font-style: italic;">Coming soon</span>
             <span class="lang-zh">待添加</span>
+            <span class="lang-de" style="font-style: italic;">Demnächst</span>
           </div>
         </div>
         <div class="contact-item">
@@ -2309,17 +2420,17 @@
 
     <section class="section" id="visitors">
       <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span></h2>
+        <h2 class="section-title"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span><span class="lang-de">Besuche</span></h2>
       </div>
 
       <div class="visitor-map" id="visitorMap" data-state="loading">
         <p class="visitor-stats">
           <span>
-            <span class="lang-en">Total visits</span><span class="lang-zh">总访问数</span>
+            <span class="lang-en">Total visits</span><span class="lang-zh">总访问数</span><span class="lang-de">Besuche insgesamt</span>
             <strong id="visitorTotal">–</strong>
           </span>
           <span>
-            <span class="lang-en">Countries / regions</span><span class="lang-zh">国家或地区数</span>
+            <span class="lang-en">Countries / regions</span><span class="lang-zh">国家或地区数</span><span class="lang-de">Länder / Regionen</span>
             <strong id="visitorCountries">–</strong>
           </span>
         </p>
@@ -2327,14 +2438,17 @@
         <p class="visitor-hint">
           <span class="lang-en">Each dot is a city — bigger and darker means more visits.</span>
           <span class="lang-zh">每个圆点代表一座城市，圆点越大、颜色越深，访问越多。</span>
+          <span class="lang-de">Jeder Punkt steht für eine Stadt – je größer und dunkler, desto mehr Besuche.</span>
         </p>
         <p class="visitor-empty">
           <span class="lang-en">No data yet</span>
           <span class="lang-zh">暂无数据</span>
+          <span class="lang-de">Noch keine Daten</span>
         </p>
         <p class="visitor-error">
           <span class="lang-en">The visitor map couldn’t be loaded — the stats service may not be reachable from your network.</span>
           <span class="lang-zh">访客地图暂时无法加载，当前网络可能无法访问统计服务。</span>
+          <span class="lang-de">Die Besucherkarte konnte nicht geladen werden – der Statistikdienst ist aus Ihrem Netzwerk möglicherweise nicht erreichbar.</span>
         </p>
       </div>
     </section>
@@ -2343,18 +2457,22 @@
       <p>
         <span class="lang-en">© 2026 Tejing Wang</span>
         <span class="lang-zh">© 2026 王特警</span>
+        <span class="lang-de">© 2026 Tejing Wang</span>
       </p>
       <p>
         <span class="lang-en">Last updated: <span class="js-updated-en">October 2026</span></span>
         <span class="lang-zh">最后更新：<span class="js-updated-zh">2026 年 10 月</span></span>
+        <span class="lang-de">Zuletzt aktualisiert: <span class="js-updated-de">Oktober 2026</span></span>
       </p>
       <p id="privacyNote">
         <span class="lang-en">Only anonymous, city-level visit counts are collected — no IP addresses are recorded.</span>
         <span class="lang-zh">仅统计城市级别的匿名访问次数，不记录 IP 地址。</span>
+        <span class="lang-de">Erfasst werden nur anonyme Besuchszahlen auf Stadtebene – IP-Adressen werden nicht gespeichert.</span>
       </p>
       <p id="analyticsNote" hidden>
         <span class="lang-en">Only anonymous statistics are collected — city-level visit counts, plus page views and referrers via GoatCounter. No cookies, no IP addresses stored, no personal data.</span>
         <span class="lang-zh">仅收集匿名统计：城市级别的访问次数，以及通过 GoatCounter 统计的页面浏览量和来源。不使用 cookie，不存储 IP 地址，不收集个人信息。</span>
+        <span class="lang-de">Erfasst werden nur anonyme Statistiken – Besuchszahlen auf Stadtebene sowie Seitenaufrufe und Verweisquellen über GoatCounter. Keine Cookies, keine gespeicherten IP-Adressen, keine personenbezogenen Daten.</span>
       </p>
     </footer>
   </main>
@@ -2370,12 +2488,12 @@
 
     function apply(lang) {
       document.documentElement.setAttribute('data-lang', lang);
-      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
       btns.forEach(function (b) {
         b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
       });
       i18nEls.forEach(function (el) {
-        var text = lang === 'zh' ? el.dataset.langZh : el.dataset.langEn;
+        var text = el.getAttribute('data-lang-' + lang) || el.dataset.langEn;
         if (text) el.textContent = text;
       });
       try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
@@ -2544,7 +2662,8 @@
       function done() {
         btn.classList.add('is-copied');
         var status = document.getElementById('bibStatus');
-        if (status) status.textContent = document.documentElement.getAttribute('data-lang') === 'zh' ? '已复制 BibTeX' : 'BibTeX copied to clipboard';
+        var copied = { zh: '已复制 BibTeX', de: 'BibTeX in die Zwischenablage kopiert' };
+        if (status) status.textContent = copied[document.documentElement.getAttribute('data-lang')] || 'BibTeX copied to clipboard';
         setTimeout(function () { btn.classList.remove('is-copied'); }, 1800);
       }
       function fallback() {
@@ -2572,8 +2691,10 @@
         if (!d || isNaN(d.getTime())) return;
         var en = document.querySelector('.js-updated-en');
         var zh = document.querySelector('.js-updated-zh');
+        var de = document.querySelector('.js-updated-de');
         if (en) en.textContent = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
         if (zh) zh.textContent = d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月';
+        if (de) de.textContent = d.toLocaleString('de-DE', { month: 'long', year: 'numeric' });
       }).catch(function () {});
     } catch (err) {}
 
@@ -2594,10 +2715,12 @@
             }
           })
           .catch(function () {
-            var lang = document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+            var lang = document.documentElement.getAttribute('data-lang');
             alert(lang === 'zh'
               ? '简历还没有上传，敬请期待。'
-              : "The CV isn't uploaded yet — check back soon.");
+              : lang === 'de'
+                ? 'Der Lebenslauf ist noch nicht hochgeladen – bitte schauen Sie bald wieder vorbei.'
+                : "The CV isn't uploaded yet — check back soon.");
           });
       });
     });

@@ -18,9 +18,23 @@ const INDEX = path.join(root, 'index.html');
 const CHECK = process.argv.includes('--check');
 
 // ---- helpers ---------------------------------------------------------------
+// German (de) is optional: a text without it shows its English on the German
+// page, and the build lists those places as a reminder instead of failing.
+const LANGS = ['en', 'zh', 'de'];
+const missingDe = [];
+
+function hasDe(value) {
+  return typeof value.de === 'string' && value.de.trim() !== '';
+}
+
+function text(value, lang) {
+  return lang === 'de' && !hasDe(value) ? value.en : value[lang];
+}
+
 function need(pair, where) {
   const ok = pair && typeof pair.en === 'string' && typeof pair.zh === 'string' && pair.en.trim() && pair.zh.trim();
   if (!ok) throw new Error(`${where}: needs a non-empty "en" AND "zh" text`);
+  if (!hasDe(pair)) missingDe.push(where);
   return pair;
 }
 
@@ -37,18 +51,19 @@ function attr(value) {
     .replace(/\r?\n/g, '&#10;');
 }
 
-// <span class="lang-en">EN</span><span class="lang-zh">ZH</span> (for use inside another element)
+// <span class="lang-en">EN</span><span class="lang-zh">ZH</span><span class="lang-de">DE</span> (for use inside another element)
 function spans(value) {
-  return `<span class="lang-en">${value.en}</span><span class="lang-zh">${value.zh}</span>`;
+  return LANGS.map((lang) => `<span class="lang-${lang}">${text(value, lang)}</span>`).join('');
 }
 
-// <tag class="cls lang-en">EN</tag> followed by <tag class="cls lang-zh">ZH</tag>
+// <tag class="cls lang-en">EN</tag>, then the same tag for zh and for de, one per line
 function pair(tag, cls, value) {
-  const c = (lang) => [cls, lang].filter(Boolean).join(' ');
-  return `<${tag} class="${c('lang-en')}">${value.en}</${tag}>\n<${tag} class="${c('lang-zh')}">${value.zh}</${tag}>`;
+  const c = (lang) => [cls, `lang-${lang}`].filter(Boolean).join(' ');
+  return LANGS.map((lang) => `<${tag} class="${c(lang)}">${text(value, lang)}</${tag}>`).join('\n');
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_DE = ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
 
 // ---- News ---------------------------------------------------------------------
 function renderNews() {
@@ -60,6 +75,7 @@ function renderNews() {
       '<div class="timeline-item">',
       `  <div class="timeline-meta lang-en"><span>${MONTHS[+m[2] - 1]} ${m[1]}</span></div>`,
       `  <div class="timeline-meta lang-zh"><span>${m[1]} 年 ${+m[2]} 月</span></div>`,
+      `  <div class="timeline-meta lang-de"><span>${MONTHS_DE[+m[2] - 1]} ${m[1]}</span></div>`,
       indent(pair('p', '', n.text), 2),
       '</div>'
     ].join('\n');
@@ -77,8 +93,8 @@ function renderNews() {
     html += `
 
 <button class="show-more-btn" id="newsToggle" type="button" aria-expanded="false" aria-controls="newsMore" data-state="collapsed">
-  <span class="label-show"><span class="lang-en">Show earlier updates</span><span class="lang-zh">显示更早的动态</span></span>
-  <span class="label-hide"><span class="lang-en">Hide earlier updates</span><span class="lang-zh">收起</span></span>
+  <span class="label-show"><span class="lang-en">Show earlier updates</span><span class="lang-zh">显示更早的动态</span><span class="lang-de">Frühere Meldungen anzeigen</span></span>
+  <span class="label-hide"><span class="lang-en">Hide earlier updates</span><span class="lang-zh">收起</span><span class="lang-de">Frühere Meldungen ausblenden</span></span>
 </button>`;
   }
   return html;
@@ -86,10 +102,10 @@ function renderNews() {
 
 // ---- Publications --------------------------------------------------------------
 const STATUS = {
-  'in-preparation': { en: 'In Preparation', zh: '撰写中' },
-  'under-review': { en: 'Under Review', zh: '审稿中' },
-  preprint: { en: 'Preprint', zh: '预印本' },
-  published: { en: 'Published', zh: '已发表' }
+  'in-preparation': { en: 'In Preparation', zh: '撰写中', de: 'In Vorbereitung' },
+  'under-review': { en: 'Under Review', zh: '审稿中', de: 'In Begutachtung' },
+  preprint: { en: 'Preprint', zh: '预印本', de: 'Preprint' },
+  published: { en: 'Published', zh: '已发表', de: 'Veröffentlicht' }
 };
 
 // key in `links`, English label, Chinese label
@@ -109,7 +125,7 @@ function renderLinks(links = {}) {
       return `<span class="pub-btn is-soon" aria-disabled="true" title="Available after publication / 论文发表后提供">${label}</span>`;
     }
     if (key === 'bibtex') {
-      return `<button class="pub-btn" type="button" data-bibtex="${attr(value)}"><span class="pub-btn-label">${label}</span><span class="pub-btn-done" aria-hidden="true">${spans({ en: 'Copied ✓', zh: '已复制 ✓' })}</span></button>`;
+      return `<button class="pub-btn" type="button" data-bibtex="${attr(value)}"><span class="pub-btn-label">${label}</span><span class="pub-btn-done" aria-hidden="true">${spans({ en: 'Copied ✓', zh: '已复制 ✓', de: 'Kopiert ✓' })}</span></button>`;
     }
     return `<a class="pub-btn" href="${attr(value)}" target="_blank" rel="noopener">${label}</a>`;
   }).filter(Boolean);
@@ -138,8 +154,8 @@ function renderPublications() {
 
 // ---- Awards ----------------------------------------------------------------------
 function renderAwards() {
-  const lists = (items) => ['en', 'zh']
-    .map((lang) => `<ul class="award-list lang-${lang}">\n${indent(items.map((it) => `<li>${it[lang]}</li>`).join('\n'), 2)}\n</ul>`)
+  const lists = (items) => LANGS
+    .map((lang) => `<ul class="award-list lang-${lang}">\n${indent(items.map((it) => `<li>${text(it, lang)}</li>`).join('\n'), 2)}\n</ul>`)
     .join('\n');
 
   const cards = data.awards.map((group, g) => {
@@ -153,8 +169,8 @@ function renderAwards() {
       const n = items.length - shown;
       parts.push(`  <div class="award-more" id="${id}" hidden>\n${indent(lists(items.slice(shown)), 4)}\n  </div>`);
       parts.push(`  <button class="show-more-btn" id="awardsToggle${g}" type="button" aria-expanded="false" aria-controls="${id}" data-state="collapsed">
-    <span class="label-show"><span class="lang-en">Show ${n} more</span><span class="lang-zh">再显示 ${n} 项</span></span>
-    <span class="label-hide"><span class="lang-en">Show fewer</span><span class="lang-zh">收起</span></span>
+    <span class="label-show"><span class="lang-en">Show ${n} more</span><span class="lang-zh">再显示 ${n} 项</span><span class="lang-de">${n} weitere anzeigen</span></span>
+    <span class="label-hide"><span class="lang-en">Show fewer</span><span class="lang-zh">收起</span><span class="lang-de">Weniger anzeigen</span></span>
   </button>`);
     }
     parts.push('</div>');
@@ -232,6 +248,10 @@ function main() {
     after = after.replace(re, (_, open, close) => `${open}\n${indent(render(), 6)}${close}`);
   }
 
+  if (missingDe.length) {
+    console.warn(`No German text yet (the German page shows the English there): ${missingDe.join(', ')}`);
+  }
+
   // The footer's "Last updated" text is a fallback for visitors whose browser can't
   // ask the server for the real date (the page script overwrites it when it can).
   // It is refreshed whenever the build runs, but never checked, so a new month
@@ -240,9 +260,11 @@ function main() {
     const now = new Date();
     const en = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
     const zh = `${now.getFullYear()} 年 ${now.getMonth() + 1} 月`;
+    const de = now.toLocaleString('de-DE', { month: 'long', year: 'numeric' });
     return html
       .replace(/(<span class="js-updated-en">)[^<]*(<\/span>)/, `$1${en}$2`)
-      .replace(/(<span class="js-updated-zh">)[^<]*(<\/span>)/, `$1${zh}$2`);
+      .replace(/(<span class="js-updated-zh">)[^<]*(<\/span>)/, `$1${zh}$2`)
+      .replace(/(<span class="js-updated-de">)[^<]*(<\/span>)/, `$1${de}$2`);
   }
 
   if (!CHECK) after = stampFooter(after);

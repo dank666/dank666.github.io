@@ -5,7 +5,7 @@
 (function () {
   try {
     var l = localStorage.getItem('site-lang');
-    if (l !== 'zh' && l !== 'en') l = 'en';
+    if (l !== 'zh' && l !== 'en' && l !== 'de') l = 'en';
     document.documentElement.setAttribute('data-lang', l);
   } catch (e) {
     document.documentElement.setAttribute('data-lang', 'en');
@@ -250,8 +250,9 @@
       margin: 0 auto;
     }
 
-    [data-lang="en"] .lang-zh { display: none; }
-    [data-lang="zh"] .lang-en { display: none; }
+    [data-lang="en"] :is(.lang-zh, .lang-de) { display: none; }
+    [data-lang="zh"] :is(.lang-en, .lang-de) { display: none; }
+    [data-lang="de"] :is(.lang-en, .lang-zh) { display: none; }
 
     .navbar {
       position: sticky;
@@ -647,25 +648,28 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
+  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容" data-lang-de="Zum Hauptinhalt springen">Skip to main content</a>
   <header class="navbar">
     <div class="nav-inner">
       <a class="logo" href="index.html">
         <img class="logo-mark" src="favicon.svg" alt="" width="22" height="22" />
         <span class="lang-en">Tejing Wang</span>
         <span class="lang-zh">王特警</span>
+        <span class="lang-de">Tejing Wang</span>
       </a>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span></a>
-          <a href="reading.html" class="active" aria-current="page"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span></a>
-          <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span></a>
-          <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span></a>
+          <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span><span class="lang-de">Startseite</span></a>
+          <a href="reading.html" class="active" aria-current="page"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span><span class="lang-de">Notizen</span></a>
+          <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span><span class="lang-de">Begriffsverband-Demo</span></a>
+          <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span><span class="lang-de">Konstellation</span></a>
         </nav>
         <div class="lang-switch" role="group" aria-label="Language">
           <button class="lang-btn" data-lang="en" type="button">EN</button>
           <span>/</span>
           <button class="lang-btn" data-lang="zh" type="button">中</button>
+          <span>/</span>
+          <button class="lang-btn" data-lang="de" type="button">DE</button>
         </div>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
           <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -677,13 +681,16 @@
 
   <main class="container" id="main-content">
     <div class="page-header">
-      <h1 data-i18n data-lang-en="Notes" data-lang-zh="笔记">Notes</h1>
+      <h1 data-i18n data-lang-en="Notes" data-lang-zh="笔记" data-lang-de="Notizen">Notes</h1>
       <p class="intro lang-en">
         Short notes from my research, together with a library of the papers I’ve read — organized by
         project and topic. It’s a working notebook that I add to as I read.
       </p>
       <p class="intro lang-zh">
         我在研究中写下的短文笔记，以及读过的论文库——按项目与主题分类。这是一个边读边补充的工作笔记本。
+      </p>
+      <p class="intro lang-de">
+        Kurze Notizen aus meiner Forschung, dazu eine Bibliothek der Artikel, die ich gelesen habe – nach Projekt und Thema geordnet. Ein Arbeitsnotizbuch, das ich beim Lesen laufend ergänze.
       </p>
     </div>
 
@@ -695,6 +702,7 @@
         placeholder="Search by title, author, or topic…"
         data-placeholder-en="Search by title, author, or topic…"
         data-placeholder-zh="按标题、作者或主题搜索…"
+        data-placeholder-de="Nach Titel, Autorenname oder Thema suchen…"
       />
       <div class="filter-row" id="typeFilters" role="group" aria-label="Filter by type" hidden></div>
       <div class="filter-row" id="projectFilters" role="group" aria-label="Filter by project"></div>
@@ -705,13 +713,16 @@
     <div class="paper-list" id="paperList"></div>
     <div class="empty-state lang-en" id="emptyEn" hidden>No entries match your filters.</div>
     <div class="empty-state lang-zh" id="emptyZh" hidden>没有符合当前筛选条件的条目。</div>
+    <div class="empty-state lang-de" id="emptyDe" hidden>Keine Einträge entsprechen Ihren Filtern.</div>
 
     <footer class="footer">
       <span class="lang-en">© 2026 Tejing Wang</span>
       <span class="lang-zh">© 2026 王特警</span>
+      <span class="lang-de">© 2026 Tejing Wang</span>
       <p id="analyticsNote" class="footer-note" hidden>
         <span class="lang-en">Only anonymous page-view statistics are collected (via GoatCounter) — no cookies, no IP addresses stored, no personal data.</span>
         <span class="lang-zh">仅收集匿名的页面浏览统计（通过 GoatCounter）——不使用 cookie，不存储 IP 地址，不收集个人信息。</span>
+        <span class="lang-de">Erfasst werden nur anonyme Seitenaufruf-Statistiken (über GoatCounter) – keine Cookies, keine gespeicherten IP-Adressen, keine personenbezogenen Daten.</span>
       </p>
     </footer>
   </main>
@@ -728,11 +739,12 @@
       id: 'agent-survey',
       label_en: 'Neuro-Symbolic Agent Survey',
       label_zh: '神经符号智能体综述',
+      label_de: 'Übersichtsartikel zu neurosymbolischen Agenten',
       groups: [
-        { id: 'planning', label_en: 'Planning', label_zh: '规划' },
-        { id: 'memory', label_en: 'Memory', label_zh: '记忆' },
-        { id: 'verification', label_en: 'Verification', label_zh: '验证' },
-        { id: 'competing-survey', label_en: 'Existing surveys', label_zh: '已有综述' }
+        { id: 'planning', label_en: 'Planning', label_zh: '规划', label_de: 'Planung' },
+        { id: 'memory', label_en: 'Memory', label_zh: '记忆', label_de: 'Gedächtnis' },
+        { id: 'verification', label_en: 'Verification', label_zh: '验证', label_de: 'Verifikation' },
+        { id: 'competing-survey', label_en: 'Existing surveys', label_zh: '已有综述', label_de: 'Bestehende Übersichtsarbeiten' }
       ]
     }
   ];
@@ -747,7 +759,8 @@
       project: 'agent-survey',
       topics: ['neuro-symbolic-agents', 'competing-survey'],
       note_en: 'One of some existing surveys I am differentiating my own neuro-symbolic agent survey from — reviewed to map what is already covered in the literature.',
-      note_zh: '我在写的神经符号智能体综述所要区分的几篇已有综述之一——用于梳理该领域已经被覆盖的内容。'
+      note_zh: '我在写的神经符号智能体综述所要区分的几篇已有综述之一——用于梳理该领域已经被覆盖的内容。',
+      note_de: 'Eine von mehreren bestehenden Übersichtsarbeiten, von denen ich meinen eigenen Übersichtsartikel zu neurosymbolischen Agenten abgrenze – gesichtet, um zu erfassen, was die Literatur bereits abdeckt.'
     },
     {
       title_en: 'Agentic AI systems: A systematic survey of multi-agent architectures, cognitive foundations, interaction, explainability, security, and performance evaluation',
@@ -758,7 +771,8 @@
       project: 'agent-survey',
       topics: ['agentic-ai', 'competing-survey'],
       note_en: 'Another of the existing surveys I am differentiating my own neuro-symbolic agent survey from.',
-      note_zh: '我在写的神经符号智能体综述所要区分的另一篇已有综述。'
+      note_zh: '我在写的神经符号智能体综述所要区分的另一篇已有综述。',
+      note_de: 'Eine weitere der bestehenden Übersichtsarbeiten, von denen ich meinen eigenen Übersichtsartikel zu neurosymbolischen Agenten abgrenze.'
     },
     // The 166 primary studies of the survey, in the order of its coding table
     // (planning, then memory, then verification). No reading notes yet.
@@ -2277,15 +2291,28 @@
 
   // ---- Helpers ------------------------------------------------------------
   function currentLang() {
-    return document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+    var lang = document.documentElement.getAttribute('data-lang');
+    return lang === 'zh' || lang === 'de' ? lang : 'en';
+  }
+
+  // A field of an entry in the current language: label_zh, note_de and so on.
+  // Whatever is missing (German is optional everywhere) falls back to English.
+  function pick(obj, key, lang) {
+    return (lang !== 'en' && obj[key + '_' + lang]) || obj[key + '_en'];
+  }
+
+  function say(lang, en, zh, de) {
+    return lang === 'zh' ? zh : lang === 'de' ? de : en;
   }
 
   var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MONTHS_DE = ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
 
   function formatNoteDate(date, lang) {
     var m = /^(\d{4})-(\d{1,2})/.exec(date || '');
     if (!m) return date || '';
     var month = parseInt(m[2], 10);
+    if (lang === 'de') return MONTHS_DE[month - 1] + ' ' + m[1];
     return lang === 'zh' ? m[1] + ' 年 ' + month + ' 月' : MONTHS_EN[month - 1] + ' ' + m[1];
   }
 
@@ -2352,10 +2379,10 @@
     var wrap = document.getElementById('projectFilters');
     wrap.querySelectorAll('.filter-btn').forEach(function (b) {
       if (b.dataset.project === 'all') {
-        b.textContent = lang === 'zh' ? '全部' : 'All';
+        b.textContent = say(lang, 'All', '全部', 'Alle');
       } else {
         var p = projectOf(b.dataset.project);
-        b.textContent = lang === 'zh' ? p.label_zh : p.label_en;
+        b.textContent = pick(p, 'label', lang);
       }
       b.setAttribute('aria-pressed', String(b.dataset.project === state.project));
     });
@@ -2364,9 +2391,9 @@
   // "All / Notes / Papers" only appears once there is at least one note, so
   // the page looks exactly like the old paper library until then.
   var TYPE_LABELS = {
-    all: { en: 'All', zh: '全部' },
-    note: { en: 'Notes', zh: '笔记' },
-    paper: { en: 'Papers', zh: '论文' }
+    all: { en: 'All', zh: '全部', de: 'Alle' },
+    note: { en: 'Notes', zh: '笔记', de: 'Notizen' },
+    paper: { en: 'Papers', zh: '论文', de: 'Artikel' }
   };
 
   function renderTypeFilters() {
@@ -2436,13 +2463,13 @@
       if (PROJECTS.length === 1) {
         var name = document.createElement('span');
         name.className = 'filter-label';
-        name.textContent = lang === 'zh' ? project.label_zh : project.label_en;
+        name.textContent = pick(project, 'label', lang);
         wrap.appendChild(name);
       }
-      add('all', lang === 'zh' ? '全部' : 'All', pool.length, !state.topic, clearTopic);
+      add('all', say(lang, 'All', '全部', 'Alle'), pool.length, !state.topic, clearTopic);
       groups.forEach(function (g) {
         var n = pool.filter(function (e) { return inGroup(e, project, g); }).length;
-        add(g.id, lang === 'zh' ? g.label_zh : g.label_en, n, state.topic === g.id, function () {
+        add(g.id, pick(g, 'label', lang), n, state.topic === g.id, function () {
           state.topic = g.id;
           render();
         });
@@ -2452,7 +2479,7 @@
     var isGroup = groups.some(function (g) { return g.id === state.topic; });
     if (state.topic && !isGroup) {
       var extra = add('topic', state.topic + ' ×', null, true, clearTopic);
-      extra.setAttribute('aria-label', (lang === 'zh' ? '取消主题筛选：' : 'Clear topic filter: ') + state.topic);
+      extra.setAttribute('aria-label', say(lang, 'Clear topic filter: ', '取消主题筛选：', 'Themenfilter aufheben: ') + state.topic);
     }
 
     // The buttons were rebuilt; keep keyboard focus where it was.
@@ -2483,6 +2510,11 @@
     if (lang === 'zh') {
       return n + (kind === 'note' ? ' 篇笔记' : kind === 'paper' ? ' 篇论文' : ' 条');
     }
+    if (lang === 'de') {
+      if (kind === 'note') return n + (n === 1 ? ' Notiz' : ' Notizen');
+      if (kind === 'paper') return n + ' Artikel';
+      return n + (n === 1 ? ' Eintrag' : ' Einträge');
+    }
     if (kind === 'note') return n + (n === 1 ? ' note' : ' notes');
     if (kind === 'paper') return n + (n === 1 ? ' paper' : ' papers');
     return n + (n === 1 ? ' entry' : ' entries');
@@ -2499,7 +2531,7 @@
       var projTag = document.createElement('button');
       projTag.className = 'paper-tag project-tag';
       projTag.type = 'button';
-      projTag.textContent = lang === 'zh' ? proj.label_zh : proj.label_en;
+      projTag.textContent = pick(proj, 'label', lang);
       projTag.addEventListener('click', function () {
         state.project = proj.id;
         state.topic = null;
@@ -2533,7 +2565,7 @@
     // Title
     var title = document.createElement('p');
     title.className = 'paper-title';
-    var titleText = lang === 'zh' ? (paper.title_zh || paper.title_en) : paper.title_en;
+    var titleText = pick(paper, 'title', lang);
     if (paper.link) {
       var a = document.createElement('a');
       a.href = paper.link;
@@ -2571,7 +2603,7 @@
     if (tags.childNodes.length) item.appendChild(tags);
 
     // Note, set off in its own bordered block (skipped for entries without one)
-    var noteText = lang === 'zh' ? paper.note_zh : paper.note_en;
+    var noteText = pick(paper, 'note', lang);
     if (!noteText) return item;
 
     var noteBlock = document.createElement('div');
@@ -2579,7 +2611,7 @@
 
     var noteLabel = document.createElement('p');
     noteLabel.className = 'paper-note-label';
-    noteLabel.innerHTML = '<span class="lang-en">Reading note</span><span class="lang-zh">阅读笔记</span>';
+    noteLabel.innerHTML = '<span class="lang-en">Reading note</span><span class="lang-zh">阅读笔记</span><span class="lang-de">Lesenotiz</span>';
     noteBlock.appendChild(noteLabel);
 
     var note = document.createElement('p');
@@ -2597,7 +2629,7 @@
 
     var title = document.createElement('p');
     title.className = 'paper-title';
-    title.textContent = lang === 'zh' ? note.title_zh : note.title_en;
+    title.textContent = pick(note, 'title', lang);
     item.appendChild(title);
 
     var secondary = document.createElement('p');
@@ -2608,8 +2640,8 @@
     if (note.about) {
       var about = document.createElement('p');
       about.className = 'paper-secondary';
-      about.appendChild(document.createTextNode(lang === 'zh' ? '关于论文：' : 'About the paper: '));
-      var aboutText = lang === 'zh' ? (note.about.title_zh || note.about.title_en) : note.about.title_en;
+      about.appendChild(document.createTextNode(say(lang, 'About the paper: ', '关于论文：', 'Zum Artikel: ')));
+      var aboutText = pick(note.about, 'title', lang);
       if (note.about.link) {
         var link = document.createElement('a');
         link.href = note.about.link;
@@ -2628,7 +2660,7 @@
 
     var body = document.createElement('div');
     body.className = 'note-body';
-    ((lang === 'zh' ? note.body_zh : note.body_en) || []).forEach(function (text) {
+    ((pick(note, 'body', lang)) || []).forEach(function (text) {
       var para = document.createElement('p');
       para.textContent = text;
       body.appendChild(para);
@@ -2648,6 +2680,7 @@
 
     document.getElementById('emptyEn').hidden = filtered.length !== 0;
     document.getElementById('emptyZh').hidden = filtered.length !== 0;
+    document.getElementById('emptyDe').hidden = filtered.length !== 0;
 
     document.getElementById('resultCount').textContent = countText(filtered.length, lang);
 
@@ -2686,9 +2719,9 @@
     groups.forEach(function (g) {
       var mine = rest.filter(function (e) { return inGroup(e, project, g); });
       rest = rest.filter(function (e) { return !inGroup(e, project, g); });
-      addSection(lang === 'zh' ? g.label_zh : g.label_en, mine);
+      addSection(pick(g, 'label', lang), mine);
     });
-    addSection(lang === 'zh' ? '其他' : 'Other', rest);
+    addSection(say(lang, 'Other', '其他', 'Sonstige'), rest);
   }
 
   function render() {
@@ -2705,18 +2738,16 @@
 
     function applyLang(lang) {
       document.documentElement.setAttribute('data-lang', lang);
-      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
       btns.forEach(function (b) {
         b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
       });
       i18nEls.forEach(function (el) {
-        var text = lang === 'zh' ? el.dataset.langZh : el.dataset.langEn;
+        var text = el.getAttribute('data-lang-' + lang) || el.dataset.langEn;
         if (text) el.textContent = text;
       });
       var input = document.getElementById('searchInput');
-      input.placeholder = lang === 'zh'
-        ? input.dataset.placeholderZh
-        : input.dataset.placeholderEn;
+      input.placeholder = input.getAttribute('data-placeholder-' + lang) || input.dataset.placeholderEn;
       try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
       render();
     }

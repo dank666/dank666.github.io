@@ -26,16 +26,16 @@
   // rows[i] lists the attribute indices that object i has.
   var PRESETS = {
     animals: {
-      label: ['Animals (small)', '动物（小例子）'],
-      objects: [['sparrow', '麻雀'], ['bat', '蝙蝠'], ['dolphin', '海豚'], ['ostrich', '鸵鸟'], ['salmon', '鲑鱼']],
-      attrs: [['flies', '会飞'], ['lays eggs', '产卵'], ['lives in water', '生活在水中'], ['has feathers', '有羽毛']],
+      label: ['Animals (small)', '动物（小例子）', 'Tiere (klein)'],
+      objects: [['sparrow', '麻雀', 'Spatz'], ['bat', '蝙蝠', 'Fledermaus'], ['dolphin', '海豚', 'Delfin'], ['ostrich', '鸵鸟', 'Strauß'], ['salmon', '鲑鱼', 'Lachs']],
+      attrs: [['flies', '会飞', 'fliegt'], ['lays eggs', '产卵', 'legt Eier'], ['lives in water', '生活在水中', 'lebt im Wasser'], ['has feathers', '有羽毛', 'hat Federn']],
       rows: [[0, 1, 3], [0], [2], [1, 3], [1, 2]]
     },
     living: {
-      label: ['Living beings and water (Ganter & Wille)', '生物与水（Ganter & Wille 经典例子）'],
-      objects: [['leech', '水蛭'], ['bream', '鳊鱼'], ['frog', '青蛙'], ['dog', '狗'], ['spike-weed', '水草'], ['reed', '芦苇'], ['bean', '豆'], ['maize', '玉米']],
-      attrs: [['needs water', '需要水'], ['lives in water', '生活在水中'], ['lives on land', '生活在陆地'], ['needs chlorophyll', '需要叶绿素'],
-              ['two seed leaves', '两片子叶'], ['one seed leaf', '一片子叶'], ['can move', '能运动'], ['has limbs', '有四肢'], ['suckles young', '哺乳']],
+      label: ['Living beings and water (Ganter & Wille)', '生物与水（Ganter & Wille 经典例子）', 'Lebewesen und Wasser (Ganter & Wille)'],
+      objects: [['leech', '水蛭', 'Blutegel'], ['bream', '鳊鱼', 'Brasse'], ['frog', '青蛙', 'Frosch'], ['dog', '狗', 'Hund'], ['spike-weed', '水草', 'Wasserpest'], ['reed', '芦苇', 'Schilf'], ['bean', '豆', 'Bohne'], ['maize', '玉米', 'Mais']],
+      attrs: [['needs water', '需要水', 'benötigt Wasser'], ['lives in water', '生活在水中', 'lebt im Wasser'], ['lives on land', '生活在陆地', 'lebt an Land'], ['needs chlorophyll', '需要叶绿素', 'benötigt Chlorophyll'],
+              ['two seed leaves', '两片子叶', 'zweikeimblättrig'], ['one seed leaf', '一片子叶', 'einkeimblättrig'], ['can move', '能运动', 'kann sich bewegen'], ['has limbs', '有四肢', 'hat Gliedmaßen'], ['suckles young', '哺乳', 'säugt Junge']],
       rows: [[0, 1, 6], [0, 1, 6, 7], [0, 1, 2, 6, 7], [0, 2, 6, 7, 8], [0, 1, 3, 5], [0, 1, 2, 3, 5], [0, 2, 3, 4], [0, 2, 3, 5]]
     }
   };
@@ -43,22 +43,61 @@
   var state = { presetId: 'animals', objects: [], attrs: [], inc: [], mode: 'classical', selected: null };
 
   function currentLang() {
-    return document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+    var lang = document.documentElement.getAttribute('data-lang');
+    return lang === 'zh' || lang === 'de' ? lang : 'en';
   }
 
-  function t(en, zh) {
-    return currentLang() === 'zh' ? zh : en;
+  // German for the fixed interface texts, looked up by their English wording.
+  // A text built from numbers passes its German to t() as a third argument.
+  var DE = {
+    'Custom (edited)': 'Eigene (bearbeitet)',
+    'Formal context: rows are objects, columns are attributes. Press a cell to toggle it.':
+      'Formaler Kontext: Zeilen sind Gegenstände, Spalten sind Merkmale. Drücken Sie eine Zelle, um sie umzuschalten.',
+    'Attribute name': 'Name des Merkmals',
+    'Remove this attribute': 'Dieses Merkmal entfernen',
+    'attribute': 'Merkmal',
+    'Object name': 'Name des Gegenstands',
+    'Remove this object': 'Diesen Gegenstand entfernen',
+    'object': 'Gegenstand',
+    'Classical concepts': 'Klassische Begriffe',
+    'Three-way, object-induced': 'Drei-Wege, gegenstandsinduziert',
+    'Three-way, attribute-induced': 'Drei-Wege, merkmalsinduziert',
+    'All concepts': 'Alle Begriffe',
+    'Click a node or a row of the list to see its extent and intent.':
+      'Klicken Sie auf einen Knoten oder eine Zeile der Liste, um Umfang und Inhalt zu sehen.',
+    'Extent (attributes):': 'Umfang (Merkmale):',
+    'Objects having all of them:': 'Gegenstände, die sie alle haben:',
+    'Objects having none of them:': 'Gegenstände, die keines davon haben:',
+    'Extent (objects):': 'Umfang (Gegenstände):',
+    'Attributes all of them have:': 'Merkmale, die sie alle haben:',
+    'Attributes none of them has:': 'Merkmale, die keiner von ihnen hat:',
+    'Intent (shared attributes):': 'Inhalt (gemeinsame Merkmale):',
+    'Extent (attributes)': 'Umfang (Merkmale)',
+    'Objects having all': 'Gegenstände mit allen',
+    'Objects having none': 'Gegenstände mit keinem',
+    'Extent (objects)': 'Umfang (Gegenstände)',
+    'Attributes all have': 'Merkmale, die alle haben',
+    'Attributes none has': 'Merkmale, die keiner hat',
+    'Intent (shared attributes)': 'Inhalt (gemeinsame Merkmale)',
+    'Concept lattice diagram': 'Diagramm des Begriffsverbands'
+  };
+
+  function t(en, zh, de) {
+    var lang = currentLang();
+    if (lang === 'zh') return zh;
+    return lang === 'de' ? de || DE[en] || en : en;
   }
 
   function nameOf(item) {
-    return currentLang() === 'zh' && item.zh ? item.zh : item.en;
+    var lang = currentLang();
+    return (lang !== 'en' && item[lang]) || item.en;
   }
 
   function loadPreset(id) {
     var p = PRESETS[id];
     state.presetId = id;
-    state.objects = p.objects.map(function (o) { return { en: o[0], zh: o[1] }; });
-    state.attrs = p.attrs.map(function (a) { return { en: a[0], zh: a[1] }; });
+    state.objects = p.objects.map(function (o) { return { en: o[0], zh: o[1], de: o[2] }; });
+    state.attrs = p.attrs.map(function (a) { return { en: a[0], zh: a[1], de: a[2] }; });
     state.inc = p.rows.map(function (row) {
       var r = p.attrs.map(function () { return false; });
       row.forEach(function (m) { r[m] = true; });
@@ -83,7 +122,7 @@
 
   // ---- Table editor -----------------------------------------------------------
   function renderPresetOptions() {
-    var lang = currentLang() === 'zh' ? 1 : 0;
+    var lang = ['en', 'zh', 'de'].indexOf(currentLang());
     presetSelect.innerHTML = '';
     Object.keys(PRESETS).forEach(function (id) {
       var o = el('option', '', PRESETS[id].label[lang]);
@@ -107,6 +146,7 @@
     input.addEventListener('input', function () {
       item.en = input.value;
       item.zh = input.value;
+      item.de = input.value;
       markCustom();
       refreshCellLabels();
       renderOutput();
@@ -151,7 +191,7 @@
     addA.type = 'button';
     addA.disabled = nM >= MAX_ATTRS;
     addA.addEventListener('click', function () {
-      state.attrs.push({ en: 'attr ' + (nM + 1), zh: '属性' + (nM + 1) });
+      state.attrs.push({ en: 'attr ' + (nM + 1), zh: '属性' + (nM + 1), de: 'Merkmal ' + (nM + 1) });
       state.inc.forEach(function (row) { row.push(false); });
       structureChanged();
     });
@@ -198,7 +238,7 @@
     addO.type = 'button';
     addO.disabled = nG >= MAX_OBJECTS;
     addO.addEventListener('click', function () {
-      state.objects.push({ en: 'object ' + (nG + 1), zh: '对象' + (nG + 1) });
+      state.objects.push({ en: 'object ' + (nG + 1), zh: '对象' + (nG + 1), de: 'Gegenstand ' + (nG + 1) });
       state.inc.push(state.attrs.map(function () { return false; }));
       structureChanged();
     });
@@ -209,7 +249,8 @@
 
     sizeNote.textContent = t(
       nG + ' objects × ' + nM + ' attributes (at most ' + MAX_OBJECTS + ' × ' + MAX_ATTRS + ')',
-      nG + ' 个对象 × ' + nM + ' 个属性（最多 ' + MAX_OBJECTS + ' × ' + MAX_ATTRS + '）');
+      nG + ' 个对象 × ' + nM + ' 个属性（最多 ' + MAX_OBJECTS + ' × ' + MAX_ATTRS + '）',
+      nG + ' Gegenstände × ' + nM + ' Merkmale (höchstens ' + MAX_OBJECTS + ' × ' + MAX_ATTRS + ')');
   }
 
   function refreshCellLabels() {
@@ -304,7 +345,8 @@
       var big = res.tooMany ? '> ' + res.count : String(res.count);
       diagramEl.appendChild(el('p', 'lat-message', t(
         'This table has ' + big + ' concepts, which is too many to draw legibly (limit ' + DRAW_LIMIT + '). Try fewer objects or attributes.',
-        '这张表有 ' + big + ' 个概念，太多了，画出来看不清（上限 ' + DRAW_LIMIT + '）。请减少对象或属性。')));
+        '这张表有 ' + big + ' 个概念，太多了，画出来看不清（上限 ' + DRAW_LIMIT + '）。请减少对象或属性。',
+        'Diese Tabelle hat ' + big + ' Begriffe – zu viele, um sie lesbar zu zeichnen (Grenze ' + DRAW_LIMIT + '). Versuchen Sie es mit weniger Gegenständen oder Merkmalen.')));
       listSummary.textContent = t('All concepts', '全部概念');
       return;
     }
@@ -316,7 +358,7 @@
     drawDiagram(res);
     renderList(res);
     renderInfo(res);
-    listSummary.textContent = t('All concepts (' + res.count + ')', '全部概念（' + res.count + '）');
+    listSummary.textContent = t('All concepts (' + res.count + ')', '全部概念（' + res.count + '）', 'Alle Begriffe (' + res.count + ')');
   }
 
   function select(res, idx) {

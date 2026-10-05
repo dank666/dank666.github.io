@@ -34,7 +34,8 @@
   }
 
   function currentLang() {
-    return document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+    var lang = document.documentElement.getAttribute('data-lang');
+    return lang === 'zh' || lang === 'de' ? lang : 'en';
   }
 
   // ---- Network ------------------------------------------------------------
@@ -102,7 +103,7 @@
 
   function countryName(code) {
     try {
-      var name = new Intl.DisplayNames([currentLang() === 'zh' ? 'zh-CN' : 'en'], { type: 'region' }).of(code);
+      var name = new Intl.DisplayNames([currentLang() === 'zh' ? 'zh-CN' : currentLang()], { type: 'region' }).of(code);
       if (name) return name;
     } catch (e) {}
     return code;
@@ -113,6 +114,7 @@
     var place = p.city ? p.city + ', ' + country : country;
     var n = p.count.toLocaleString();
     if (currentLang() === 'zh') return place + ' · ' + n + ' 次访问';
+    if (currentLang() === 'de') return place + ' · ' + n + (p.count === 1 ? ' Besuch' : ' Besuche');
     return place + ' · ' + n + (p.count === 1 ? ' visit' : ' visits');
   }
 
@@ -137,7 +139,7 @@
     var svg = svgEl('svg', {
       viewBox: '0 ' + top + ' ' + w + ' ' + height,
       role: 'group',
-      'aria-label': currentLang() === 'zh' ? '访客世界地图' : 'World map of visitors'
+      'aria-label': currentLang() === 'zh' ? '访客世界地图' : currentLang() === 'de' ? 'Weltkarte der Besuche' : 'World map of visitors'
     });
 
     var g = svgEl('g', {});

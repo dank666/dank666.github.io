@@ -5,7 +5,7 @@
 (function () {
   try {
     var l = localStorage.getItem('site-lang');
-    if (l !== 'zh' && l !== 'en') l = 'en';
+    if (l !== 'zh' && l !== 'en' && l !== 'de') l = 'en';
     document.documentElement.setAttribute('data-lang', l);
   } catch (e) {
     document.documentElement.setAttribute('data-lang', 'en');
@@ -170,8 +170,9 @@
        panel render anyway. This keeps `hidden` authoritative everywhere. */
     [hidden] { display: none !important; }
 
-    [data-lang="en"] .lang-zh { display: none; }
-    [data-lang="zh"] .lang-en { display: none; }
+    [data-lang="en"] :is(.lang-zh, .lang-de) { display: none; }
+    [data-lang="zh"] :is(.lang-en, .lang-de) { display: none; }
+    [data-lang="de"] :is(.lang-en, .lang-zh) { display: none; }
 
     /* Chinese is never set in italic (it has no italic, only a slanted
        distortion of the upright), even inside an italic parent. */
@@ -349,25 +350,28 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
+  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容" data-lang-de="Zum Hauptinhalt springen">Skip to main content</a>
   <header class="navbar">
     <div class="nav-inner">
       <a class="logo" href="index.html">
         <img class="logo-mark" src="favicon.svg" alt="" width="22" height="22" />
         <span class="lang-en">Tejing Wang</span>
         <span class="lang-zh">王特警</span>
+        <span class="lang-de">Tejing Wang</span>
       </a>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span></a>
-          <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span></a>
-          <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span></a>
-          <a href="constellation.html" class="active" aria-current="page"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span></a>
+          <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span><span class="lang-de">Startseite</span></a>
+          <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span><span class="lang-de">Notizen</span></a>
+          <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span><span class="lang-de">Begriffsverband-Demo</span></a>
+          <a href="constellation.html" class="active" aria-current="page"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span><span class="lang-de">Konstellation</span></a>
         </nav>
         <div class="lang-switch" role="group" aria-label="Language">
           <button class="lang-btn" data-lang="en" type="button">EN</button>
           <span>/</span>
           <button class="lang-btn" data-lang="zh" type="button">中</button>
+          <span>/</span>
+          <button class="lang-btn" data-lang="de" type="button">DE</button>
         </div>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
           <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -379,14 +383,14 @@
 
   <main class="container" id="main-content">
     <div class="page-header">
-      <h1 data-i18n data-lang-en="Constellation" data-lang-zh="星座">Constellation</h1>
+      <h1 data-i18n data-lang-en="Constellation" data-lang-zh="星座" data-lang-de="Konstellation">Constellation</h1>
     </div>
 
     <div class="constellation-wrap">
       <ul class="constellation-stats">
-        <li><strong id="constellationTotal">–</strong><span class="lang-en">stars lit</span><span class="lang-zh">颗星星</span></li>
-        <li><strong id="constellationCurrent">–</strong><span class="lang-en">day streak</span><span class="lang-zh">天连续</span></li>
-        <li><strong id="constellationBest">–</strong><span class="lang-en">best streak</span><span class="lang-zh">最长纪录</span></li>
+        <li><strong id="constellationTotal">–</strong><span class="lang-en">stars lit</span><span class="lang-zh">颗星星</span><span class="lang-de">Sterne</span></li>
+        <li><strong id="constellationCurrent">–</strong><span class="lang-en">day streak</span><span class="lang-zh">天连续</span><span class="lang-de">Tage in Folge</span></li>
+        <li><strong id="constellationBest">–</strong><span class="lang-en">best streak</span><span class="lang-zh">最长纪录</span><span class="lang-de">längste Serie</span></li>
       </ul>
 
       <div class="constellation" id="constellation" data-state="loading">
@@ -397,22 +401,24 @@
         <p class="constellation-empty">
           <span class="lang-en">No stars yet — the sky is waiting.</span>
           <span class="lang-zh">还没有星星——天空在等待第一颗。</span>
+          <span class="lang-de">Noch keine Sterne – der Himmel wartet.</span>
         </p>
         <p class="constellation-error">
           <span class="lang-en">The sky couldn’t be loaded right now.</span>
           <span class="lang-zh">星图暂时无法加载。</span>
+          <span class="lang-de">Der Himmel konnte gerade nicht geladen werden.</span>
         </p>
       </div>
 
       <div class="checkin-panel" id="checkinPanel">
         <div class="checkin-locked" id="checkinLocked">
           <button class="owner-link" id="ownerLinkBtn" type="button">
-            <span class="lang-en">Owner sign-in</span><span class="lang-zh">拥有者登录</span>
+            <span class="lang-en">Owner sign-in</span><span class="lang-zh">拥有者登录</span><span class="lang-de">Admin-Anmeldung</span>
           </button>
           <div class="owner-form" id="ownerForm" hidden>
             <input class="owner-token" type="password" id="ownerTokenInput" autocomplete="off" spellcheck="false" placeholder="token" />
             <button class="btn-ghost" id="ownerTokenSave" type="button">
-              <span class="lang-en">Save</span><span class="lang-zh">保存</span>
+              <span class="lang-en">Save</span><span class="lang-zh">保存</span><span class="lang-de">Speichern</span>
             </button>
           </div>
         </div>
@@ -420,20 +426,20 @@
         <div class="checkin-unlocked" id="checkinUnlocked" hidden>
           <div class="checkin-note-row">
             <label class="checkin-note-label" for="checkinNote">
-              <span class="lang-en">Note (optional)</span><span class="lang-zh">备注（可选）</span>
+              <span class="lang-en">Note (optional)</span><span class="lang-zh">备注（可选）</span><span class="lang-de">Notiz (optional)</span>
             </label>
             <input class="checkin-note" type="text" id="checkinNote" maxlength="200" />
           </div>
           <div class="checkin-actions">
             <button class="btn" id="checkinBtn" type="button" data-done="false">
-              <span class="label-todo"><span class="lang-en">Light tonight’s star</span><span class="lang-zh">点亮今天的星星</span></span>
-              <span class="label-done"><span class="lang-en">✓ Star lit</span><span class="lang-zh">✓ 星星已点亮</span></span>
+              <span class="label-todo"><span class="lang-en">Light tonight’s star</span><span class="lang-zh">点亮今天的星星</span><span class="lang-de">Den heutigen Stern entzünden</span></span>
+              <span class="label-done"><span class="lang-en">✓ Star lit</span><span class="lang-zh">✓ 星星已点亮</span><span class="lang-de">✓ Stern entzündet</span></span>
             </button>
             <button class="btn-ghost" id="checkinUndoBtn" type="button" hidden>
-              <span class="lang-en">Undo today</span><span class="lang-zh">撤销今天</span>
+              <span class="lang-en">Undo today</span><span class="lang-zh">撤销今天</span><span class="lang-de">Heute rückgängig machen</span>
             </button>
             <button class="owner-link checkin-signout" id="ownerSignoutBtn" type="button">
-              <span class="lang-en">Sign out</span><span class="lang-zh">退出登录</span>
+              <span class="lang-en">Sign out</span><span class="lang-zh">退出登录</span><span class="lang-de">Abmelden</span>
             </button>
             <span class="checkin-status" id="checkinStatus" hidden></span>
           </div>
@@ -444,9 +450,11 @@
     <footer class="footer">
       <span class="lang-en">© 2026 Tejing Wang</span>
       <span class="lang-zh">© 2026 王特警</span>
+      <span class="lang-de">© 2026 Tejing Wang</span>
       <p id="analyticsNote" class="footer-note" hidden>
         <span class="lang-en">Only anonymous page-view statistics are collected (via GoatCounter) — no cookies, no IP addresses stored, no personal data.</span>
         <span class="lang-zh">仅收集匿名的页面浏览统计（通过 GoatCounter）——不使用 cookie，不存储 IP 地址，不收集个人信息。</span>
+        <span class="lang-de">Erfasst werden nur anonyme Seitenaufruf-Statistiken (über GoatCounter) – keine Cookies, keine gespeicherten IP-Adressen, keine personenbezogenen Daten.</span>
       </p>
     </footer>
   </main>
@@ -461,12 +469,12 @@
 
     function applyLang(lang) {
       document.documentElement.setAttribute('data-lang', lang);
-      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
       btns.forEach(function (b) {
         b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
       });
       i18nEls.forEach(function (el) {
-        var text = lang === 'zh' ? el.dataset.langZh : el.dataset.langEn;
+        var text = el.getAttribute('data-lang-' + lang) || el.dataset.langEn;
         if (text) el.textContent = text;
       });
       try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}

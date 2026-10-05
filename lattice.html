@@ -5,7 +5,7 @@
 (function () {
   try {
     var l = localStorage.getItem('site-lang');
-    if (l !== 'zh' && l !== 'en') l = 'en';
+    if (l !== 'zh' && l !== 'en' && l !== 'de') l = 'en';
     document.documentElement.setAttribute('data-lang', l);
   } catch (e) {
     document.documentElement.setAttribute('data-lang', 'en');
@@ -214,8 +214,9 @@
       margin: 0 auto;
     }
 
-    [data-lang="en"] .lang-zh { display: none; }
-    [data-lang="zh"] .lang-en { display: none; }
+    [data-lang="en"] :is(.lang-zh, .lang-de) { display: none; }
+    [data-lang="zh"] :is(.lang-en, .lang-de) { display: none; }
+    [data-lang="de"] :is(.lang-en, .lang-zh) { display: none; }
 
     /* Chinese is never set in italic (it has no italic, only a slanted
        distortion of the upright): emphasis is carried by weight instead, and
@@ -779,25 +780,28 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容">Skip to main content</a>
+  <a class="skip-link" href="#main-content" data-i18n data-lang-en="Skip to main content" data-lang-zh="跳到主要内容" data-lang-de="Zum Hauptinhalt springen">Skip to main content</a>
   <header class="navbar">
     <div class="nav-inner">
       <a class="logo" href="index.html">
         <img class="logo-mark" src="favicon.svg" alt="" width="22" height="22" />
         <span class="lang-en">Tejing Wang</span>
         <span class="lang-zh">王特警</span>
+        <span class="lang-de">Tejing Wang</span>
       </a>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span></a>
-          <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span></a>
-          <a href="lattice.html" class="active" aria-current="page"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span></a>
-          <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span></a>
+          <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span><span class="lang-de">Startseite</span></a>
+          <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span><span class="lang-de">Notizen</span></a>
+          <a href="lattice.html" class="active" aria-current="page"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span><span class="lang-de">Begriffsverband-Demo</span></a>
+          <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span><span class="lang-de">Konstellation</span></a>
         </nav>
         <div class="lang-switch" role="group" aria-label="Language">
           <button class="lang-btn" data-lang="en" type="button">EN</button>
           <span>/</span>
           <button class="lang-btn" data-lang="zh" type="button">中</button>
+          <span>/</span>
+          <button class="lang-btn" data-lang="de" type="button">DE</button>
         </div>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
           <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -809,7 +813,7 @@
 
   <main class="container" id="main-content">
     <div class="page-header">
-      <h1 data-i18n data-lang-en="Concept Lattice Demo" data-lang-zh="概念格演示">Concept Lattice Demo</h1>
+      <h1 data-i18n data-lang-en="Concept Lattice Demo" data-lang-zh="概念格演示" data-lang-de="Begriffsverband-Demo">Concept Lattice Demo</h1>
       <p class="intro lang-en">
         Enter a formal context — a table of objects and the attributes they have — and watch its concept
         lattice being drawn. Switch to three-way concepts to see, in addition, which attributes a group of
@@ -819,19 +823,23 @@
       <p class="intro lang-zh">
         输入一个形式背景（对象与属性组成的表格），实时画出它的概念格。切换到三支概念，还能看到一组对象“肯定不具有”哪些属性。这是一个小型的教学演示，展示的正是我研究概念学习与三支概念分析时所依托的结构。
       </p>
+      <p class="intro lang-de">
+        Geben Sie einen formalen Kontext ein – eine Tabelle aus Gegenständen und ihren Merkmalen – und sehen Sie zu, wie sein Begriffsverband gezeichnet wird. Mit den Drei-Wege-Begriffen sehen Sie zusätzlich, welche Merkmale einer Gruppe von Gegenständen mit Sicherheit fehlen. Es ist ein kleines Lehrwerkzeug für die Art von Struktur, die hinter meiner Forschung zu Begriffslernen und Drei-Wege-Begriffsanalyse steht.
+      </p>
     </div>
 
     <section class="lat-panel" aria-labelledby="ctxTitle">
-      <h2 class="lat-h" id="ctxTitle"><span class="lang-en">Formal context</span><span class="lang-zh">形式背景</span></h2>
+      <h2 class="lat-h" id="ctxTitle"><span class="lang-en">Formal context</span><span class="lang-zh">形式背景</span><span class="lang-de">Formaler Kontext</span></h2>
       <p class="lat-hint">
         <span class="lang-en">Click a cell to toggle it (✓ = the object has the attribute). Type in the boxes to rename objects and attributes.</span>
         <span class="lang-zh">点击单元格切换（✓ 表示该对象具有该属性）。在输入框里输入即可重命名对象和属性。</span>
+        <span class="lang-de">Klicken Sie auf eine Zelle, um sie umzuschalten (✓ = der Gegenstand hat das Merkmal). Tippen Sie in die Felder, um Gegenstände und Merkmale umzubenennen.</span>
       </p>
       <div class="lat-toolbar">
-        <label class="lat-field"><span class="lang-en">Example</span><span class="lang-zh">示例</span>
+        <label class="lat-field"><span class="lang-en">Example</span><span class="lang-zh">示例</span><span class="lang-de">Beispiel</span>
           <select id="presetSelect"></select>
         </label>
-        <button class="lat-btn" id="clearBtn" type="button"><span class="lang-en">Clear all cells</span><span class="lang-zh">清空所有单元格</span></button>
+        <button class="lat-btn" id="clearBtn" type="button"><span class="lang-en">Clear all cells</span><span class="lang-zh">清空所有单元格</span><span class="lang-de">Alle Zellen leeren</span></button>
         <span class="lat-note" id="sizeNote"></span>
       </div>
       <div class="lat-table-wrap">
@@ -840,29 +848,33 @@
     </section>
 
     <section class="lat-panel" id="outPanel" data-mode="classical" aria-labelledby="outTitle">
-      <h2 class="lat-h" id="outTitle"><span class="lang-en">Concept lattice</span><span class="lang-zh">概念格</span></h2>
+      <h2 class="lat-h" id="outTitle"><span class="lang-en">Concept lattice</span><span class="lang-zh">概念格</span><span class="lang-de">Begriffsverband</span></h2>
       <div class="lat-modes" role="group" aria-label="Kind of concept">
-        <button class="lat-mode" type="button" data-mode="classical" aria-pressed="true"><span class="lang-en">Classical concepts</span><span class="lang-zh">经典概念</span></button>
-        <button class="lat-mode" type="button" data-mode="oe" aria-pressed="false"><span class="lang-en">Three-way (object-induced)</span><span class="lang-zh">三支概念（对象诱导）</span></button>
-        <button class="lat-mode" type="button" data-mode="ae" aria-pressed="false"><span class="lang-en">Three-way (attribute-induced)</span><span class="lang-zh">三支概念（属性诱导）</span></button>
+        <button class="lat-mode" type="button" data-mode="classical" aria-pressed="true"><span class="lang-en">Classical concepts</span><span class="lang-zh">经典概念</span><span class="lang-de">Klassische Begriffe</span></button>
+        <button class="lat-mode" type="button" data-mode="oe" aria-pressed="false"><span class="lang-en">Three-way (object-induced)</span><span class="lang-zh">三支概念（对象诱导）</span><span class="lang-de">Drei-Wege (gegenstandsinduziert)</span></button>
+        <button class="lat-mode" type="button" data-mode="ae" aria-pressed="false"><span class="lang-en">Three-way (attribute-induced)</span><span class="lang-zh">三支概念（属性诱导）</span><span class="lang-de">Drei-Wege (merkmalsinduziert)</span></button>
       </div>
 
       <div class="lat-defs">
         <p class="lat-def" data-for="classical">
           <span class="lang-en"><strong>Classical concept</strong> (X, Y): X is a set of objects, Y is the set of attributes that <em>all</em> of them share, and X is exactly the set of objects having all of Y. Concepts are ordered by inclusion of their extents X; the result is the concept lattice (top = all objects).</span>
           <span class="lang-zh"><strong>经典概念</strong> (X, Y)：X 是对象集合，Y 是这些对象<em>全部</em>共有的属性，并且 X 恰好是拥有 Y 中所有属性的对象集合。概念按外延 X 的包含关系排序，得到概念格（最上面是包含全部对象的概念）。</span>
+          <span class="lang-de"><strong>Klassischer Begriff</strong> (X, Y): X ist eine Menge von Gegenständen, Y ist die Menge der Merkmale, die sie <em>alle</em> gemeinsam haben, und X ist genau die Menge der Gegenstände, die alle Merkmale aus Y haben. Begriffe werden nach der Inklusion ihrer Umfänge X geordnet; das Ergebnis ist der Begriffsverband (oben = alle Gegenstände).</span>
         </p>
         <p class="lat-def" data-for="oe">
           <span class="lang-en"><strong>Three-way concept</strong> (X, (Y, Z)): Y is the set of attributes that every object in X has, Z is the set of attributes that <em>no</em> object in X has, and X is exactly the set of objects having all of Y and none of Z. It records what the objects do have <em>and</em> what they definitely lack (shown as <em>¬attribute</em>).</span>
           <span class="lang-zh"><strong>三支概念</strong> (X, (Y, Z))：Y 是 X 中每个对象都具有的属性，Z 是 X 中<em>所有</em>对象都不具有的属性，并且 X 恰好是具有 Y 中全部属性、且不具有 Z 中任何属性的对象集合。它既记录对象“有什么”，也记录“肯定没有什么”（图中以 <em>¬属性</em> 表示）。</span>
+          <span class="lang-de"><strong>Drei-Wege-Begriff</strong> (X, (Y, Z)): Y ist die Menge der Merkmale, die jeder Gegenstand in X hat, Z ist die Menge der Merkmale, die <em>kein</em> Gegenstand in X hat, und X ist genau die Menge der Gegenstände, die alle Merkmale aus Y und keines aus Z haben. Er hält fest, was die Gegenstände haben <em>und</em> was ihnen mit Sicherheit fehlt (dargestellt als <em>¬Merkmal</em>).</span>
         </p>
         <p class="lat-def" data-for="ae">
           <span class="lang-en"><strong>Attribute-induced three-way concept</strong> (Y, (X, W)): the dual view. Y is a set of attributes, X is the set of objects having all of them, W is the set of objects having none of them, and Y is exactly the set of attributes that all of X have and none of W has. Here the nodes are sets of attributes.</span>
           <span class="lang-zh"><strong>属性诱导的三支概念</strong> (Y, (X, W))：对偶视角。Y 是属性集合，X 是拥有 Y 中全部属性的对象，W 是不拥有 Y 中任何属性的对象，并且 Y 恰好是 X 中所有对象都具有、且 W 中所有对象都不具有的属性集合。此时节点是属性的集合。</span>
+          <span class="lang-de"><strong>Merkmalsinduzierter Drei-Wege-Begriff</strong> (Y, (X, W)): die duale Sicht. Y ist eine Menge von Merkmalen, X ist die Menge der Gegenstände, die sie alle haben, W ist die Menge der Gegenstände, die keines davon haben, und Y ist genau die Menge der Merkmale, die alle Gegenstände aus X und keiner aus W haben. Hier sind die Knoten Mengen von Merkmalen.</span>
         </p>
         <p class="lat-def-note">
           <span class="lang-en">Notation and naming differ between papers; this page uses the common formulation in which the three-way concepts are the concepts of the table extended with a negated copy of every attribute.</span>
           <span class="lang-zh">不同论文的记号和叫法略有差异；本页采用的是常见的表述：三支概念等价于在表格中为每个属性增加一个“否定”副本之后得到的概念。</span>
+          <span class="lang-de">Notation und Benennung unterscheiden sich von Artikel zu Artikel; diese Seite verwendet die verbreitete Formulierung, nach der die Drei-Wege-Begriffe die Begriffe der Tabelle sind, die um eine negierte Kopie jedes Merkmals erweitert wurde.</span>
         </p>
       </div>
 
@@ -870,7 +882,7 @@
       <div class="lat-diagram" id="diagram"></div>
       <div class="lat-info" id="info" aria-live="polite"></div>
       <details class="lat-list">
-        <summary id="listSummary"><span class="lang-en">All concepts</span><span class="lang-zh">全部概念</span></summary>
+        <summary id="listSummary"><span class="lang-en">All concepts</span><span class="lang-zh">全部概念</span><span class="lang-de">Alle Begriffe</span></summary>
         <div id="conceptList"></div>
       </details>
     </section>
@@ -878,9 +890,11 @@
     <footer class="footer">
       <span class="lang-en">© 2026 Tejing Wang</span>
       <span class="lang-zh">© 2026 王特警</span>
+      <span class="lang-de">© 2026 Tejing Wang</span>
       <p id="analyticsNote" class="footer-note" hidden>
         <span class="lang-en">Only anonymous page-view statistics are collected (via GoatCounter) — no cookies, no IP addresses stored, no personal data.</span>
         <span class="lang-zh">仅收集匿名的页面浏览统计（通过 GoatCounter）——不使用 cookie，不存储 IP 地址，不收集个人信息。</span>
+        <span class="lang-de">Erfasst werden nur anonyme Seitenaufruf-Statistiken (über GoatCounter) – keine Cookies, keine gespeicherten IP-Adressen, keine personenbezogenen Daten.</span>
       </p>
     </footer>
   </main>
@@ -895,12 +909,12 @@
 
     function applyLang(lang) {
       document.documentElement.setAttribute('data-lang', lang);
-      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
       btns.forEach(function (b) {
         b.setAttribute('aria-current', b.dataset.lang === lang ? 'true' : 'false');
       });
       i18nEls.forEach(function (el) {
-        var text = lang === 'zh' ? el.dataset.langZh : el.dataset.langEn;
+        var text = el.getAttribute('data-lang-' + lang) || el.dataset.langEn;
         if (text) el.textContent = text;
       });
       try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
