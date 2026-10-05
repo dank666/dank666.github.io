@@ -402,6 +402,14 @@
       gap: 8px;
       font-size: 0.9rem;
       color: var(--muted);
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    /* A select is as wide as its longest option, which is wider than a phone:
+       let it shrink inside the row instead of widening the page. */
+    .lat-field select {
+      min-width: 0;
     }
 
     .lat-panel select,
