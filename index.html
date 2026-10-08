@@ -697,22 +697,56 @@
       color: var(--muted);
     }
 
-    /* Under the research interests: the one thing here a visitor can try.
-       Underlined, so it reads as a link beside the line of interests above
-       it, which is in the same colour but is not one. */
+    /* Under the research interests: an invitation to try the concept lattice
+       demo. It is set like an item of the contact row right below it (a small
+       icon, then the words, muted until hovered) and sits at that row's own
+       line spacing, so the two read as one block of links with the demo
+       first, and the line of interests stays the only one in the accent. */
     .hero-demo {
-      margin: 6px 0 0;
-      font-size: 0.9rem;
+      margin: 16px 0 0;
+      font-size: 0.92rem;
     }
 
     .hero-demo a {
-      text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 4px;
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 6px;
+      color: var(--muted);
     }
 
     .hero-demo a:hover {
-      text-decoration-thickness: 2px;
+      color: var(--accent);
+    }
+
+    /* Centred on the first line, should the sentence ever wrap. */
+    .hero-demo .hero-icon {
+      margin-top: 0.31em;
+    }
+
+    /* If the sentence has to wrap on a narrow phone, it breaks into two even
+       lines, and the arrow never leaves the last word. */
+    .hero-demo a > span {
+      text-wrap: balance;
+    }
+
+    .hero-demo-end {
+      white-space: nowrap;
+    }
+
+    /* An inline block: the hover underline stops at the last word, and the
+       arrow can move on its own. */
+    .hero-demo-arrow {
+      display: inline-block;
+      margin-left: 0.4em;
+      transition: transform 0.15s ease;
+    }
+
+    .hero-demo a:hover .hero-demo-arrow {
+      transform: translateX(3px);
+    }
+
+    .hero-demo + .hero-contact {
+      margin-top: 8px;
     }
 
     .hero-contact {
@@ -1860,14 +1894,14 @@
             <h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警" data-lang-de="Tejing Wang">Tejing Wang</h1>
             <span class="hero-latin lang-zh" lang="en">Tejing Wang</span>
           </div>
-          <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master’s student in Computer Science and Technology advised by <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
-          <p class="hero-lede lang-zh">陕西师范大学人工智能专业本科生，将在本校攻读计算机科学与技术学术型硕士，导师为<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>。</p>
-          <p class="hero-lede lang-de">Ich studiere Künstliche Intelligenz im Bachelor an der Shaanxi Normal University und beginne dort demnächst das Masterstudium in Informatik und Technologie, betreut von <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
+          <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master’s student in Computer Science and Technology.</p>
+          <p class="hero-lede lang-zh">陕西师范大学人工智能专业本科生，将在本校攻读计算机科学与技术学术型硕士。</p>
+          <p class="hero-lede lang-de">Ich studiere Künstliche Intelligenz im Bachelor an der Shaanxi Normal University und beginne dort demnächst das Masterstudium in Informatik und Technologie.</p>
           <p class="subtitle lang-en"><span class="nw">Formal Concept Analysis</span> <span class="nw">Neuro-Symbolic AI</span> <span class="nw">Reliability of LLM Knowledge</span></p>
           <p class="subtitle lang-zh"><span class="nw">形式概念分析</span> <span class="nw">神经符号人工智能</span> <span class="nw">大语言模型知识的可靠性</span></p>
           <p class="subtitle lang-de"><span class="nw">Formale Begriffsanalyse</span> <span class="nw">Neurosymbolische KI</span> <span class="nw">Verlässlichkeit von LLM-Wissen</span></p>
           <p class="hero-demo">
-            <a href="lattice.html"><span class="lang-en">Try the interactive concept lattice demo →</span><span class="lang-zh">试试概念格交互演示 →</span><span class="lang-de">Zur interaktiven Begriffsverband-Demo →</span></a>
+            <a href="lattice.html"><svg class="hero-icon is-stroke" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4" r="2.4"/><circle cx="4" cy="12" r="2.4"/><circle cx="20" cy="12" r="2.4"/><circle cx="12" cy="20" r="2.4"/><path d="M10.3 5.7 5.7 10.3M13.7 5.7l4.6 4.6M5.7 13.7l4.6 4.6M18.3 13.7l-4.6 4.6"/></svg><span class="lang-en">Try the interactive concept lattice <span class="hero-demo-end">demo<span class="hero-demo-arrow" aria-hidden="true">→</span></span></span><span class="lang-zh">试试概念格交互<span class="hero-demo-end">演示<span class="hero-demo-arrow" aria-hidden="true">→</span></span></span><span class="lang-de">Zur interaktiven <span class="hero-demo-end">Begriffsverband-Demo<span class="hero-demo-arrow" aria-hidden="true">→</span></span></span></a>
           </p>
           <div class="hero-contact">
             <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn"><svg class="hero-icon is-stroke" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg><span class="email-text">42312205 [at] snnu [dot] edu [dot] cn</span></a>
@@ -1901,13 +1935,13 @@
           <p class="lang-en">
             I am a student in Artificial Intelligence at <a href="https://www.snnu.edu.cn/" target="_blank">Shaanxi Normal University</a>, continuing on to
             an academic master’s program there in the <a href="https://ccs.snnu.edu.cn/" target="_blank">School of Artificial Intelligence and Computer
-            Science</a>, advised by Prof. Fei Hao.
+            Science</a>, advised by <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.
           </p>
           <p class="lang-zh">
-            我是<a href="https://www.snnu.edu.cn/" target="_blank">陕西师范大学</a>人工智能专业的学生，本科毕业后将继续在本校<a href="https://ccs.snnu.edu.cn/" target="_blank">人工智能与计算机科学学院</a>攻读学术型硕士学位，导师为郝飞教授。
+            我是<a href="https://www.snnu.edu.cn/" target="_blank">陕西师范大学</a>人工智能专业的学生，本科毕业后将继续在本校<a href="https://ccs.snnu.edu.cn/" target="_blank">人工智能与计算机科学学院</a>攻读学术型硕士学位，导师为<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>。
           </p>
           <p class="lang-de">
-            Ich studiere Künstliche Intelligenz an der <a href="https://www.snnu.edu.cn/" target="_blank">Shaanxi Normal University</a> und setze mein Studium dort im forschungsorientierten Masterstudiengang an der <a href="https://ccs.snnu.edu.cn/" target="_blank">Fakultät für Künstliche Intelligenz und Informatik</a> fort, betreut von Prof. Fei Hao.
+            Ich studiere Künstliche Intelligenz an der <a href="https://www.snnu.edu.cn/" target="_blank">Shaanxi Normal University</a> und setze mein Studium dort im forschungsorientierten Masterstudiengang an der <a href="https://ccs.snnu.edu.cn/" target="_blank">Fakultät für Künstliche Intelligenz und Informatik</a> fort, betreut von <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.
           </p>
           <p class="lang-en">
             My research interests center on formal concept analysis, neuro-symbolic AI, and the
@@ -1919,15 +1953,6 @@
           </p>
           <p class="lang-de">
             Meine Forschungsinteressen liegen vor allem in der Formalen Begriffsanalyse, der neurosymbolischen KI und der Verlässlichkeit des Wissens großer Sprachmodelle, daneben im graphbasierten kognitiven Begriffslernen, in erklärbarer KI, LLM-gestützter Bildung, digitalen Zwillingen und verkörperter Intelligenz.
-          </p>
-          <p class="lang-en">
-            My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master’s.
-          </p>
-          <p class="lang-zh">
-            我的长期目标是在硕士毕业后赴海外攻读人工智能博士学位。
-          </p>
-          <p class="lang-de">
-            Mein langfristiges Ziel ist eine Promotion im Bereich Künstliche Intelligenz im Ausland nach dem Masterabschluss.
           </p>
         </div>
       </div>
