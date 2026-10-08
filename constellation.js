@@ -24,6 +24,14 @@
   var MAX_RADIUS = 0.48;
   var MILESTONES = [7, 30, 100, 200, 365, 500, 1000]; // star counts, 1-based
 
+  // The view. While there are few stars the camera sits closer, so the
+  // constellation fills the sky instead of huddling in its middle; it pulls
+  // back as the spiral grows and is at full view from about five months of
+  // stars on. Only the view changes: the stars keep their places relative
+  // to each other, so the picture never rearranges.
+  var ZOOM_FILL = 0.3;  // how far from the centre the outermost stars sit while zoomed in
+  var ZOOM_MAX = 4;
+
   var root = document.getElementById('constellation');
   var canvas = document.getElementById('constellationCanvas');
   if (!root || !canvas) return;
@@ -35,8 +43,11 @@
     days: [],       // [{date, note}] ascending
     stats: null,
     stars: [],      // computed layout: [{date, note, x, y, r, milestone}]
+    links: [],
     dust: [],       // decorative background points
     todayDone: false,
+    zoom: 1,        // where the camera is heading (see ZOOM_FILL)
+    view: 0,        // where it is now: eases toward `zoom`; 0 = not set yet
   };
 
   function setPanelState(name) {
@@ -125,6 +136,16 @@
     return links;
   }
 
+  function zoomFor(n) {
+    if (!n) return 1;
+    var reach = RADIUS_K * Math.sqrt(n) + 0.03; // radius of the spiral so far, plus the jitter
+    return Math.max(1, Math.min(ZOOM_MAX, ZOOM_FILL / reach));
+  }
+
+  // A star's place on the canvas, in CSS pixels, through the current view.
+  function starX(s) { return (0.5 + (s.x - 0.5) * state.view) * displayW; }
+  function starY(s) { return (0.5 + (s.y - 0.5) * state.view) * displayH; }
+
   function makeDust(count, seed) {
     var rnd = mulberry32(seed);
     var pts = [];
@@ -169,6 +190,12 @@
 
     var tw = reduceMotion ? 0 : t / 1000;
 
+    // Ease the camera toward where it should be (after a new star).
+    if (!state.view || reduceMotion) state.view = state.zoom;
+    else state.view += (state.zoom - state.view) * 0.06;
+    // Seen from closer, the stars are drawn a little larger too.
+    var near = 1 + (state.view - 1) * 0.16;
+
     // Decorative dust (never interactive, just atmosphere).
     ctx.fillStyle = 'rgba(200, 210, 255, 1)';
     state.dust.forEach(function (p) {
@@ -187,32 +214,30 @@
       var a = state.stars[pair[0]];
       var b = state.stars[pair[1]];
       ctx.beginPath();
-      ctx.moveTo(a.x * displayW, a.y * displayH);
-      ctx.lineTo(b.x * displayW, b.y * displayH);
+      ctx.moveTo(starX(a), starY(a));
+      ctx.lineTo(starX(b), starY(b));
       ctx.stroke();
     });
 
     // Stars.
     state.stars.forEach(function (s) {
       var flicker = reduceMotion ? 1 : 0.75 + 0.25 * Math.sin(tw * 1.3 + s.phase);
-      var baseR = (s.milestone ? 3.2 : 1.8) + glowBoost * 1.1;
+      var baseR = ((s.milestone ? 3.2 : 1.8) + glowBoost * 1.1) * near;
       var r = baseR * flicker;
+      var x = starX(s), y = starY(s);
 
-      var glow = ctx.createRadialGradient(
-        s.x * displayW, s.y * displayH, 0,
-        s.x * displayW, s.y * displayH, r * (s.milestone ? 6 : 4)
-      );
+      var glow = ctx.createRadialGradient(x, y, 0, x, y, r * (s.milestone ? 6 : 4));
       var core = s.milestone ? '255, 226, 158' : '255, 255, 255';
       glow.addColorStop(0, 'rgba(' + core + ', ' + (0.85 * flicker) + ')');
       glow.addColorStop(1, 'rgba(' + core + ', 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(s.x * displayW, s.y * displayH, r * (s.milestone ? 6 : 4), 0, Math.PI * 2);
+      ctx.arc(x, y, r * (s.milestone ? 6 : 4), 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = 'rgba(' + core + ', 1)';
       ctx.beginPath();
-      ctx.arc(s.x * displayW, s.y * displayH, r, 0, Math.PI * 2);
+      ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
     });
 
@@ -232,25 +257,38 @@
     if (animHandle === null) animHandle = requestAnimationFrame(draw);
   }
 
-  // ---- Hover tooltip (desktop only, best-effort) ---------------------------
+  // ---- Tooltip: the date (and note) of the star pointed at or tapped --------
 
   var tip = document.getElementById('constellationTip');
+  var MONTHS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MONTHS_DE = ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
+
+  function formatDate(date) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+    if (!m) return date;
+    var day = parseInt(m[3], 10), month = parseInt(m[2], 10);
+    var lang = currentLang();
+    if (lang === 'zh') return m[1] + ' 年 ' + month + ' 月 ' + day + ' 日';
+    if (lang === 'de') return day + '. ' + MONTHS_DE[month - 1] + ' ' + m[1];
+    return day + ' ' + MONTHS_EN[month - 1] + ' ' + m[1];
+  }
+
   function nearestStar(px, py) {
     var best = null;
     var bestDist = Infinity;
     state.stars.forEach(function (s) {
-      var dx = s.x * displayW - px;
-      var dy = s.y * displayH - py;
+      var dx = starX(s) - px;
+      var dy = starY(s) - py;
       var d = dx * dx + dy * dy;
       if (d < bestDist) {
         bestDist = d;
         best = s;
       }
     });
-    return bestDist < 100 ? best : null;
+    return bestDist < 196 ? best : null;
   }
 
-  canvas.addEventListener('mousemove', function (e) {
+  function showTip(e) {
     if (!tip) return;
     var rect = canvas.getBoundingClientRect();
     var s = nearestStar(e.clientX - rect.left, e.clientY - rect.top);
@@ -258,11 +296,17 @@
       tip.hidden = true;
       return;
     }
+    tip.textContent = s.note ? formatDate(s.date) + ' — ' + s.note : formatDate(s.date);
     tip.hidden = false;
-    tip.style.left = e.clientX - rect.left + 12 + 'px';
-    tip.style.top = e.clientY - rect.top + 12 + 'px';
-    tip.textContent = s.note ? s.date + ' — ' + s.note : s.date;
-  });
+    // Beside the star, above it; kept inside the sky.
+    var x = starX(s) + 12, y = starY(s) - tip.offsetHeight - 10;
+    if (x + tip.offsetWidth > displayW - 6) x = starX(s) - tip.offsetWidth - 12;
+    tip.style.left = Math.max(6, x) + 'px';
+    tip.style.top = Math.max(6, y) + 'px';
+  }
+
+  canvas.addEventListener('mousemove', showTip);
+  canvas.addEventListener('click', showTip);
   canvas.addEventListener('mouseleave', function () {
     if (tip) tip.hidden = true;
   });
@@ -312,6 +356,7 @@
     state.stats = data.stats || { total: 0, currentStreak: 0, bestStreak: 0, lastDate: null };
     state.stars = layoutStars(state.days);
     state.links = nearestNeighborLinks(state.stars);
+    state.zoom = zoomFor(state.stars.length);
     state.dust = makeDust(30 + Math.min(220, state.stats.total * 2), 1337);
     state.todayDone = state.stats.lastDate === localDateStr();
 
@@ -393,6 +438,7 @@
   if (ownerLinkBtn && ownerForm) {
     ownerLinkBtn.addEventListener('click', function () {
       ownerForm.hidden = !ownerForm.hidden;
+      ownerLinkBtn.setAttribute('aria-expanded', String(!ownerForm.hidden));
       if (!ownerForm.hidden && ownerTokenInput) ownerTokenInput.focus();
     });
   }
@@ -404,6 +450,7 @@
       setToken(v);
       ownerTokenInput.value = '';
       ownerForm.hidden = true;
+      if (ownerLinkBtn) ownerLinkBtn.setAttribute('aria-expanded', 'false');
       updateCheckinUI();
     });
   }

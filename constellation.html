@@ -232,111 +232,119 @@
     .lang-btn[aria-current="true"] { color: var(--text); background: var(--accent-soft); font-weight: 600; }
     .lang-switch span { color: var(--line); }
 
-    .page-header { padding: 52px 0 8px; }
+    :root { --radius: 8px; }
+
+    .page-header { padding: 52px 0 26px; }
     .page-header h1 { margin: 0; font-family: var(--font-display); font-size: clamp(1.8rem, 3.4vw, 2.3rem); letter-spacing: -0.01em; font-weight: 600; }
+    .page-header .intro { margin: 12px 0 0; color: var(--muted); max-width: 34em; }
 
-    /* ---- Constellation panel -------------------------------------------
-       The night sky is deliberately always dark, independent of the site's
-       light/dark theme — like a real sky, it doesn't switch with the page. */
-    .constellation-wrap { padding: 28px 0 8px; }
+    .constellation-wrap { padding: 0 0 8px; }
 
+    /* Three numbers in the display face, each over a small spaced-out label
+       (the same voice as a paper's status on the home page). */
     .constellation-stats {
-      display: flex; flex-wrap: wrap; gap: 22px;
-      margin: 0 0 14px; padding: 0; list-style: none;
-      font-size: 0.88rem; color: var(--muted);
+      display: flex; flex-wrap: wrap; gap: 10px 48px;
+      margin: 0 0 22px; padding: 0; list-style: none;
     }
-    .constellation-stats strong { display: block; font-size: 1.3rem; color: var(--text); font-weight: 700; }
+    .constellation-stats strong {
+      display: block; font-family: var(--font-display); font-size: 2.2rem; font-weight: 600;
+      line-height: 1.1; letter-spacing: -0.01em; color: var(--text);
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    .constellation-stats span {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    /* Chinese has no capitals to shrink: keep it a little larger. */
+    .constellation-stats .lang-zh { font-size: 0.8rem; letter-spacing: 0.04em; }
 
+    /* ---- The sky ---------------------------------------------------------
+       Deliberately always dark, independent of the site's light/dark theme:
+       like a real sky, it doesn't switch with the page. */
     .constellation {
       position: relative;
-      border-radius: 14px;
+      border-radius: var(--radius);
       overflow: hidden;
       background: #05060d;
       border: 1px solid var(--line);
     }
-    .constellation-canvas-wrap { position: relative; height: min(46vw, 420px); min-height: 240px; }
+    .constellation-canvas-wrap { position: relative; height: min(54vw, 440px); min-height: 260px; }
     .constellation-canvas-wrap canvas { display: block; width: 100%; height: 100%; }
 
     .constellation-tip {
       position: absolute;
-      transform: translate(0, -100%);
       padding: 4px 9px;
       border-radius: 6px;
       background: rgba(10, 12, 22, 0.92);
+      border: 1px solid rgba(150, 170, 230, 0.25);
       color: #e7e8ea;
       font-size: 0.8rem;
+      line-height: 1.4;
       white-space: nowrap;
       pointer-events: none;
     }
     .constellation-tip[hidden] { display: none; }
 
     .constellation-empty, .constellation-error {
-      display: none; margin: 0; padding: 40px 20px; text-align: center;
-      color: #9199a1; font-style: italic;
+      display: none; margin: 0; padding: 56px 20px; text-align: center;
+      color: #9199a1;
     }
     .constellation[data-state="empty"] .constellation-empty,
     .constellation[data-state="error"] .constellation-error { display: block; }
     .constellation:not([data-state="ready"]) .constellation-canvas-wrap { display: none; }
 
-    /* ---- Check-in panel --------------------------------------------- */
-    .checkin-panel { margin: 22px 0 0; font-size: 0.9rem; }
+    /* Under the sky: what a star is, and at the far end the owner's way in. */
+    .constellation-foot {
+      display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+      gap: 6px 24px; margin: 12px 0 0;
+    }
+    .constellation-hint { flex: 1 1 16em; margin: 0; color: var(--muted); font-size: 0.86rem; }
 
+    /* ---- Check-in ---------------------------------------------------------
+       Signing in is a maintenance affordance for the site's owner, not
+       something meant to draw a visitor's eye. */
     .owner-link {
-      background: none; border: 0; padding: 2px 0; font: inherit; font-size: 0.8rem;
-      color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+      background: none; border: 0; padding: 0; font: inherit; font-size: 0.86rem;
+      color: var(--muted); cursor: pointer; white-space: nowrap;
     }
-    .owner-link:hover { color: var(--text); }
+    .owner-link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
-    /* Sign-in: a small, quiet form — this is a maintenance affordance for
-       the site owner, not something meant to draw a visitor's eye. */
-    .owner-form {
-      display: flex; gap: 8px; margin-top: 10px; max-width: 340px;
+    .owner-form { display: flex; gap: 8px; margin: 12px 0 0 auto; max-width: 320px; }
+    .owner-token, .checkin-note {
+      min-width: 0; padding: 5px 10px; font: inherit; font-size: 0.88rem;
+      border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); background: var(--bg);
     }
-    .owner-token {
-      flex: 1 1 auto; min-width: 0; padding: 6px 10px; font: inherit; font-size: 0.85rem;
-      border: 1px solid var(--line); border-radius: 7px; color: var(--text); background: var(--bg);
-    }
+    .owner-token { flex: 1 1 auto; }
+    .owner-token:focus, .checkin-note:focus { outline: none; border-color: var(--accent); }
 
-    /* Signed-in: a proper card, its own visual weight since this is the
-       page's one interactive action. */
+    /* Signed in: the note for today and the one action of the page, in a row
+       under a hairline. */
     .checkin-unlocked {
-      display: flex; flex-direction: column; gap: 12px;
-      padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--accent-soft);
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px;
+      margin: 18px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); font-size: 0.9rem;
     }
+    .checkin-note-row { display: flex; flex: 1 1 260px; align-items: center; gap: 10px; min-width: 0; }
+    .checkin-note-label { font-size: 0.86rem; color: var(--muted); white-space: nowrap; }
+    .checkin-note { flex: 1 1 auto; }
+    .checkin-actions { display: flex; flex: 0 1 auto; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
 
-    .checkin-note-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .checkin-note-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
-    .checkin-note {
-      flex: 1 1 200px; min-width: 0; padding: 7px 10px; font: inherit; font-size: 0.88rem;
-      border: 1px solid var(--line); border-radius: 8px; color: var(--text); background: var(--bg);
+    .btn, .btn-ghost {
+      font: inherit; font-size: 0.82rem; line-height: 1.5; padding: 4px 13px;
+      border-radius: 999px; cursor: pointer; white-space: nowrap;
     }
-
-    .checkin-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-
-    .btn {
-      font: inherit; font-size: 0.88rem; font-weight: 600; padding: 8px 18px;
-      border-radius: 8px; border: 1px solid var(--accent); cursor: pointer;
-      background: var(--accent); color: #fff;
-    }
-    .btn:hover { opacity: 0.92; }
-    .btn[data-done="true"] {
-      background: transparent; color: var(--accent); cursor: default;
-    }
-    .btn[data-done="true"]:hover { opacity: 1; }
+    .btn { border: 1px solid var(--accent); background: var(--accent); color: var(--bg); font-weight: 600; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.55; cursor: default; }
+    .btn[data-done="true"] { background: transparent; color: var(--accent); }
+    .btn[data-done="true"]:hover { opacity: 1; background: var(--accent-soft); }
     .btn[data-done="false"] .label-done,
     .btn[data-done="true"] .label-todo { display: none; }
 
-    .btn-ghost {
-      font: inherit; font-size: 0.8rem; padding: 5px 10px; border-radius: 7px;
-      border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer;
-    }
+    .btn-ghost { border: 1px solid var(--line); background: var(--bg); color: var(--muted); }
     .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
 
-    .checkin-status { flex: 1 0 100%; font-size: 0.82rem; color: var(--muted); }
+    .checkin-status { flex: 1 0 100%; font-size: 0.86rem; color: var(--muted); }
     .checkin-status.is-error { color: #b3452c; }
-
-    /* Tucked to the far edge, deliberately low-key next to the primary action. */
-    .checkin-signout { margin-left: auto; }
 
     .back-to-top {
       position: fixed; right: 22px; bottom: 22px; width: 42px; height: 42px;
@@ -358,6 +366,9 @@
       .lang-switch { order: 1; margin-left: auto; border-left: 0; padding-left: 0; }
       .theme-toggle { order: 2; }
       .nav-links-wrap { order: 3; flex: 1 1 100%; }
+      .page-header { padding: 32px 0 22px; }
+      .constellation-stats { gap: 10px 32px; }
+      .constellation-stats strong { font-size: 1.9rem; }
     }
   </style>
 </head>
@@ -398,6 +409,16 @@
   <main class="container" id="main-content">
     <div class="page-header">
       <h1 data-i18n data-lang-en="Constellation" data-lang-zh="星座" data-lang-de="Konstellation">Constellation</h1>
+      <p class="intro lang-en">
+        A small streak tracker of my own: one star for each day the plan got done. The sky grows a little
+        richer with every star, and a missed day is just a gap — it never takes a star away.
+      </p>
+      <p class="intro lang-zh">
+        一个给自己用的打卡小工具：每完成一天的计划，就点亮一颗星。星星越多，这片天空越亮；漏掉的一天只是空着，不会摘掉任何一颗星。
+      </p>
+      <p class="intro lang-de">
+        Ein kleiner Streak-Tracker für mich selbst: ein Stern für jeden Tag, an dem der Plan geschafft wurde. Mit jedem Stern wird der Himmel ein wenig reicher, und ein ausgelassener Tag bleibt einfach eine Lücke – er nimmt keinen Stern weg.
+      </p>
     </div>
 
     <div class="constellation-wrap">
@@ -424,40 +445,46 @@
         </p>
       </div>
 
-      <div class="checkin-panel" id="checkinPanel">
+      <div class="constellation-foot">
+        <p class="constellation-hint">
+          <span class="lang-en">Each star is one day — point at one (or tap it) to see its date. Gold stars are milestones.</span>
+          <span class="lang-zh">每颗星代表一天，把鼠标移到星星上（或点一下）可以看到日期。金色的星是里程碑。</span>
+          <span class="lang-de">Jeder Stern ist ein Tag – zeigen Sie auf einen (oder tippen Sie ihn an), um sein Datum zu sehen. Goldene Sterne sind Meilensteine.</span>
+        </p>
         <div class="checkin-locked" id="checkinLocked">
-          <button class="owner-link" id="ownerLinkBtn" type="button">
+          <button class="owner-link" id="ownerLinkBtn" type="button" aria-expanded="false" aria-controls="ownerForm">
             <span class="lang-en">Owner sign-in</span><span class="lang-zh">拥有者登录</span><span class="lang-de">Admin-Anmeldung</span>
           </button>
-          <div class="owner-form" id="ownerForm" hidden>
-            <input class="owner-token" type="password" id="ownerTokenInput" autocomplete="off" spellcheck="false" placeholder="token" />
-            <button class="btn-ghost" id="ownerTokenSave" type="button">
-              <span class="lang-en">Save</span><span class="lang-zh">保存</span><span class="lang-de">Speichern</span>
-            </button>
-          </div>
         </div>
+      </div>
 
-        <div class="checkin-unlocked" id="checkinUnlocked" hidden>
-          <div class="checkin-note-row">
-            <label class="checkin-note-label" for="checkinNote">
-              <span class="lang-en">Note (optional)</span><span class="lang-zh">备注（可选）</span><span class="lang-de">Notiz (optional)</span>
-            </label>
-            <input class="checkin-note" type="text" id="checkinNote" maxlength="200" />
-          </div>
-          <div class="checkin-actions">
-            <button class="btn" id="checkinBtn" type="button" data-done="false">
-              <span class="label-todo"><span class="lang-en">Light tonight’s star</span><span class="lang-zh">点亮今天的星星</span><span class="lang-de">Den heutigen Stern entzünden</span></span>
-              <span class="label-done"><span class="lang-en">✓ Star lit</span><span class="lang-zh">✓ 星星已点亮</span><span class="lang-de">✓ Stern entzündet</span></span>
-            </button>
-            <button class="btn-ghost" id="checkinUndoBtn" type="button" hidden>
-              <span class="lang-en">Undo today</span><span class="lang-zh">撤销今天</span><span class="lang-de">Heute rückgängig machen</span>
-            </button>
-            <button class="owner-link checkin-signout" id="ownerSignoutBtn" type="button">
-              <span class="lang-en">Sign out</span><span class="lang-zh">退出登录</span><span class="lang-de">Abmelden</span>
-            </button>
-            <span class="checkin-status" id="checkinStatus" hidden></span>
-          </div>
+      <div class="owner-form" id="ownerForm" hidden>
+        <input class="owner-token" type="password" id="ownerTokenInput" autocomplete="off" spellcheck="false" placeholder="token" aria-label="Token" />
+        <button class="btn-ghost" id="ownerTokenSave" type="button">
+          <span class="lang-en">Save</span><span class="lang-zh">保存</span><span class="lang-de">Speichern</span>
+        </button>
+      </div>
+
+      <div class="checkin-unlocked" id="checkinUnlocked" hidden>
+        <div class="checkin-note-row">
+          <label class="checkin-note-label" for="checkinNote">
+            <span class="lang-en">Note (optional)</span><span class="lang-zh">备注（可选）</span><span class="lang-de">Notiz (optional)</span>
+          </label>
+          <input class="checkin-note" type="text" id="checkinNote" maxlength="200" />
         </div>
+        <div class="checkin-actions">
+          <button class="btn" id="checkinBtn" type="button" data-done="false">
+            <span class="label-todo"><span class="lang-en">Light tonight’s star</span><span class="lang-zh">点亮今天的星星</span><span class="lang-de">Den heutigen Stern entzünden</span></span>
+            <span class="label-done"><span class="lang-en">✓ Star lit</span><span class="lang-zh">✓ 星星已点亮</span><span class="lang-de">✓ Stern entzündet</span></span>
+          </button>
+          <button class="btn-ghost" id="checkinUndoBtn" type="button" hidden>
+            <span class="lang-en">Undo today</span><span class="lang-zh">撤销今天</span><span class="lang-de">Heute rückgängig machen</span>
+          </button>
+          <button class="owner-link" id="ownerSignoutBtn" type="button">
+            <span class="lang-en">Sign out</span><span class="lang-zh">退出登录</span><span class="lang-de">Abmelden</span>
+          </button>
+        </div>
+        <span class="checkin-status" id="checkinStatus" hidden></span>
       </div>
     </div>
 

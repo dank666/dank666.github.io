@@ -107,13 +107,6 @@
 
       :root:not([data-theme="light"]) .filter-btn[aria-pressed="true"] {
         background: var(--accent);
-        border-color: var(--accent);
-        color: #0e1014;
-      }
-
-      :root:not([data-theme="light"]) .paper-tag.project-tag,
-      :root:not([data-theme="light"]) .paper-tag[aria-pressed="true"] {
-        color: #0e1014;
       }
 
       :root:not([data-theme="light"]) .back-to-top {
@@ -141,13 +134,6 @@
 
     :root[data-theme="dark"] .filter-btn[aria-pressed="true"] {
       background: var(--accent);
-      border-color: var(--accent);
-      color: #0e1014;
-    }
-
-    :root[data-theme="dark"] .paper-tag.project-tag,
-    :root[data-theme="dark"] .paper-tag[aria-pressed="true"] {
-      color: #0e1014;
     }
 
     :root[data-theme="dark"] .back-to-top {
@@ -414,8 +400,7 @@
     }
 
     .controls {
-      padding: 8px 0 28px;
-      border-bottom: 1px solid var(--line);
+      padding: 8px 0 0;
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -444,6 +429,10 @@
       gap: 8px;
     }
 
+    .filter-row[hidden] {
+      display: none;
+    }
+
     /* Names the project whose categories the buttons after it filter by. */
     .filter-label {
       margin-right: 4px;
@@ -454,14 +443,15 @@
 
     .filter-count {
       margin-left: 6px;
-      opacity: 0.65;
+      opacity: 0.7;
       font-variant-numeric: tabular-nums;
     }
 
     .filter-btn {
       font: inherit;
-      font-size: 0.85rem;
-      padding: 5px 12px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      padding: 4px 11px;
       border-radius: 999px;
       border: 1px solid var(--line);
       background: var(--bg);
@@ -469,73 +459,142 @@
       cursor: pointer;
     }
 
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
     .filter-btn[aria-pressed="true"] {
       background: var(--accent);
       border-color: var(--accent);
-      color: #fff;
+      color: var(--bg);
+    }
+
+    /* How many entries are listed, and at the far end the one filter that
+       cuts across the categories: only the entries with a note of mine. */
+    .result-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 16px;
     }
 
     .result-count {
       font-size: 0.85rem;
       color: var(--muted);
+      font-variant-numeric: tabular-nums;
     }
 
     .paper-list {
-      padding: 8px 0;
+      padding: 0 0 8px;
     }
 
+    /* A category: one hairline with a short accent mark at its start, then
+       its name in the display face, as the sections of the home page. */
     .paper-group {
-      padding-top: 28px;
+      position: relative;
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    .paper-group::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--accent);
     }
 
     .group-heading {
-      margin: 0;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--accent);
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    /* Chinese titles have no display face and look larger at the same size. */
+    [data-lang="zh"] .group-heading {
       font-size: 1.15rem;
-      font-weight: 700;
-      line-height: 1.4;
+      letter-spacing: 0;
     }
 
     .group-count {
-      margin-left: 8px;
-      font-size: 0.85rem;
-      font-weight: 400;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
       color: var(--muted);
       font-variant-numeric: tabular-nums;
     }
 
-    .paper-item {
-      padding: 18px 0;
-      border-bottom: 1px solid var(--line);
+    /* Entries are listed by year: the year once in the margin (it stays in
+       view while its entries scroll past), the entries beside it, and a
+       hairline where the year changes. */
+    .year-band {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      column-gap: 20px;
+      padding: 16px 0 2px;
+      border-top: 1px solid var(--line);
     }
 
-    .paper-item:last-child {
-      border-bottom: 0;
+    .paper-group > .year-band:first-of-type {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    /* A flat list (one category picked) starts with a little air instead. */
+    .paper-list > .year-band:first-child {
+      margin-top: 30px;
+    }
+
+    .year-label {
+      position: sticky;
+      top: 76px;
+      align-self: start;
+      padding-top: 1px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .paper-item {
+      padding: 0 0 14px;
     }
 
     .paper-title {
       margin: 0;
-      font-size: 1.05rem;
+      font-size: 0.98rem;
       font-weight: 600;
       line-height: 1.4;
     }
 
-    /* A title is a whole-line link, not one inline in running text, so it
-       doesn't need the always-on underline that `p a` adds. */
-    .paper-title a { text-decoration: none; }
-    .paper-title a:hover { text-decoration: underline; }
-
-    .paper-authors {
-      margin: 6px 0 0;
+    /* A title is a whole-line link in a list of titles, not one inline in
+       running text: it stays in the text colour and takes the accent (and
+       an underline) when pointed at. */
+    .paper-title a {
       color: var(--text);
-      font-size: 0.92rem;
+      text-decoration: none;
     }
 
-    .paper-secondary {
-      margin: 2px 0 0;
+    .paper-title a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .paper-meta {
+      margin: 3px 0 0;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.86rem;
     }
 
     /* Journal or conference name, in the italic display face. Slightly
@@ -551,35 +610,57 @@
       font-synthesis: weight;
     }
 
+    /* Topics that are not one of the categories: a quiet line of text under
+       the entry. Clicking one filters by it. */
     .paper-tags {
-      margin: 12px 0 0;
+      margin: 4px 0 0;
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 2px 12px;
     }
 
     .paper-tag {
       font: inherit;
-      font-size: 0.78rem;
-      padding: 2px 9px;
-      border-radius: 999px;
-      background: var(--accent-soft);
+      font-size: 0.8rem;
+      padding: 0;
+      border: 0;
+      background: none;
       color: var(--accent);
       cursor: pointer;
-      border: 0;
+    }
+
+    .paper-tag:hover {
+      text-decoration: underline;
     }
 
     .paper-tag.project-tag,
     .paper-tag[aria-pressed="true"] {
-      background: var(--accent);
-      color: #fff;
+      font-weight: 600;
     }
 
+    /* My own note on a paper: the reason this page exists, so it is the one
+       thing in the list that is set off, by a rule in the accent colour. */
     .paper-note-block {
-      margin: 14px 0 0;
+      margin: 10px 0 6px;
       max-width: 33em;
       padding-left: 14px;
-      border-left: 2px solid var(--accent-soft);
+      border-left: 2px solid var(--accent);
+    }
+
+    .paper-note-label {
+      margin: 0;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      line-height: 1.7;
+      color: var(--accent);
+    }
+
+    /* Chinese has no capitals to shrink: keep it a little larger. */
+    .paper-note-label .lang-zh {
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
     }
 
     .paper-note {
@@ -588,21 +669,8 @@
       font-size: 0.95rem;
     }
 
-    .paper-note-label {
-      font-size: 0.76rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .filter-row[hidden] {
-      display: none;
-    }
-
     .note-body {
-      margin: 12px 0 0;
+      margin: 8px 0 6px;
       max-width: 33em;
     }
 
@@ -620,6 +688,20 @@
       padding: 40px 0;
       color: var(--muted);
       text-align: center;
+    }
+
+    /* On a phone the year sits above its entries. */
+    @media (max-width: 640px) {
+      .year-band {
+        grid-template-columns: minmax(0, 1fr);
+        padding-top: 14px;
+      }
+
+      .year-label {
+        position: static;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
     }
 
     .footer .footer-note {
@@ -668,6 +750,7 @@
 
     @media (max-width: 640px) {
       .filter-label { flex-basis: 100%; }
+      .page-header { padding: 32px 0 22px; }
       /* Two rows: the name with the language/theme controls, then the page links. */
       .nav-inner { flex-wrap: wrap; gap: 8px 12px; }
       .nav-right { display: contents; }
@@ -739,7 +822,10 @@
       <div class="filter-row" id="typeFilters" role="group" aria-label="Filter by type" hidden></div>
       <div class="filter-row" id="projectFilters" role="group" aria-label="Filter by project"></div>
       <div class="filter-row" id="groupFilters" role="group" aria-label="Filter by category" hidden></div>
-      <div class="result-count" id="resultCount"></div>
+      <div class="result-row">
+        <div class="result-count" id="resultCount"></div>
+        <button class="filter-btn" id="notesToggle" type="button" aria-pressed="false"><span class="lang-en">With notes</span><span class="lang-zh">有笔记</span><span class="lang-de">Mit Notiz</span><span class="filter-count" id="notesCount"></span></button>
+      </div>
     </div>
 
     <div class="paper-list" id="paperList"></div>
@@ -2310,6 +2396,339 @@
       link: 'https://arxiv.org/abs/2603.20449',
       project: 'agent-survey',
       topics: ['verification']
+    },
+    {
+      title_en: 'SayPlan: Grounding Large Language Models using 3D Scene Graphs for Scalable Robot Task Planning',
+      authors: 'Krishan Rana, Jesse Haviland, Sourav Garg, Jad Abou-Chakra, Ian Reid, Niko Suenderhauf',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2307.06135',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Text2Motion: From Natural Language Instructions to Feasible Plans',
+      authors: 'Kevin Lin, Christopher Agia, Toki Migimatsu, Marco Pavone, Jeannette Bohg',
+      year: 2023,
+      venue: 'Autonomous Robots',
+      link: 'https://arxiv.org/abs/2303.12153',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Plan-on-Graph: Self-Correcting Adaptive Planning of Large Language Model on Knowledge Graphs',
+      authors: 'Liyi Chen, Panrong Tong, Zhongming Jin, Ying Sun, Jieping Ye, Hui Xiong',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2410.23875',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'ISR-LLM: Iterative Self-Refined Large Language Model for Long-Horizon Sequential Task Planning',
+      authors: 'Zhehua Zhou, Jiayang Song, Kunpeng Yao, Zhan Shu, Lei Ma',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2308.13724',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'SayNav: Grounding Large Language Models for Dynamic Planning to Navigation in New Environments',
+      authors: 'Abhinav Rajvanshi, Karan Sikka, Xiao Lin, Bhoram Lee, Han-Pang Chiu, Alvaro Velasquez',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2309.04077',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'UniGoal: Towards Universal Zero-shot Goal-oriented Navigation',
+      authors: 'Hang Yin, Xiuwei Xu, Lingqing Zhao, Ziwei Wang, Jie Zhou, Jiwen Lu',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2503.10630',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'KG-RAG: Bridging the Gap Between Knowledge and Creativity',
+      authors: 'Diego Sanmartin',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2405.12035',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'Integrating Action Knowledge and LLMs for Task Planning and Situation Handling in Open Worlds',
+      authors: 'Yan Ding, Xiaohan Zhang, Saeid Amiri, Nieqing Cao, Hao Yang, Andy Kaminski, Chad Esselink, Shiqi Zhang',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2305.17590',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'DoraemonGPT: Toward Understanding Dynamic Scenes with Large Language Models (Exemplified as A Video Agent)',
+      authors: 'Zongxin Yang, Guikun Chen, Xiaodi Li, Wenguan Wang, Yi Yang',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2401.08392',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'CoPAL: Corrective Planning of Robot Actions with Large Language Models',
+      authors: 'Frank Joublin, Antonello Ceravola, Pavel Smirnov, Felix Ocker, Joerg Deigmoeller, Anna Belardinelli, Chao Wang, Stephan Hasler, Daniel Tanneberg, Michael Gienger',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2310.07263',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Structured, flexible, and robust: benchmarking and improving large language models towards more human-like behavior in out-of-distribution reasoning tasks',
+      authors: 'Katherine M. Collins, Catherine Wong, Jiahai Feng, Megan Wei, Joshua B. Tenenbaum',
+      year: 2022,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2205.05718',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'DRIFT: Dynamic Rule-Based Defense with Injection Isolation for Securing LLM Agents',
+      authors: 'Hao Li, Xiaogeng Liu, Hung-Chun Chiu, Dianqi Li, Ning Zhang, Chaowei Xiao',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2506.12104',
+      project: 'agent-survey',
+      topics: ['verification']
+    },
+    {
+      title_en: 'Safety Guardrails for LLM-Enabled Robots',
+      authors: 'Zachary Ravichandran, Alexander Robey, Vijay Kumar, George J. Pappas, Hamed Hassani',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2503.07885',
+      project: 'agent-survey',
+      topics: ['verification']
+    },
+    {
+      title_en: 'Vision-Language Interpreter for Robot Task Planning',
+      authors: 'Keisuke Shirai, Cristian C. Beltran-Hernandez, Masashi Hamaya, Atsushi Hashimoto, Shohei Tanaka, Kento Kawaharazuka, Kazutoshi Tanaka, Yoshitaka Ushiku, Shinsuke Mori',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2311.00967',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'InterPreT: Interactive Predicate Learning from Language Feedback for Generalizable Task Planning',
+      authors: 'Muzhi Han, Yifeng Zhu, Song-Chun Zhu, Ying Nian Wu, Yuke Zhu',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2405.19758',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Dynamic Open-Vocabulary 3D Scene Graphs for Long-term Language-Guided Mobile Manipulation',
+      authors: 'Zhijie Yan, Shufei Li, Zuoxu Wang, Lixiu Wu, Han Wang, Jun Zhu, Lijiang Chen, Jihong Liu',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2410.11989',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'DELTA: Decomposed Efficient Long-Term Robot Task Planning using Large Language Models',
+      authors: 'Yuchen Liu, Luigi Palmieri, Sebastian Koch, Ilche Georgievski, Marco Aiello',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2404.03275',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'VisualPredicator: Learning Abstract World Models with Neuro-Symbolic Predicates for Robot Planning',
+      authors: 'Yichao Liang, Nishanth Kumar, Hao Tang, Adrian Weller, Joshua B. Tenenbaum, Tom Silver, João F. Henriques, Kevin Ellis',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2410.23156',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Collaborative Memory: Multi-User Memory Sharing in LLM Agents with Dynamic Access Control',
+      authors: 'Alireza Rezazadeh, Zichao Li, Ange Lou, Yuying Zhao, Wei Wei, Yujia Bao',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2505.18279',
+      project: 'agent-survey',
+      topics: ['verification']
+    },
+    {
+      title_en: 'Optimal Scene Graph Planning with Large Language Model Guidance',
+      authors: 'Zhirui Dai, Arash Asgharivaskasi, Thai Duong, Shusen Lin, Maria-Elizabeth Tzes, George Pappas, Nikolay Atanasov',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2309.09182',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'GraphEQA: Using 3D Semantic Scene Graphs for Real-time Embodied Question Answering',
+      authors: 'Saumya Saxena, Blake Buchanan, Chris Paxton, Peiqi Liu, Bingqing Chen, Narunas Vaskevicius, Luigi Palmieri, Jonathan Francis, Oliver Kroemer',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2412.14480',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'KARMA: Augmenting Embodied AI Agents with Long-and-short Term Memory Systems',
+      authors: 'Zixuan Wang, Bo Yu, Junzhe Zhao, Wenhao Sun, Sai Hou, Shuai Liang, Xing Hu, Yinhe Han, Yiming Gan',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2409.14908',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'AutoGPT+P: Affordance-based Task Planning with Large Language Models',
+      authors: 'Timo Birr, Christoph Pohl, Abdelrahman Younes, Tamim Asfour',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2402.10778',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Open Scene Graphs for Open-World Object-Goal Navigation',
+      authors: 'Joel Loo, Zhanxin Wu, David Hsu',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2508.04678',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Hindsight is 20/20: Building Agent Memory that Retains, Recalls, and Reflects',
+      authors: 'Chris Latimer, Nicoló Boschi, Andrew Neeser, Chris Bartholomew, Gaurav Srivastava, Xuan Wang, Naren Ramakrishnan',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2512.12818',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'Learning Compositional Behaviors from Demonstration and Language',
+      authors: 'Weiyu Liu, Neil Nie, Ruohan Zhang, Jiayuan Mao, Jiajun Wu',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2505.21981',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'NL2Plan: Robust LLM-Driven Planning from Minimal Text Descriptions',
+      authors: 'Elliot Gestrin, Marco Kuhlmann, Jendrik Seipp',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2405.04215',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'EmbodiedRAG: Dynamic 3D Scene Graph Retrieval for Efficient and Scalable Robot Task Planning',
+      authors: 'Meghan Booker, Grayson Byrd, Bethany Kemp, Aurora Schmidt, Corban Rivera',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2410.23968',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'To the Globe (TTG): Towards Language-Driven Guaranteed Travel Planning',
+      authors: 'Da Ju, Song Jiang, Andrew Cohen, Aaron Foss, Sasha Mitts, Arman Zharmagambetov, Brandon Amos, Xian Li, Justine T Kao, Maryam Fazel-Zarandi, Yuandong Tian',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2410.16456',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Grounding Classical Task Planners via Vision-Language Models',
+      authors: 'Xiaohan Zhang, Yan Ding, Saeid Amiri, Hao Yang, Andy Kaminski, Chad Esselink, Shiqi Zhang',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2304.08587',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Planning in the Dark: LLM-Symbolic Planning Pipeline without Experts',
+      authors: 'Sukai Huang, Nir Lipovetzky, Trevor Cohn',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2409.15915',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'EffiQA: Efficient Question-Answering with Strategic Multi-Model Collaboration on Knowledge Graphs',
+      authors: 'Zixuan Dong, Baoyun Peng, Yufei Wang, Jia Fu, Xiaodong Wang, Yongxue Shan, Xin Zhou',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2406.01238',
+      project: 'agent-survey',
+      topics: ['memory']
+    },
+    {
+      title_en: 'Code World Models for General Game Playing',
+      authors: 'Wolfgang Lehrach, Daniel Hennes, Miguel Lazaro-Gredilla, Xinghua Lou, Carter Wendelken, Zun Li, Antoine Dedieu, Jordi Grau-Moya, Marc Lanctot, Atil Iscen, John Schultz, Marcus Chiam, Ian Gemp, Piotr Zielinski, Satinder Singh, Kevin P. Murphy',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2510.04542',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'LLM-enhanced Scene Graph Learning for Household Rearrangement',
+      authors: 'Wenhao Li, Zhiyuan Yu, Qijin She, Zhinan Yu, Yuqing Lan, Chenyang Zhu, Ruizhen Hu, Kai Xu',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2408.12093',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'VeriSafe Agent: Safeguarding Mobile GUI Agent via Logic-based Action Verification',
+      authors: 'Jungjae Lee, Dongjae Lee, Chihun Choi, Youngmin Im, Jaeyoung Wi, Kihong Heo, Sangeun Oh, Sunjae Lee, Insik Shin',
+      year: 2025,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2503.18492',
+      project: 'agent-survey',
+      topics: ['verification']
+    },
+    {
+      title_en: 'Language-Augmented Symbolic Planner for Open-World Task Planning',
+      authors: 'Guanqi Chen, Lei Yang, Ruixing Jia, Zhe Hu, Yizhou Chen, Wei Zhang, Wenping Wang, Jia Pan',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2407.09792',
+      project: 'agent-survey',
+      topics: ['planning']
+    },
+    {
+      title_en: 'Generating consistent PDDL domains with Large Language Models',
+      authors: 'Pavel Smirnov, Frank Joublin, Antonello Ceravola, Michael Gienger',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2404.07751',
+      project: 'agent-survey',
+      topics: ['planning']
     }
   ];
 
@@ -2328,7 +2747,8 @@
   var NOTES = [];
 
   // ---- State --------------------------------------------------------------
-  var state = { type: 'all', project: 'all', topic: null, query: '' };
+  // notesOnly: show only the entries that carry a note of mine.
+  var state = { type: 'all', project: 'all', topic: null, query: '', notesOnly: false };
 
   // ---- Helpers ------------------------------------------------------------
   function currentLang() {
@@ -2355,6 +2775,26 @@
     var month = parseInt(m[2], 10);
     if (lang === 'de') return MONTHS_DE[month - 1] + ' ' + m[1];
     return lang === 'zh' ? m[1] + ' 年 ' + month + ' 月' : MONTHS_EN[month - 1] + ' ' + m[1];
+  }
+
+  // A paper with a reading note on it, or a short note (which is one).
+  function hasNote(entry) {
+    var d = entry.data;
+    return entry.kind === 'note' || !!(d.note_en || d.note_zh || d.note_de);
+  }
+
+  function entryYear(entry) {
+    if (entry.kind === 'paper') return entry.data.year == null ? '' : String(entry.data.year);
+    var m = /^(\d{4})/.exec(entry.data.date || '');
+    return m ? m[1] : '';
+  }
+
+  // Long author lists are cut to the first three; the full list stays
+  // searchable and is shown when the names are pointed at.
+  function shortAuthors(authors, lang) {
+    var list = authors.split(/,\s*/);
+    if (list.length <= 4) return authors;
+    return list.slice(0, 3).join(', ') + (lang === 'zh' ? ' 等' : ' et al.');
   }
 
   // One list for both kinds of entry: papers and short notes.
@@ -2530,11 +2970,14 @@
     }
   }
 
-  function matches(entry, ignoreTopic) {
+  // `except` leaves one filter out ('topic' or 'notes'): that is how the
+  // number on a button says what clicking it would show.
+  function matches(entry, except) {
     var d = entry.data;
     if (NOTES.length && state.type !== 'all' && entry.kind !== state.type) return false;
     if (state.project !== 'all' && d.project !== state.project) return false;
-    if (!ignoreTopic && state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
+    if (except !== 'topic' && state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
+    if (except !== 'notes' && state.notesOnly && !hasNote(entry)) return false;
     if (state.query) {
       var q = state.query.toLowerCase();
       var parts = entry.kind === 'paper'
@@ -2546,19 +2989,25 @@
     return true;
   }
 
-  function countText(n, lang) {
+  // "205 papers", or "5 of 205 papers" while something is filtered out.
+  function countText(n, total, lang) {
     var kind = NOTES.length ? state.type : 'paper';
+    var some = n !== total;
     if (lang === 'zh') {
-      return n + (kind === 'note' ? ' 篇笔记' : kind === 'paper' ? ' 篇论文' : ' 条');
+      return (some ? n + ' / ' + total : n) + (kind === 'note' ? ' 篇笔记' : kind === 'paper' ? ' 篇论文' : ' 条');
     }
     if (lang === 'de') {
-      if (kind === 'note') return n + (n === 1 ? ' Notiz' : ' Notizen');
-      if (kind === 'paper') return n + ' Artikel';
-      return n + (n === 1 ? ' Eintrag' : ' Einträge');
+      var m = some ? n + ' von ' + total : String(n);
+      var count = some ? total : n;
+      if (kind === 'note') return m + (count === 1 ? ' Notiz' : ' Notizen');
+      if (kind === 'paper') return m + (some ? ' Artikeln' : ' Artikel');
+      return m + (count === 1 ? ' Eintrag' : some ? ' Einträgen' : ' Einträge');
     }
-    if (kind === 'note') return n + (n === 1 ? ' note' : ' notes');
-    if (kind === 'paper') return n + (n === 1 ? ' paper' : ' papers');
-    return n + (n === 1 ? ' entry' : ' entries');
+    var lead = some ? n + ' of ' + total : String(n);
+    var plural = (some ? total : n) !== 1;
+    if (kind === 'note') return lead + (plural ? ' notes' : ' note');
+    if (kind === 'paper') return lead + (plural ? ' papers' : ' paper');
+    return lead + (plural ? ' entries' : ' entry');
   }
 
   // ---- Rendering -------------------------------------------------------------
@@ -2611,6 +3060,7 @@
       var a = document.createElement('a');
       a.href = paper.link;
       a.target = '_blank';
+      a.rel = 'noopener';
       a.textContent = titleText;
       title.appendChild(a);
     } else {
@@ -2618,32 +3068,30 @@
     }
     item.appendChild(title);
 
-    // Authors (own line)
+    // One muted line: authors · venue (the venue name in italics). The year
+    // is in the margin, once for all the entries of that year.
+    var meta = document.createElement('p');
+    meta.className = 'paper-meta';
     if (paper.authors) {
-      var authors = document.createElement('p');
-      authors.className = 'paper-authors';
-      authors.textContent = paper.authors;
-      item.appendChild(authors);
+      var authors = document.createElement('span');
+      authors.textContent = shortAuthors(paper.authors, lang);
+      if (authors.textContent !== paper.authors) authors.title = paper.authors;
+      meta.appendChild(authors);
     }
-
-    // Secondary line: year · venue (muted, smaller; the venue name in italics)
-    var secondary = document.createElement('p');
-    secondary.className = 'paper-secondary';
-    secondary.textContent = paper.year == null ? '' : String(paper.year);
     if (paper.venue) {
       var venue = document.createElement('span');
       venue.className = 'paper-venue';
       venue.textContent = paper.venue;
-      secondary.appendChild(document.createTextNode(' · '));
-      secondary.appendChild(venue);
+      if (paper.authors) meta.appendChild(document.createTextNode('\u00a0· '));
+      meta.appendChild(venue);
     }
-    item.appendChild(secondary);
+    if (meta.childNodes.length) item.appendChild(meta);
 
-    // Tags: project (solid pill, clickable to filter) + topics
+    // Topics other than the categories, clickable to filter by them
     var tags = buildTags(paper, lang);
     if (tags.childNodes.length) item.appendChild(tags);
 
-    // Note, set off in its own bordered block (skipped for entries without one)
+    // Note, set off by a rule in the accent colour (skipped for entries without one)
     var noteText = pick(paper, 'note', lang);
     if (!noteText) return item;
 
@@ -2674,13 +3122,13 @@
     item.appendChild(title);
 
     var secondary = document.createElement('p');
-    secondary.className = 'paper-secondary';
+    secondary.className = 'paper-meta';
     secondary.textContent = formatNoteDate(note.date, lang);
     item.appendChild(secondary);
 
     if (note.about) {
       var about = document.createElement('p');
-      about.className = 'paper-secondary';
+      about.className = 'paper-meta';
       about.appendChild(document.createTextNode(say(lang, 'About the paper: ', '关于论文：', 'Zum Artikel: ')));
       var aboutText = pick(note.about, 'title', lang);
       if (note.about.link) {
@@ -2713,21 +3161,48 @@
   function renderList() {
     var lang = currentLang();
     var list = document.getElementById('paperList');
-    var pool = allEntries().filter(function (e) { return matches(e, true); });
-    var filtered = pool.filter(function (e) { return matches(e); })
+    var entries = allEntries();
+    var pool = entries.filter(function (e) { return matches(e, 'topic'); });
+    var filtered = entries.filter(function (e) { return matches(e); })
       .sort(function (a, b) { return b.sortKey - a.sortKey; });
     renderGroupFilters(pool, lang);
     list.innerHTML = '';
+
+    // "With notes": the number is what it would show with the other filters as they are.
+    var notesToggle = document.getElementById('notesToggle');
+    notesToggle.setAttribute('aria-pressed', String(state.notesOnly));
+    document.getElementById('notesCount').textContent =
+      entries.filter(function (e) { return matches(e, 'notes') && hasNote(e); }).length;
 
     document.getElementById('emptyEn').hidden = filtered.length !== 0;
     document.getElementById('emptyZh').hidden = filtered.length !== 0;
     document.getElementById('emptyDe').hidden = filtered.length !== 0;
 
-    document.getElementById('resultCount').textContent = countText(filtered.length, lang);
+    var total = entries.filter(function (e) {
+      return !(NOTES.length && state.type !== 'all' && e.kind !== state.type) &&
+        (state.project === 'all' || e.data.project === state.project);
+    }).length;
+    document.getElementById('resultCount').textContent = countText(filtered.length, total, lang);
 
-    function addItems(parent, entries) {
-      entries.forEach(function (entry) {
-        parent.appendChild(entry.kind === 'paper' ? buildPaperItem(entry.data, lang) : buildNoteItem(entry.data, lang));
+    // One band per year: the year once in the margin, its entries beside it.
+    function addItems(parent, items) {
+      var year = null, holder = null;
+      items.forEach(function (entry) {
+        var y = entryYear(entry);
+        if (y !== year || !holder) {
+          year = y;
+          var band = document.createElement('div');
+          band.className = 'year-band';
+          var label = document.createElement('div');
+          label.className = 'year-label';
+          label.textContent = y || '–';
+          holder = document.createElement('div');
+          holder.className = 'year-items';
+          band.appendChild(label);
+          band.appendChild(holder);
+          parent.appendChild(band);
+        }
+        holder.appendChild(entry.kind === 'paper' ? buildPaperItem(entry.data, lang) : buildNoteItem(entry.data, lang));
       });
     }
 
@@ -2740,8 +3215,8 @@
       return;
     }
 
-    function addSection(label, entries) {
-      if (!entries.length) return;
+    function addSection(label, items) {
+      if (!items.length) return;
       var section = document.createElement('section');
       section.className = 'paper-group';
       var heading = document.createElement('h2');
@@ -2749,10 +3224,10 @@
       heading.appendChild(document.createTextNode(label));
       var count = document.createElement('span');
       count.className = 'group-count';
-      count.textContent = entries.length;
+      count.textContent = items.length;
       heading.appendChild(count);
       section.appendChild(heading);
-      addItems(section, entries);
+      addItems(section, items);
       list.appendChild(section);
     }
 
@@ -2796,6 +3271,11 @@
     var initial = document.documentElement.getAttribute('data-lang') || 'en';
     btns.forEach(function (b) {
       b.addEventListener('click', function () { applyLang(b.dataset.lang); });
+    });
+
+    document.getElementById('notesToggle').addEventListener('click', function () {
+      state.notesOnly = !state.notesOnly;
+      render();
     });
 
     renderProjectFilters();
