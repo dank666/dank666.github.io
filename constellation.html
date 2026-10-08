@@ -197,9 +197,21 @@
     .logo:hover { color: var(--text); text-decoration: none; }
     .logo-mark { width: 22px; height: 22px; flex: none; }
     .nav-right { display: flex; align-items: center; gap: 18px; flex-wrap: nowrap; min-width: 0; }
+    .nav-links-wrap { position: relative; min-width: 0; flex: 1 1 auto; }
+    /* On a phone the page links scroll sideways. While there is more to the
+       right, the row fades out under a small chevron, so a clipped label
+       reads as "scroll for more" and not as a word that was cut off. */
+    .nav-links-wrap::after {
+      content: "›"; position: absolute; top: 0; right: 0; bottom: 0; width: 52px;
+      display: flex; align-items: center; justify-content: flex-end;
+      background: linear-gradient(to right, transparent, var(--bg) 70%);
+      color: var(--muted); font-size: 1.15rem; line-height: 1;
+      pointer-events: none; opacity: 0; transition: opacity 0.15s ease;
+    }
+    .nav-links-wrap.has-overflow::after { opacity: 1; }
     .nav-links {
       display: flex; gap: 14px; flex-wrap: nowrap; overflow-x: auto;
-      scrollbar-width: none; -ms-overflow-style: none; min-width: 0; flex: 1 1 auto;
+      scrollbar-width: none; -ms-overflow-style: none;
       /* Room for the current page's underline inside the scrolling row. */
       padding-bottom: 4px; margin-bottom: -4px;
     }
@@ -345,7 +357,7 @@
       .nav-right { display: contents; }
       .lang-switch { order: 1; margin-left: auto; border-left: 0; padding-left: 0; }
       .theme-toggle { order: 2; }
-      .nav-links { order: 3; flex: 1 1 100%; }
+      .nav-links-wrap { order: 3; flex: 1 1 100%; }
     }
   </style>
 </head>
@@ -360,12 +372,14 @@
         <span class="lang-de">Tejing Wang</span>
       </a>
       <div class="nav-right">
+        <div class="nav-links-wrap">
         <nav class="nav-links">
           <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span><span class="lang-de">Startseite</span></a>
           <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span><span class="lang-de">Notizen</span></a>
           <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span><span class="lang-de">Begriffsverband-Demo</span></a>
           <a href="constellation.html" class="active" aria-current="page"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span><span class="lang-de">Konstellation</span></a>
         </nav>
+        </div>
         <div class="lang-switch" role="group" aria-label="Language">
           <button class="lang-btn" data-lang="en" type="button">EN</button>
           <span>/</span>
@@ -521,6 +535,18 @@
         if (!document.documentElement.getAttribute('data-theme')) updateThemeButton();
       });
     }
+
+    // Nav-links overflow fade: hint that there's more to scroll to on a phone.
+    var navLinksWrap = document.querySelector('.nav-links-wrap');
+    var navLinksEl = document.querySelector('.nav-links');
+    function updateNavFade() {
+      if (!navLinksWrap || !navLinksEl) return;
+      var canScrollRight = navLinksEl.scrollWidth - navLinksEl.clientWidth - navLinksEl.scrollLeft > 4;
+      navLinksWrap.classList.toggle('has-overflow', canScrollRight);
+    }
+    if (navLinksEl) navLinksEl.addEventListener('scroll', updateNavFade, { passive: true });
+    window.addEventListener('resize', updateNavFade);
+    updateNavFade();
 
     var backToTop = document.getElementById('backToTop');
     function toggleBackToTop() {

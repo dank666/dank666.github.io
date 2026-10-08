@@ -64,8 +64,11 @@ function checkContext(inc, nG, nM, label) {
     res.covers.forEach(([lo, up]) => ok(L.level[lo] > L.level[up], `${label} ${kind}: edge direction`));
     ok(L.levels.reduce((s, r) => s + r.length, 0) === res.nodes.length, `${label} ${kind}: layout covers all nodes`);
     ok(L.x.every(x => x > 0 && x < 1), `${label} ${kind}: x in (0,1)`);
+    // nodes of one level keep at least one column between them
+    L.levels.forEach(row => { for (let q = 1; q < row.length; q++) ok((L.x[row[q]] - L.x[row[q - 1]]) * L.span > 1 - 1e-9, `${label} ${kind}: spacing inside a level`); });
     ok(L.levels[0].length === 1 && res.nodes[L.levels[0][0]].ext === (1 << nG) - 1, `${label} ${kind}: single top = all objects`);
   }
+  checkImplications(inc, nG, nM, label);
   // attribute-induced: brute force by its own definition, compared with analyze(transpose)
   const rows = rowsOf(inc, nG, nM), allM = (1 << nM) - 1, want = {};
   for (let Y = 0; Y < (1 << nM); Y++) {
@@ -79,6 +82,37 @@ function checkContext(inc, nG, nM, label) {
   const wk = Object.keys(want).map(Number).sort((a, b) => a - b), ak = ae.nodes.map(n => n.ext).sort((a, b) => a - b);
   ok(JSON.stringify(wk) === JSON.stringify(ak), `${label} AE: extents differ (${wk.length} vs ${ak.length})`);
   ae.nodes.forEach(n => { if (want[n.ext]) ok(want[n.ext].pos === n.pos && want[n.ext].neg === n.neg, `${label} AE: sides of ${n.ext}`); });
+}
+
+// ---- implications: the canonical basis against the definition of a pseudo-intent ----
+// P is a pseudo-intent when it is not closed and contains the closure of every
+// pseudo-intent that is a proper subset of it. Proper subsets of a bitmask are
+// numerically smaller, so one pass in numeric order is enough.
+function checkImplications(inc, nG, nM, label) {
+  const rows = rowsOf(inc, nG, nM), allM = (1 << nM) - 1;
+  const extOf = Y => { let e = 0; for (let g = 0; g < nG; g++) if ((rows[g] & Y) === Y) e |= 1 << g; return e; };
+  const closure = Y => { let c = allM; const e = extOf(Y); for (let g = 0; g < nG; g++) if (e >> g & 1) c &= rows[g]; return c; };
+  const pseudo = [];
+  for (let P = 0; P <= allM; P++) {
+    if (closure(P) === P) continue;
+    if (pseudo.every(Q => (Q & P) !== Q || Q === P || (closure(Q) & P) === closure(Q))) pseudo.push(P);
+  }
+  const res = C.implications(inc, nG, nM);
+  ok(!res.tooMany, `${label} implications: not cut off`);
+  const got = res.list.map(im => im.premise).sort((a, b) => a - b);
+  ok(JSON.stringify(got) === JSON.stringify(pseudo), `${label} implications: premises are exactly the pseudo-intents (${got.length} vs ${pseudo.length})`);
+  res.list.forEach(im => {
+    ok(im.conclusion === (closure(im.premise) & ~im.premise), `${label} implications: conclusion of ${im.premise}`);
+    ok(im.support === pc(extOf(im.premise)), `${label} implications: support of ${im.premise}`);
+  });
+  // complete and sound: closing any set under the rules gives its closure in the table
+  for (let Y = 0; Y <= allM; Y++) {
+    let X = Y, changed = true;
+    while (changed) { changed = false; res.list.forEach(im => { if ((im.premise & X) === im.premise && (im.conclusion & ~X)) { X |= im.conclusion; changed = true; } }); }
+    ok(X === closure(Y), `${label} implications: closure of ${Y}`);
+  }
+  const mk = C.masks(inc, nG, nM);
+  ok(C.intentClosure(mk, 0).intent === closure(0) && C.intentClosure(mk, allM).ext === extOf(allM), `${label} intentClosure`);
 }
 
 // ---- known example: Ganter & Wille, "Living beings and water" ----
@@ -102,6 +136,13 @@ const toy = [[true, false], [true, false], [false, true]];
 const toyCl = C.analyze(toy, 3, 2, 'classical');
 console.log('toy classical count =', toyCl.count, '(hand count: 4 = {all}, {sparrow,bat}, {dolphin}, {})');
 ok(toyCl.count === 4, 'toy classical count');
+// by hand: every subset of {flies, swims} is closed (the full set is the intent of
+// the bottom concept), so no rule holds
+ok(C.implications(toy, 3, 2).list.length === 0, 'toy implications: none');
+// has feathers -> lays eggs in the animals example of the page
+const animals = [[1, 1, 0, 1], [1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 1], [0, 1, 1, 0]].map(r => r.map(Boolean));
+const anIm = C.implications(animals, 5, 4).list;
+ok(anIm.some(im => im.premise === 8 && im.conclusion === 2 && im.support === 2), 'animals: has feathers -> lays eggs, for 2 objects');
 
 // ---- randomised property test ----
 let seed = 12345; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;

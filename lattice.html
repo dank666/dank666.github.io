@@ -219,11 +219,9 @@
     [data-lang="de"] :is(.lang-en, .lang-zh) { display: none; }
 
     /* Chinese is never set in italic (it has no italic, only a slanted
-       distortion of the upright): emphasis is carried by weight instead, and
-       the negated labels in the diagram keep only their muted colour. */
+       distortion of the upright): emphasis is carried by weight instead. */
     .lang-zh { font-style: normal; }
     .lang-zh em { font-style: normal; font-weight: 600; }
-    [data-lang="zh"] .lat-lbl-neg { font-style: normal; }
 
     .navbar {
       position: sticky;
@@ -268,6 +266,38 @@
       min-width: 0;
     }
 
+    .nav-links-wrap {
+      position: relative;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    /* On a phone the page links scroll sideways. While there is more to the
+       right, the row fades out under a small chevron, so a clipped label
+       reads as "scroll for more" and not as a word that was cut off. */
+    .nav-links-wrap::after {
+      content: "›";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      background: linear-gradient(to right, transparent, var(--bg) 70%);
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .nav-links-wrap.has-overflow::after {
+      opacity: 1;
+    }
+
     .nav-links {
       display: flex;
       gap: 14px;
@@ -275,8 +305,6 @@
       overflow-x: auto;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      min-width: 0;
-      flex: 1 1 auto;
       /* Room for the current page's underline inside the scrolling row. */
       padding-bottom: 4px;
       margin-bottom: -4px;
@@ -330,7 +358,7 @@
     .lang-switch span { color: var(--line); }
 
     .page-header {
-      padding: 52px 0 28px;
+      padding: 48px 0 26px;
     }
 
     .page-header h1 {
@@ -356,7 +384,8 @@
 
 
     :root {
-      --max-width: 980px;
+      --max-width: 1120px;
+      --radius: 8px;
     }
 
     .sr-only {
@@ -368,15 +397,63 @@
       white-space: nowrap;
     }
 
-    .lat-panel {
-      margin: 0 0 28px;
-      padding: 22px 22px 24px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
+    /* The tool: the cross table on the left and its lattice on the right, so
+       a cell and what it changes are on screen together. The left column is
+       as wide as the table needs (lattice.js sets --ctx-w), within limits.
+       Whichever column is shorter stays in view while the other scrolls. */
+    .lat-layout {
+      display: grid;
+      grid-template-columns: clamp(320px, var(--ctx-w, 340px), 52%) minmax(0, 1fr);
+      gap: 48px;
+      align-items: start;
+      padding: 28px 0 40px;
+      border-top: 1px solid var(--line);
+    }
+
+    .lat-col {
+      position: sticky;
+      top: 84px;
+      min-width: 0;
+    }
+
+    /* The rename editor is placed inside the table's section. */
+    .lat-ctx {
+      position: relative;
+    }
+
+    /* One column: the table, the lattice right under it, and only then the
+       comparison (which sits under the table on a wide screen). */
+    @media (max-width: 900px) {
+      .lat-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+        padding-top: 24px;
+      }
+
+      .lat-col {
+        position: static;
+      }
+
+      .lat-left {
+        display: contents;
+      }
+
+      .lat-ctx { order: 1; }
+      #outPanel { order: 2; }
+      .lat-compare { order: 3; margin-top: 0; }
+    }
+
+    .lat-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 2px 12px;
+      margin: 0 0 12px;
     }
 
     .lat-h {
-      margin: 0 0 6px;
+      margin: 0;
       font-size: 1.1rem;
       font-weight: 700;
     }
@@ -385,46 +462,48 @@
     .lat-note {
       margin: 0;
       color: var(--muted);
-      font-size: 0.88rem;
+      font-size: 0.86rem;
     }
 
-    .lat-toolbar {
-      margin: 14px 0 0;
+    .lat-note {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lat-toolbar,
+    .lat-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px 14px;
-    }
-
-    .lat-field {
-      display: inline-flex;
-      align-items: center;
       gap: 8px;
-      font-size: 0.9rem;
-      color: var(--muted);
-      min-width: 0;
-      max-width: 100%;
     }
 
-    /* A select is as wide as its longest option, which is wider than a phone:
-       let it shrink inside the row instead of widening the page. */
+    /* The example menu takes a row of its own, as wide as the column. */
+    .lat-field {
+      display: flex;
+      flex: 1 1 100%;
+      min-width: 0;
+    }
+
     .lat-field select {
+      width: 100%;
       min-width: 0;
     }
 
-    .lat-panel select,
-    .lat-name {
+    .lat-root select,
+    .lat-name,
+    .lat-import textarea {
       font: inherit;
       font-size: 0.88rem;
       color: var(--text);
       background: var(--bg);
       border: 1px solid var(--line);
-      border-radius: 6px;
+      border-radius: var(--radius);
       padding: 5px 8px;
     }
 
-    .lat-panel select:focus,
-    .lat-name:focus {
+    .lat-root select:focus,
+    .lat-name:focus,
+    .lat-import textarea:focus {
       outline: none;
       border-color: var(--accent);
     }
@@ -432,8 +511,9 @@
     .lat-btn,
     .lat-mode {
       font: inherit;
-      font-size: 0.85rem;
-      padding: 5px 12px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      padding: 4px 11px;
       border-radius: 999px;
       border: 1px solid var(--line);
       background: var(--bg);
@@ -458,160 +538,329 @@
       color: var(--bg);
     }
 
+    .lat-btn-done,
+    .lat-btn.is-done .lat-btn-label {
+      display: none;
+    }
+
+    .lat-btn.is-done .lat-btn-done {
+      display: inline;
+    }
+
+    /* Import: a place to paste a table, opened by its button. */
+    .lat-import {
+      margin: 14px 0 0;
+    }
+
+    .lat-import textarea {
+      display: block;
+      width: 100%;
+      min-height: 7.5em;
+      margin: 8px 0;
+      padding: 8px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+
+    .lat-msg {
+      margin: 8px 0 0;
+      color: var(--text);
+      font-size: 0.86rem;
+    }
+
+    .lat-msg:empty {
+      display: none;
+    }
+
+    /* The cross table, as in a textbook: names in plain text (the attributes
+       upright along their columns), a hairline grid, a cross where the
+       object has the attribute. */
     .lat-table-wrap {
-      margin: 16px 0 0;
+      margin: 18px 0 0;
       overflow-x: auto;
     }
 
     .lat-table {
       border-collapse: separate;
-      border-spacing: 4px;
+      border-spacing: 0;
+      font-size: 0.88rem;
     }
 
     .lat-table th,
     .lat-table td {
       padding: 0;
       font-weight: 400;
-      vertical-align: middle;
     }
 
-    .lat-name {
-      width: 112px;
-    }
-
-    .lat-colhead .lat-name {
-      display: block;
-      width: 124px;
-      margin: 0 auto 3px;
-      text-align: center;
-    }
-
-    .lat-colhead,
+    /* The names stay in place while a wide table scrolls under them. */
+    .lat-corner,
     .lat-rowhead {
-      text-align: center;
-    }
-
-    .lat-rowhead {
-      white-space: nowrap;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: var(--bg);
       text-align: left;
     }
 
-    .lat-x {
-      width: 22px;
-      height: 22px;
-      margin-left: 4px;
+    .lat-colhead {
+      vertical-align: bottom;
+      text-align: center;
+    }
+
+    .lat-colname,
+    .lat-rowname,
+    .lat-add {
+      font: inherit;
       padding: 0;
       border: 0;
-      border-radius: 50%;
       background: none;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1;
+      color: var(--text);
       cursor: pointer;
     }
 
-    .lat-colhead .lat-x {
-      margin: 0;
+    .lat-colname,
+    .lat-addcol .lat-add {
+      display: inline-flex;
+      justify-content: center;
+      width: 35px;
+      padding: 4px 0 8px;
     }
 
-    .lat-x:hover:not(:disabled) {
-      background: var(--accent-soft);
-      color: var(--text);
+    .lat-vert {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      white-space: nowrap;
+      line-height: 1.25;
     }
 
-    .lat-x:disabled {
-      opacity: 0.3;
+    /* Chinese reads down the column with its characters upright. */
+    .lat-vert.is-cjk {
+      transform: none;
+      letter-spacing: 0.06em;
+    }
+
+    .lat-rowname,
+    .lat-addrow .lat-add {
+      display: block;
+      height: 35px;
+      padding-right: 14px;
+      white-space: nowrap;
+    }
+
+    .lat-add {
+      color: var(--muted);
+    }
+
+    .lat-colname:hover,
+    .lat-rowname:hover,
+    .lat-add:hover:not(:disabled) {
+      color: var(--accent);
+    }
+
+    .lat-add:disabled {
+      opacity: 0.45;
       cursor: not-allowed;
     }
 
+    .lat-cellwrap {
+      position: relative;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .lat-rowhead + .lat-cellwrap {
+      border-left: 1px solid var(--line);
+    }
+
+    .lat-table tbody tr:first-child .lat-cellwrap {
+      border-top: 1px solid var(--line);
+    }
+
     .lat-cell {
-      width: 100%;
-      min-width: 40px;
+      display: block;
+      width: 34px;
       height: 34px;
       padding: 0;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--bg);
-      color: var(--bg);
-      font-size: 1rem;
-      line-height: 1;
+      border: 0;
+      background: none;
+      font: inherit;
+      font-size: 1.1rem;
+      line-height: 34px;
+      color: var(--text);
       cursor: pointer;
     }
 
     .lat-cell:hover {
-      border-color: var(--accent);
+      background: var(--accent-soft);
     }
 
-    .lat-cell[aria-checked="true"] {
-      background: var(--accent);
-      border-color: var(--accent);
+    .lat-cell:focus-visible {
+      outline-offset: -2px;
     }
 
-    .lat-addcell {
-      text-align: left;
-      white-space: nowrap;
+    /* A selected concept in the table: its rows and columns, the block of
+       crosses where they meet, and (three-way concepts) the block that is
+       empty, with the names of what the concept lacks struck through. */
+    .lat-cellwrap.in-rect {
+      background: var(--accent-soft);
     }
 
-    .lat-modes {
-      margin: 12px 0 0;
+    .lat-cellwrap.in-rect .lat-cell {
+      color: var(--accent);
+    }
+
+    .lat-cellwrap.in-neg {
+      background-image: repeating-linear-gradient(135deg, var(--line) 0 1px, transparent 1px 6px);
+    }
+
+    .is-on > .lat-rowname,
+    .is-on > .lat-colname {
+      color: var(--accent);
+    }
+
+    .is-neg > .lat-rowname,
+    .is-neg > .lat-colname {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    /* Differences from the reference: a ring around a cross that is only in
+       this table, a dashed ring around the ghost of one that is only in the
+       reference. The legend under the table uses the same two marks. */
+    .lat-cellwrap.is-added::after,
+    .lat-cellwrap.is-removed::after {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .lat-cellwrap.is-removed::after {
+      border: 1.5px dashed var(--muted);
+    }
+
+    .lat-cellwrap.is-added .lat-cell {
+      color: var(--accent);
+    }
+
+    .lat-cellwrap.is-removed .lat-cell::before {
+      content: "×";
+      color: var(--muted);
+      opacity: 0.55;
+    }
+
+    .lat-table-hint {
+      margin-top: 12px;
+    }
+
+    .lat-compare {
+      margin: 18px 0 0;
+      padding: 16px 0 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .lat-compare .lat-hint {
+      margin-top: 8px;
+    }
+
+    .lat-legend {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px 18px;
+      margin: 12px 0 0;
+      font-size: 0.86rem;
     }
 
-    .lat-defs {
-      margin: 14px 0 0;
-    }
-
-    .lat-def {
-      margin: 0;
-      max-width: 34em;
-      color: var(--text);
-      font-size: 0.93rem;
-    }
-
-    .lat-panel[data-mode="classical"] .lat-def:not([data-for="classical"]),
-    .lat-panel[data-mode="oe"] .lat-def:not([data-for="oe"]),
-    .lat-panel[data-mode="ae"] .lat-def:not([data-for="ae"]) {
+    .lat-legend[hidden] {
       display: none;
     }
 
-    .lat-def-note {
-      margin: 8px 0 0;
-      max-width: 34em;
-      color: var(--muted);
-      font-size: 0.82rem;
+    .lat-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      margin-right: 6px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      color: var(--accent);
+      font-size: 0.95rem;
+      line-height: 1;
+      vertical-align: -5px;
     }
 
-    .lat-counts {
-      margin: 16px 0 12px;
+    .lat-key.is-removed {
+      border: 1.5px dashed var(--muted);
+      color: var(--muted);
+    }
+
+    /* The editor that opens at a name: rename it, or remove its row or column. */
+    .lat-pop {
+      position: absolute;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .lat-name {
+      width: 172px;
+    }
+
+    /* Lattice column */
+    .lat-modes,
+    .lat-view {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px 8px;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 14px;
     }
 
-    .lat-chip {
-      padding: 2px 10px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--muted);
-      font-size: 0.8rem;
+    .lat-view[hidden],
+    .lat-diff[hidden] {
+      display: none;
     }
 
-    .lat-chip.is-current {
-      color: var(--accent);
+    .lat-mode-n {
+      margin-left: 7px;
       font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lat-diff {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px 18px;
+      margin: 0 0 12px;
+      font-size: 0.86rem;
+    }
+
+    .lat-diff-note {
+      flex-basis: 100%;
+      color: var(--muted);
     }
 
     .lat-diagram {
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius);
       background: var(--bg);
       overflow-x: auto;
     }
 
     .lat-diagram svg {
       display: block;
+      margin: 0 auto;
     }
 
     .lat-message {
@@ -622,15 +871,26 @@
     }
 
     .lat-edge {
+      fill: none;
       stroke: var(--muted);
-      stroke-opacity: 0.55;
-      stroke-width: 1.3;
+      stroke-opacity: 0.5;
+      stroke-width: 1.2;
     }
 
-    .lat-edge.is-active {
+    /* With a concept selected, everything above and below it stays lit and
+       the rest of the lattice steps back. */
+    .lat-edge.is-rel {
       stroke: var(--accent);
       stroke-opacity: 1;
-      stroke-width: 2.2;
+      stroke-width: 1.9;
+    }
+
+    .has-selection .lat-edge:not(.is-rel) {
+      stroke-opacity: 0.2;
+    }
+
+    .has-selection .lat-node:not(.is-active):not(.is-rel) {
+      opacity: 0.38;
     }
 
     .lat-node {
@@ -645,15 +905,33 @@
     .lat-dot {
       fill: var(--bg);
       stroke: var(--accent);
-      stroke-width: 2;
+      stroke-width: 1.75;
     }
 
-    .lat-dot.has-ext {
+    .lat-half {
+      fill: var(--accent);
+    }
+
+    .lat-ring {
+      fill: none;
+      stroke: none;
+      stroke-width: 1.25;
+    }
+
+    .lat-node:hover .lat-ring,
+    .lat-node:focus-visible .lat-ring,
+    .lat-node.is-hover .lat-ring,
+    .lat-node.is-active .lat-ring {
       fill: var(--accent-soft);
     }
 
-    .lat-node:hover .lat-dot,
-    .lat-node:focus-visible .lat-dot,
+    /* Ringed: the selected concept, and concepts the other table of a
+       comparison does not have. */
+    .lat-node.is-active .lat-ring,
+    .lat-node.is-diff .lat-ring {
+      stroke: var(--accent);
+    }
+
     .lat-node.is-active .lat-dot {
       fill: var(--accent);
     }
@@ -674,34 +952,124 @@
 
     .lat-lbl-neg {
       fill: var(--muted);
-      font-style: italic;
     }
 
     .lat-info {
-      min-height: 4.4em;
-      margin: 14px 0 0;
-    }
-
-    .lat-info-line {
-      margin: 0 0 3px;
-      font-size: 0.92rem;
-    }
-
-    .lat-list {
+      min-height: 3.6em;
       margin: 12px 0 0;
     }
 
-    .lat-list summary {
-      cursor: pointer;
+    .lat-info-line {
+      margin: 0 0 2px;
+      font-size: 0.92rem;
+    }
+
+    .lat-info-diff {
       color: var(--muted);
+    }
+
+    .lat-actions {
+      margin: 10px 0 0;
+    }
+
+    /* Under the tool: the implications, the list of concepts, the definitions. */
+    .lat-more {
+      border-top: 1px solid var(--line);
+    }
+
+    .lat-list {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .lat-list summary {
+      padding: 14px 0;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .lat-list > .lat-hint {
+      max-width: 44em;
+      margin: 0 0 12px;
+    }
+
+    .lat-list > div {
+      padding: 0 0 18px;
+    }
+
+    .lat-impl {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .lat-impl-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 2px 10px;
+      width: 100%;
+      padding: 6px 10px;
+      border: 0;
+      border-radius: var(--radius);
+      background: none;
+      font: inherit;
       font-size: 0.9rem;
+      text-align: left;
+      color: var(--text);
+    }
+
+    button.lat-impl-row {
+      cursor: pointer;
+    }
+
+    button.lat-impl-row:hover {
+      background: var(--accent-soft);
+    }
+
+    .lat-arrow {
+      color: var(--muted);
+    }
+
+    .lat-impl-c {
+      color: var(--accent);
+    }
+
+    .lat-impl-s {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    /* Small spaced-out labels, the same voice as a paper's status on the home page. */
+    .lat-tag,
+    .lat-sub {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lat-tag {
+      margin-left: 8px;
+      color: var(--accent);
+    }
+
+    .lat-sub {
+      margin: 16px 0 4px;
+      padding: 0 10px;
+      color: var(--muted);
+    }
+
+    /* Chinese has no capitals to shrink: keep it a little larger. */
+    [data-lang="zh"] .lat-tag,
+    [data-lang="zh"] .lat-sub {
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
     }
 
     .lat-list-table {
-      margin: 10px 0 0;
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
     }
 
     .lat-list-table th {
@@ -718,6 +1086,10 @@
       vertical-align: top;
     }
 
+    .lat-list-table tr:last-child td {
+      border-bottom: 0;
+    }
+
     .lat-list-row {
       cursor: pointer;
     }
@@ -727,10 +1099,26 @@
       background: var(--accent-soft);
     }
 
-    @media (max-width: 640px) {
-      .lat-panel {
-        padding: 16px 14px 18px;
-      }
+    .lat-defs {
+      padding: 22px 0 8px;
+    }
+
+    .lat-def,
+    .lat-def-note {
+      margin: 10px 0 0;
+      max-width: 44em;
+      font-size: 0.93rem;
+    }
+
+    .lat-root[data-mode="classical"] .lat-def[data-for]:not([data-for="classical"]),
+    .lat-root[data-mode="oe"] .lat-def[data-for]:not([data-for="oe"]),
+    .lat-root[data-mode="ae"] .lat-def[data-for]:not([data-for="ae"]) {
+      display: none;
+    }
+
+    .lat-def-note {
+      color: var(--muted);
+      font-size: 0.86rem;
     }
 
     .footer .footer-note {
@@ -778,12 +1166,14 @@
     .back-to-top:hover { border-color: var(--accent); }
 
     @media (max-width: 640px) {
+      .page-header { padding: 32px 0 22px; }
+
       /* Two rows: the name with the language/theme controls, then the page links. */
       .nav-inner { flex-wrap: wrap; gap: 8px 12px; }
       .nav-right { display: contents; }
       .lang-switch { order: 1; margin-left: auto; border-left: 0; padding-left: 0; }
       .theme-toggle { order: 2; }
-      .nav-links { order: 3; flex: 1 1 100%; }
+      .nav-links-wrap { order: 3; flex: 1 1 100%; }
     }
   </style>
 </head>
@@ -798,12 +1188,14 @@
         <span class="lang-de">Tejing Wang</span>
       </a>
       <div class="nav-right">
+        <div class="nav-links-wrap">
         <nav class="nav-links">
           <a href="index.html"><span class="lang-en">Home</span><span class="lang-zh">主页</span><span class="lang-de">Startseite</span></a>
           <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span><span class="lang-de">Notizen</span></a>
           <a href="lattice.html" class="active" aria-current="page"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span><span class="lang-de">Begriffsverband-Demo</span></a>
           <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span><span class="lang-de">Konstellation</span></a>
         </nav>
+        </div>
         <div class="lang-switch" role="group" aria-label="Language">
           <button class="lang-btn" data-lang="en" type="button">EN</button>
           <span>/</span>
@@ -824,76 +1216,149 @@
       <h1 data-i18n data-lang-en="Concept Lattice Demo" data-lang-zh="概念格演示" data-lang-de="Begriffsverband-Demo">Concept Lattice Demo</h1>
       <p class="intro lang-en">
         Enter a formal context — a table of objects and the attributes they have — and watch its concept
-        lattice being drawn. Switch to three-way concepts to see, in addition, which attributes a group of
-        objects definitely lacks. It is a small teaching tool for the kind of structure behind my research
-        on concept learning and three-way concept analysis.
+        lattice being drawn. Three-way concepts add what a group of objects definitely lacks. A small
+        teaching tool for the structures behind my research on formal concept analysis and the
+        reliability of what large language models know.
       </p>
       <p class="intro lang-zh">
-        输入一个形式背景（对象与属性组成的表格），实时画出它的概念格。切换到三支概念，还能看到一组对象“肯定不具有”哪些属性。这是一个小型的教学演示，展示的正是我研究概念学习与三支概念分析时所依托的结构。
+        输入一个形式背景（对象与属性组成的表格），实时画出它的概念格；切换到三支概念，还能看到一组对象“肯定不具有”哪些属性。这是一个小型的教学演示，展示我在形式概念分析与大语言模型知识可靠性研究中所依托的结构。
       </p>
       <p class="intro lang-de">
-        Geben Sie einen formalen Kontext ein – eine Tabelle aus Gegenständen und ihren Merkmalen – und sehen Sie zu, wie sein Begriffsverband gezeichnet wird. Mit den Drei-Wege-Begriffen sehen Sie zusätzlich, welche Merkmale einer Gruppe von Gegenständen mit Sicherheit fehlen. Es ist ein kleines Lehrwerkzeug für die Art von Struktur, die hinter meiner Forschung zu Begriffslernen und Drei-Wege-Begriffsanalyse steht.
+        Geben Sie einen formalen Kontext ein – eine Tabelle aus Gegenständen und ihren Merkmalen – und sehen Sie zu, wie sein Begriffsverband gezeichnet wird. Drei-Wege-Begriffe zeigen zusätzlich, was einer Gruppe von Gegenständen mit Sicherheit fehlt. Ein kleines Lehrwerkzeug für die Strukturen hinter meiner Forschung zur Formalen Begriffsanalyse und zur Verlässlichkeit des Wissens großer Sprachmodelle.
       </p>
     </div>
 
-    <section class="lat-panel" aria-labelledby="ctxTitle">
-      <h2 class="lat-h" id="ctxTitle"><span class="lang-en">Formal context</span><span class="lang-zh">形式背景</span><span class="lang-de">Formaler Kontext</span></h2>
-      <p class="lat-hint">
-        <span class="lang-en">Click a cell to toggle it (✓ = the object has the attribute). Type in the boxes to rename objects and attributes.</span>
-        <span class="lang-zh">点击单元格切换（✓ 表示该对象具有该属性）。在输入框里输入即可重命名对象和属性。</span>
-        <span class="lang-de">Klicken Sie auf eine Zelle, um sie umzuschalten (✓ = der Gegenstand hat das Merkmal). Tippen Sie in die Felder, um Gegenstände und Merkmale umzubenennen.</span>
-      </p>
-      <div class="lat-toolbar">
-        <label class="lat-field"><span class="lang-en">Example</span><span class="lang-zh">示例</span><span class="lang-de">Beispiel</span>
-          <select id="presetSelect"></select>
-        </label>
-        <button class="lat-btn" id="clearBtn" type="button"><span class="lang-en">Clear all cells</span><span class="lang-zh">清空所有单元格</span><span class="lang-de">Alle Zellen leeren</span></button>
-        <span class="lat-note" id="sizeNote"></span>
-      </div>
-      <div class="lat-table-wrap">
-        <table class="lat-table" id="ctxTable"></table>
-      </div>
-    </section>
+    <div class="lat-root" id="latRoot" data-mode="classical">
+      <div class="lat-layout" id="latLayout">
+        <div class="lat-col lat-left">
+        <section class="lat-ctx" id="ctxPanel" aria-labelledby="ctxTitle">
+          <div class="lat-head">
+            <h2 class="lat-h" id="ctxTitle"><span class="lang-en">Formal context</span><span class="lang-zh">形式背景</span><span class="lang-de">Formaler Kontext</span></h2>
+            <span class="lat-note" id="sizeNote"></span>
+          </div>
+          <div class="lat-toolbar">
+            <label class="lat-field"><span class="sr-only"><span class="lang-en">Example</span><span class="lang-zh">示例</span><span class="lang-de">Beispiel</span></span>
+              <select id="presetSelect"></select>
+            </label>
+            <button class="lat-btn" id="undoBtn" type="button"><span class="lang-en">Undo</span><span class="lang-zh">撤销</span><span class="lang-de">Rückgängig</span></button>
+            <button class="lat-btn" id="clearBtn" type="button"><span class="lang-en">Clear</span><span class="lang-zh">清空</span><span class="lang-de">Leeren</span></button>
+            <button class="lat-btn" id="importBtn" type="button" aria-expanded="false" aria-controls="importBox"><span class="lang-en">Import</span><span class="lang-zh">导入</span><span class="lang-de">Importieren</span></button>
+          </div>
+          <div class="lat-import" id="importBox" hidden>
+            <label class="lat-hint" for="importText">
+              <span class="lang-en">Paste a table: a header row with the attribute names, then one row per object, with x or 1 where the object has the attribute (comma-, semicolon- or tab-separated). Burmeister .cxt files work too.</span>
+              <span class="lang-zh">粘贴一张表格：第一行是属性名称，之后每个对象一行，对象具有该属性的位置写 x 或 1（用逗号、分号或制表符分隔）。也支持 Burmeister 的 .cxt 文件。</span>
+              <span class="lang-de">Fügen Sie eine Tabelle ein: eine Kopfzeile mit den Merkmalsnamen, danach eine Zeile je Gegenstand, mit x oder 1, wo der Gegenstand das Merkmal hat (durch Komma, Semikolon oder Tabulator getrennt). Burmeister-Dateien (.cxt) funktionieren ebenfalls.</span>
+            </label>
+            <textarea id="importText" spellcheck="false" placeholder=",flies,lays eggs&#10;sparrow,x,x&#10;bat,x,"></textarea>
+            <div class="lat-row">
+              <button class="lat-btn" id="importLoad" type="button"><span class="lang-en">Load table</span><span class="lang-zh">载入表格</span><span class="lang-de">Tabelle laden</span></button>
+              <label class="lat-btn"><span class="lang-en">Choose a file</span><span class="lang-zh">选择文件</span><span class="lang-de">Datei wählen</span><input id="importFile" type="file" accept=".csv,.tsv,.txt,.cxt" hidden /></label>
+            </div>
+            <p class="lat-msg" id="importMsg" aria-live="polite"></p>
+          </div>
+          <div class="lat-table-wrap">
+            <table class="lat-table" id="ctxTable"></table>
+          </div>
+          <p class="lat-legend" id="compareLegend" hidden>
+            <span><span class="lat-key" aria-hidden="true">×</span><span class="lang-en">only in this table</span><span class="lang-zh">仅当前表有</span><span class="lang-de">nur in dieser Tabelle</span></span>
+            <span><span class="lat-key is-removed" aria-hidden="true">×</span><span class="lang-en">only in the reference</span><span class="lang-zh">仅参考表有</span><span class="lang-de">nur in der Referenz</span></span>
+          </p>
+          <p class="lat-hint lat-table-hint">
+            <span class="lang-en">Click a cell to set or clear its cross. Click a name to rename or remove it.</span>
+            <span class="lang-zh">点击单元格添加或去掉叉号；点击名称可以重命名或删除。</span>
+            <span class="lang-de">Klicken Sie auf eine Zelle, um ihr Kreuz zu setzen oder zu entfernen. Klicken Sie auf einen Namen, um ihn zu ändern oder zu entfernen.</span>
+          </p>
+        </section>
+        <div class="lat-compare">
+            <div id="compareOff">
+              <button class="lat-btn" id="refSet" type="button"><span class="lang-en">Compare with a reference</span><span class="lang-zh">与参考表对比</span><span class="lang-de">Mit einer Referenz vergleichen</span></button>
+              <p class="lat-hint">
+                <span class="lang-en">Keeps a copy of this table. What you change or import afterwards is marked, here and in the lattice.</span>
+                <span class="lang-zh">保留当前这张表作为参考。之后修改或导入的内容，会在表格和概念格里标出差异。</span>
+                <span class="lang-de">Behält eine Kopie dieser Tabelle. Was Sie danach ändern oder importieren, wird markiert – hier und im Verband.</span>
+              </p>
+            </div>
+            <div id="compareOn" hidden>
+              <div class="lat-row">
+                <button class="lat-btn" id="refUpdate" type="button"><span class="lang-en">Make this the reference</span><span class="lang-zh">把当前表设为参考表</span><span class="lang-de">Diese Tabelle zur Referenz machen</span></button>
+                <button class="lat-btn" id="refClear" type="button"><span class="lang-en">Stop comparing</span><span class="lang-zh">结束对比</span><span class="lang-de">Vergleich beenden</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <section class="lat-panel" id="outPanel" data-mode="classical" aria-labelledby="outTitle">
-      <h2 class="lat-h" id="outTitle"><span class="lang-en">Concept lattice</span><span class="lang-zh">概念格</span><span class="lang-de">Begriffsverband</span></h2>
-      <div class="lat-modes" role="group" aria-label="Kind of concept">
-        <button class="lat-mode" type="button" data-mode="classical" aria-pressed="true"><span class="lang-en">Classical concepts</span><span class="lang-zh">经典概念</span><span class="lang-de">Klassische Begriffe</span></button>
-        <button class="lat-mode" type="button" data-mode="oe" aria-pressed="false"><span class="lang-en">Three-way (object-induced)</span><span class="lang-zh">三支概念（对象诱导）</span><span class="lang-de">Drei-Wege (gegenstandsinduziert)</span></button>
-        <button class="lat-mode" type="button" data-mode="ae" aria-pressed="false"><span class="lang-en">Three-way (attribute-induced)</span><span class="lang-zh">三支概念（属性诱导）</span><span class="lang-de">Drei-Wege (merkmalsinduziert)</span></button>
+        <section class="lat-col" id="outPanel" aria-labelledby="outTitle">
+          <div class="lat-head">
+            <h2 class="lat-h" id="outTitle"><span class="lang-en">Concept lattice</span><span class="lang-zh">概念格</span><span class="lang-de">Begriffsverband</span></h2>
+          </div>
+          <div class="lat-modes" role="group" aria-label="Kind of concept">
+            <button class="lat-mode" type="button" data-mode="classical" aria-pressed="true"><span class="lang-en">Classical</span><span class="lang-zh">经典概念</span><span class="lang-de">Klassisch</span><span class="lat-mode-n" id="count-classical"></span></button>
+            <button class="lat-mode" type="button" data-mode="oe" aria-pressed="false"><span class="lang-en">Three-way · object-induced</span><span class="lang-zh">三支 · 对象诱导</span><span class="lang-de">Drei-Wege · gegenstandsinduziert</span><span class="lat-mode-n" id="count-oe"></span></button>
+            <button class="lat-mode" type="button" data-mode="ae" aria-pressed="false"><span class="lang-en">Three-way · attribute-induced</span><span class="lang-zh">三支 · 属性诱导</span><span class="lang-de">Drei-Wege · merkmalsinduziert</span><span class="lat-mode-n" id="count-ae"></span></button>
+          </div>
+          <div class="lat-view" id="viewRow" role="group" aria-label="Table shown" hidden>
+            <span class="lat-hint"><span class="lang-en">Lattice of</span><span class="lang-zh">显示</span><span class="lang-de">Verband</span></span>
+            <button class="lat-mode" type="button" data-view="cur" aria-pressed="true"><span class="lang-en">this table</span><span class="lang-zh">当前表</span><span class="lang-de">dieser Tabelle</span></button>
+            <button class="lat-mode" type="button" data-view="ref" aria-pressed="false"><span class="lang-en">the reference</span><span class="lang-zh">参考表</span><span class="lang-de">der Referenz</span></button>
+          </div>
+          <p class="lat-diff" id="diffSummary" aria-live="polite" hidden></p>
+          <div class="lat-diagram" id="diagram"></div>
+          <div class="lat-info" id="info" aria-live="polite"></div>
+          <div class="lat-actions lat-row">
+            <button class="lat-btn" id="svgBtn" type="button"><span class="lang-en">Download SVG</span><span class="lang-zh">下载 SVG</span><span class="lang-de">SVG herunterladen</span></button>
+            <button class="lat-btn" id="linkBtn" type="button"><span class="lat-btn-label"><span class="lang-en">Copy link to this table</span><span class="lang-zh">复制这张表的链接</span><span class="lang-de">Link zu dieser Tabelle kopieren</span></span><span class="lat-btn-done" aria-hidden="true"><span class="lang-en">Copied ✓</span><span class="lang-zh">已复制 ✓</span><span class="lang-de">Kopiert ✓</span></span></button>
+          </div>
+        </section>
       </div>
 
-      <div class="lat-defs">
-        <p class="lat-def" data-for="classical">
-          <span class="lang-en"><strong>Classical concept</strong> (X, Y): X is a set of objects, Y is the set of attributes that <em>all</em> of them share, and X is exactly the set of objects having all of Y. Concepts are ordered by inclusion of their extents X; the result is the concept lattice (top = all objects).</span>
-          <span class="lang-zh"><strong>经典概念</strong> (X, Y)：X 是对象集合，Y 是这些对象<em>全部</em>共有的属性，并且 X 恰好是拥有 Y 中所有属性的对象集合。概念按外延 X 的包含关系排序，得到概念格（最上面是包含全部对象的概念）。</span>
-          <span class="lang-de"><strong>Klassischer Begriff</strong> (X, Y): X ist eine Menge von Gegenständen, Y ist die Menge der Merkmale, die sie <em>alle</em> gemeinsam haben, und X ist genau die Menge der Gegenstände, die alle Merkmale aus Y haben. Begriffe werden nach der Inklusion ihrer Umfänge X geordnet; das Ergebnis ist der Begriffsverband (oben = alle Gegenstände).</span>
-        </p>
-        <p class="lat-def" data-for="oe">
-          <span class="lang-en"><strong>Three-way concept</strong> (X, (Y, Z)): Y is the set of attributes that every object in X has, Z is the set of attributes that <em>no</em> object in X has, and X is exactly the set of objects having all of Y and none of Z. It records what the objects do have <em>and</em> what they definitely lack (shown as <em>¬attribute</em>).</span>
-          <span class="lang-zh"><strong>三支概念</strong> (X, (Y, Z))：Y 是 X 中每个对象都具有的属性，Z 是 X 中<em>所有</em>对象都不具有的属性，并且 X 恰好是具有 Y 中全部属性、且不具有 Z 中任何属性的对象集合。它既记录对象“有什么”，也记录“肯定没有什么”（图中以 <em>¬属性</em> 表示）。</span>
-          <span class="lang-de"><strong>Drei-Wege-Begriff</strong> (X, (Y, Z)): Y ist die Menge der Merkmale, die jeder Gegenstand in X hat, Z ist die Menge der Merkmale, die <em>kein</em> Gegenstand in X hat, und X ist genau die Menge der Gegenstände, die alle Merkmale aus Y und keines aus Z haben. Er hält fest, was die Gegenstände haben <em>und</em> was ihnen mit Sicherheit fehlt (dargestellt als <em>¬Merkmal</em>).</span>
-        </p>
-        <p class="lat-def" data-for="ae">
-          <span class="lang-en"><strong>Attribute-induced three-way concept</strong> (Y, (X, W)): the dual view. Y is a set of attributes, X is the set of objects having all of them, W is the set of objects having none of them, and Y is exactly the set of attributes that all of X have and none of W has. Here the nodes are sets of attributes.</span>
-          <span class="lang-zh"><strong>属性诱导的三支概念</strong> (Y, (X, W))：对偶视角。Y 是属性集合，X 是拥有 Y 中全部属性的对象，W 是不拥有 Y 中任何属性的对象，并且 Y 恰好是 X 中所有对象都具有、且 W 中所有对象都不具有的属性集合。此时节点是属性的集合。</span>
-          <span class="lang-de"><strong>Merkmalsinduzierter Drei-Wege-Begriff</strong> (Y, (X, W)): die duale Sicht. Y ist eine Menge von Merkmalen, X ist die Menge der Gegenstände, die sie alle haben, W ist die Menge der Gegenstände, die keines davon haben, und Y ist genau die Menge der Merkmale, die alle Gegenstände aus X und keiner aus W haben. Hier sind die Knoten Mengen von Merkmalen.</span>
-        </p>
-        <p class="lat-def-note">
-          <span class="lang-en">Notation and naming differ between papers; this page uses the common formulation in which the three-way concepts are the concepts of the table extended with a negated copy of every attribute.</span>
-          <span class="lang-zh">不同论文的记号和叫法略有差异；本页采用的是常见的表述：三支概念等价于在表格中为每个属性增加一个“否定”副本之后得到的概念。</span>
-          <span class="lang-de">Notation und Benennung unterscheiden sich von Artikel zu Artikel; diese Seite verwendet die verbreitete Formulierung, nach der die Drei-Wege-Begriffe die Begriffe der Tabelle sind, die um eine negierte Kopie jedes Merkmals erweitert wurde.</span>
-        </p>
-      </div>
+      <section class="lat-more" aria-labelledby="moreTitle">
+        <h2 class="sr-only" id="moreTitle"><span class="lang-en">Details</span><span class="lang-zh">详细信息</span><span class="lang-de">Einzelheiten</span></h2>
+        <details class="lat-list" open>
+          <summary id="implSummary"><span class="lang-en">Implications</span><span class="lang-zh">蕴含规则</span><span class="lang-de">Implikationen</span></summary>
+          <p class="lat-hint">
+            <span class="lang-en">A → B means: every object that has all of A also has all of B. Listed are the fewest rules from which every other rule of the table follows (its canonical basis). They describe the table itself, whichever kind of concept is drawn.</span>
+            <span class="lang-zh">A → B 表示：凡是具有 A 中全部属性的对象，也都具有 B 中的全部属性。这里列出的是能推出表中其余所有规则的最少一组规则（规范基）。它们描述的是表格本身，与当前画的是哪种概念无关。</span>
+            <span class="lang-de">A → B bedeutet: Jeder Gegenstand, der alle Merkmale aus A hat, hat auch alle aus B. Aufgeführt ist die kleinste Menge von Regeln, aus der alle übrigen Regeln der Tabelle folgen (ihre kanonische Basis). Sie beschreiben die Tabelle selbst, gleich welche Art von Begriff gezeichnet wird.</span>
+          </p>
+          <div id="implList"></div>
+        </details>
+        <details class="lat-list">
+          <summary id="listSummary"><span class="lang-en">All concepts</span><span class="lang-zh">全部概念</span><span class="lang-de">Alle Begriffe</span></summary>
+          <div id="conceptList"></div>
+        </details>
 
-      <p class="lat-counts" id="counts" aria-live="polite"></p>
-      <div class="lat-diagram" id="diagram"></div>
-      <div class="lat-info" id="info" aria-live="polite"></div>
-      <details class="lat-list">
-        <summary id="listSummary"><span class="lang-en">All concepts</span><span class="lang-zh">全部概念</span><span class="lang-de">Alle Begriffe</span></summary>
-        <div id="conceptList"></div>
-      </details>
-    </section>
+        <div class="lat-defs">
+          <h2 class="lat-h"><span class="lang-en">Definition</span><span class="lang-zh">定义</span><span class="lang-de">Definition</span></h2>
+          <p class="lat-def" data-for="classical">
+            <span class="lang-en"><strong>Classical concept</strong> (X, Y): X is a set of objects, Y is the set of attributes that <em>all</em> of them share, and X is exactly the set of objects having all of Y. Concepts are ordered by inclusion of their extents X; the result is the concept lattice (top = all objects).</span>
+            <span class="lang-zh"><strong>经典概念</strong> (X, Y)：X 是对象集合，Y 是这些对象<em>全部</em>共有的属性，并且 X 恰好是拥有 Y 中所有属性的对象集合。概念按外延 X 的包含关系排序，得到概念格（最上面是包含全部对象的概念）。</span>
+            <span class="lang-de"><strong>Klassischer Begriff</strong> (X, Y): X ist eine Menge von Gegenständen, Y ist die Menge der Merkmale, die sie <em>alle</em> gemeinsam haben, und X ist genau die Menge der Gegenstände, die alle Merkmale aus Y haben. Begriffe werden nach der Inklusion ihrer Umfänge X geordnet; das Ergebnis ist der Begriffsverband (oben = alle Gegenstände).</span>
+          </p>
+          <p class="lat-def" data-for="oe">
+            <span class="lang-en"><strong>Three-way concept</strong> (X, (Y, Z)): Y is the set of attributes that every object in X has, Z is the set of attributes that <em>no</em> object in X has, and X is exactly the set of objects having all of Y and none of Z. It records what the objects do have <em>and</em> what they definitely lack (shown as ¬attribute).</span>
+            <span class="lang-zh"><strong>三支概念</strong> (X, (Y, Z))：Y 是 X 中每个对象都具有的属性，Z 是 X 中<em>所有</em>对象都不具有的属性，并且 X 恰好是具有 Y 中全部属性、且不具有 Z 中任何属性的对象集合。它既记录对象“有什么”，也记录“肯定没有什么”（图中以 ¬属性 表示）。</span>
+            <span class="lang-de"><strong>Drei-Wege-Begriff</strong> (X, (Y, Z)): Y ist die Menge der Merkmale, die jeder Gegenstand in X hat, Z ist die Menge der Merkmale, die <em>kein</em> Gegenstand in X hat, und X ist genau die Menge der Gegenstände, die alle Merkmale aus Y und keines aus Z haben. Er hält fest, was die Gegenstände haben <em>und</em> was ihnen mit Sicherheit fehlt (dargestellt als ¬Merkmal).</span>
+          </p>
+          <p class="lat-def" data-for="ae">
+            <span class="lang-en"><strong>Attribute-induced three-way concept</strong> (Y, (X, W)): the dual view. Y is a set of attributes, X is the set of objects having all of them, W is the set of objects having none of them, and Y is exactly the set of attributes that all of X have and none of W has. Here the nodes are sets of attributes.</span>
+            <span class="lang-zh"><strong>属性诱导的三支概念</strong> (Y, (X, W))：对偶视角。Y 是属性集合，X 是拥有 Y 中全部属性的对象，W 是不拥有 Y 中任何属性的对象，并且 Y 恰好是 X 中所有对象都具有、且 W 中所有对象都不具有的属性集合。此时节点是属性的集合。</span>
+            <span class="lang-de"><strong>Merkmalsinduzierter Drei-Wege-Begriff</strong> (Y, (X, W)): die duale Sicht. Y ist eine Menge von Merkmalen, X ist die Menge der Gegenstände, die sie alle haben, W ist die Menge der Gegenstände, die keines davon haben, und Y ist genau die Menge der Merkmale, die alle Gegenstände aus X und keiner aus W haben. Hier sind die Knoten Mengen von Merkmalen.</span>
+          </p>
+          <p class="lat-def">
+            <span class="lang-en"><strong>Reading the diagram.</strong> A name written above a node also holds for every node below it; a name written under a node also belongs to every node above it. The upper half of a node is filled where a name is written above it, the lower half where one is written under it.</span>
+            <span class="lang-zh"><strong>读图方法。</strong>写在节点上方的名称，对它下方的所有节点也成立；写在节点下方的名称，也属于它上方的所有节点。节点上半部分填色，表示它上方标有名称；下半部分填色，表示它下方标有名称。</span>
+            <span class="lang-de"><strong>So liest man das Diagramm.</strong> Ein Name über einem Knoten gilt auch für alle Knoten darunter; ein Name unter einem Knoten gehört auch zu allen Knoten darüber. Die obere Hälfte eines Knotens ist gefüllt, wo ein Name über ihm steht, die untere, wo einer unter ihm steht.</span>
+          </p>
+          <p class="lat-def-note">
+            <span class="lang-en">Notation and naming differ between papers; this page uses the common formulation in which the three-way concepts are the concepts of the table extended with a negated copy of every attribute.</span>
+            <span class="lang-zh">不同论文的记号和叫法略有差异；本页采用的是常见的表述：三支概念等价于在表格中为每个属性增加一个“否定”副本之后得到的概念。</span>
+            <span class="lang-de">Notation und Benennung unterscheiden sich von Artikel zu Artikel; diese Seite verwendet die verbreitete Formulierung, nach der die Drei-Wege-Begriffe die Begriffe der Tabelle sind, die um eine negierte Kopie jedes Merkmals erweitert wurde.</span>
+          </p>
+        </div>
+      </section>
+      <span class="sr-only" id="latStatus" role="status" aria-live="polite"></span>
+    </div>
 
     <footer class="footer">
       <span class="lang-en">© 2026 Tejing Wang</span>
@@ -970,6 +1435,18 @@
         if (!document.documentElement.getAttribute('data-theme')) updateThemeButton();
       });
     }
+
+    // Nav-links overflow fade: hint that there's more to scroll to on a phone.
+    var navLinksWrap = document.querySelector('.nav-links-wrap');
+    var navLinksEl = document.querySelector('.nav-links');
+    function updateNavFade() {
+      if (!navLinksWrap || !navLinksEl) return;
+      var canScrollRight = navLinksEl.scrollWidth - navLinksEl.clientWidth - navLinksEl.scrollLeft > 4;
+      navLinksWrap.classList.toggle('has-overflow', canScrollRight);
+    }
+    if (navLinksEl) navLinksEl.addEventListener('scroll', updateNavFade, { passive: true });
+    window.addEventListener('resize', updateNavFade);
+    updateNavFade();
 
     var backToTop = document.getElementById('backToTop');
     function toggleBackToTop() {

@@ -44,7 +44,7 @@ A personal academic homepage for **Tejing Wang (王特警)** — an Artificial I
 - **Content in a data file** — News, Publications, Awards and Projects live in `data/content.mjs` as `{ en, zh }` pairs; a small dependency-free script writes them into `index.html` as plain static HTML and refuses to build if either language is missing.
 - **Publication cards** with status tags and PDF / arXiv / Code / BibTeX buttons; **project cards** with schematic figures and screenshot galleries; **folded awards**.
 - **Notes** (`reading.html`) — short notes plus a searchable library of papers I've read.
-- **Concept lattice demo** (`lattice.html`) — enter a formal context and see its classical or three-way concept lattice drawn live. The maths is tested against a brute-force implementation.
+- **Concept lattice demo** (`lattice.html`) — a cross table beside its live-drawn classical or three-way concept lattice: select a concept to see it as a rectangle in the table, read off the table’s implications, compare against a reference table, import CSV / `.cxt`, export SVG, share a link to any table. The maths is tested against a brute-force implementation.
 - **Visitor map** — anonymous, city-level visit counts on a world map, in a small block above the footer that only appears when its data loads (Cloudflare Worker + D1; no IPs stored).
 - **Analytics** — privacy-friendly GoatCounter page views, referrers (`?ref=`) and which sections get read.
 - Scroll-spy navigation, responsive down to mobile, skip-to-content link, reduced-motion support, social-preview meta tags, structured data, emails assembled by script (not in the page source).
@@ -660,7 +660,7 @@ ORCID、GitHub 是同样的写法。**CV 那一行**带着 `data-cv hidden`：�
 
 链接可以指向本页板块（`href="#id"`）或别的页面（`href="reading.html"`）。
 
-**子页面的导航**（`reading.html`、`lattice.html`、`constellation.html`）是另一套：顶部列出所有页面（主页、笔记、概念格演示、星座），可以直接互相跳转，左上角的名字也能点回主页。每个页面里这四行是一样的，只有**当前页面那一行**多了 `class="active" aria-current="page"`（显示成带下划线）。所以加、删、改名一个页面时，三个子页面的这段导航都要改一遍。
+**子页面的导航**（`reading.html`、`lattice.html`、`constellation.html`）是另一套：顶部列出所有页面（主页、笔记、概念格演示、星座），可以直接互相跳转，左上角的名字也能点回主页。每个页面里这四行是一样的，只有**当前页面那一行**多了 `class="active" aria-current="page"`（显示成带下划线）。所以加、删、改名一个页面时，三个子页面的这段导航都要改一遍。三个子页面里这段导航外面都包了一层 `<div class="nav-links-wrap">`：手机上链接排不下、可以横向滑动时，右端会渐隐并显示一个小箭头 `›`，滑到头就消失（和主页的做法一样）。
 
 ### 7.5 网页标题、描述、分享预览
 
@@ -865,9 +865,19 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 
 ## 11. 概念格演示
 
-`lattice.html` 是一个纯前端的页面：输入一个"对象×属性"的表格，实时画出经典概念格或三支概念格。**不需要后端，也不需要构建。**
+`lattice.html` 是一个纯前端的页面：左边是一张"对象×属性"的交叉表，右边实时画出它的经典概念格或三支概念格。**不需要后端，也不需要构建。**
 
-- **计算部分**在 `lattice-core.js`（纯函数，不碰页面），**界面**在 `lattice.js`，**页面文字**在 `lattice.html`。
+- **计算部分**在 `lattice-core.js`（纯函数，不碰页面），**界面**在 `lattice.js`，**页面文字和样式**在 `lattice.html`。界面里由脚本生成的文字（按钮提示、统计、报错等）集中在 `lattice.js` 的 `STR` 里，每条是 `[英文, 中文, 德文]`。
+- **页面上有什么**：
+  - **表格**：点单元格添加或去掉叉号；点对象名或属性名会弹出一个小编辑框，可以改名或删除；表格末尾的 "+ 对象 / + 属性" 用来添加。属性名竖排：拉丁字母转 90° 自下而上读，中文逐字直排（脚本按名字里有没有汉字自动判断）。**撤销**按钮（或 `Cmd/Ctrl+Z`）可以退回最近 60 步。
+  - **概念格**：三个按钮切换概念的种类，按钮上的数字是该种类的概念个数。节点上半部分填色表示这里标有属性，下半部分填色表示标有对象（教材里的画法）。跨了几层的边如果会穿过一个无关的节点，会画成弧线绕开。
+  - **选中一个概念**（点节点，或点下面列表里的一行）：概念格里它上方和下方的概念保持高亮，其余变淡；表格里它的对象行、属性列变成强调色，交叉处的叉号连成一个矩形（"概念就是表格里的一个极大矩形"）；三支概念下，"肯定不具有"的属性名加删除线，对应的格子画斜纹。
+  - **蕴含规则**：列出表格的规范基（Duquenne–Guigues basis），也就是能推出其余所有规则的最少一组规则，每条后面是满足前提的对象个数；前提里的属性在表中从不同时出现的，单独列在"从不同时出现"下面。点一条规则会选中对应的概念。
+  - **与参考表对比**：点"与参考表对比"会把当前表存为参考；之后改动（或导入一张对象、属性都相同的表）时，表格里用实线圈标出"仅当前表有"的叉号、用虚线圈标出"仅参考表有"的；概念格里带外圈的节点是另一张表没有的概念；蕴含规则里会标出在另一张表中不成立的规则。可以在"当前表 / 参考表"之间切换看哪一张的概念格。**页面不预置任何对比数据**，参考表就是你自己存下的那张。
+  - **导入**：粘贴或选择文件。支持带表头的 CSV / TSV（第一行是属性名，之后每个对象一行，有该属性的位置写 `x` 或 `1`）和 Burmeister 的 `.cxt` 格式。
+  - **下载 SVG**：把当前的概念格存成独立的 SVG 文件（样式已写进文件里，可以直接放进幻灯片或论文）。
+  - **复制链接**：整张表（名称、叉号、参考表、概念种类）都编码在网址的 `#` 后面，所以把地址发给别人，打开就是同一张表。格式写在 `lattice.js` 里 `encodeState` 上面的注释里。
+- **版式**：宽屏上左右两栏，左栏的宽度跟着表格走（脚本把表格宽度写进 `--ctx-w`），较短的一栏在滚动时会停在视线里；窄于 900px 时变成单栏，顺序是表格、概念格、对比。
 - **加一个示例表格**：在 `lattice.js` 里搜 `var PRESETS = {`，在里面加一项：
 
 **模板：新增一个示例表格**
@@ -881,12 +891,12 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
     },
 ```
 
-  - `objects`、`attrs` 里每一项是 `[英文名, 中文名]`。
+  - `label` 和 `objects`、`attrs` 里的每一项都是 `[英文名, 中文名]`，后面可以再加第三个德文名（不写的话德语模式下显示英文）。
   - `rows` 里的**第 i 行**，列出**第 i 个对象具有的属性的下标（从 0 开始数）**。上面的例子里，对象甲有属性一、二，对象乙有属性二、三，对象丙有属性一、三。
   - 前面一项和这一项之间要有逗号。
 - **大小限制**：表格最大 12×12、画出来的概念数上限 400，是 `lattice.js` 开头的 `MAX_OBJECTS`、`MAX_ATTRS`、`DRAW_LIMIT`。
 - **页面里"三支概念"的定义**采用的是常见表述：三支概念等价于"给每个属性增加一个'否定'副本之后的概念"。如果你论文里的定义或记号不同，改 `lattice.html` 里的说明文字（搜 `lat-def`）和 `lattice-core.js` 顶部的注释。
-- **改了 `lattice-core.js` 的计算逻辑之后，一定要运行测试**：`node tests/lattice-core.test.js`。它会拿一个独立的暴力算法逐项对照结果，全部通过才说明算对了（[第 16 节](#16-自动检查和测试)）。改界面和示例表格不需要测试。
+- **改了 `lattice-core.js` 的计算逻辑之后，一定要运行测试**：`node tests/lattice-core.test.js`。它会拿一个独立的暴力算法逐项对照结果（概念、覆盖关系、标注位置、画图的层次，以及蕴含规则是否恰好是规范基），全部通过才说明算对了（[第 16 节](#16-自动检查和测试)）。改界面和示例表格不需要测试。
 
 ---
 
@@ -1101,7 +1111,7 @@ node tools/build.mjs --check
 node tests/lattice-core.test.js
 ```
 
-`tests/lattice-core.test.js` 会拿一个独立的暴力算法，对几百个随机表格和边界情况逐项核对概念格算法（还核对了经典的"Living beings and water"例子应有 19 个概念），全部通过才算过。
+`tests/lattice-core.test.js` 会拿一个独立的暴力算法，对几百个随机表格和边界情况逐项核对概念格算法（还核对了经典的"Living beings and water"例子应有 19 个概念）；蕴含规则则按伪内涵的定义逐个子集核对，并检查用这些规则求闭包与表格里的闭包完全一致。全部通过才算过。
 
 ---
 
@@ -1133,8 +1143,8 @@ node tests/lattice-core.test.js
 ├── index.html            主页（所有板块）。含四个由 data/content.mjs 生成的区块
 ├── reading.html          Notes 页：论文库 + 短文笔记（数据在文件里的 PAPERS / NOTES / PROJECTS 数组）
 ├── lattice.html          概念格演示的页面
-├── lattice.js            概念格演示：表格编辑器、画图、示例表格 PRESETS
-├── lattice-core.js       概念格演示：概念的计算（纯函数，有测试保护）
+├── lattice.js            概念格演示：表格、画图、选中与对比、导入导出、链接；示例表格 PRESETS、界面文字 STR
+├── lattice-core.js       概念格演示：概念、蕴含规则、图的层次布局的计算（纯函数，有测试保护）
 ├── constellation.html    Constellation 页：每完成一天就点亮一颗星星的打卡工具
 ├── constellation.js      Constellation：星图的绘制、打卡/撤销请求（Worker 地址 API_BASE 在文件开头）
 ├── analytics.js          GoatCounter 统计（站点代码 GOATCOUNTER_CODE 在文件开头）

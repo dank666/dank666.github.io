@@ -16,6 +16,10 @@
    transposed table: (Y, (X, W)) where Y is a set of attributes, X the objects
    having all of them and W the objects having none of them.
 
+   Also computed: the canonical (Duquenne-Guigues) basis of attribute
+   implications of a table, i.e. a smallest set of rules "every object with
+   all of A also has all of B" from which every other such rule follows.
+
    Sets are bitmasks (an int per set), so tables are limited to 30 rows and 30
    columns; the demo page allows far fewer. */
 (function (root) {
@@ -166,8 +170,12 @@
 
   /* Diagram layout. Every edge points downward: level 0 is the top concept
      (largest extent). Nodes inside a level are ordered with a few
-     barycentre sweeps to reduce edge crossings, then spread evenly.
-     Returns { levels: [[nodeIdx...] per level], x: [0..1 per node], level: [per node] } */
+     barycentre sweeps to reduce edge crossings; every level is then centred
+     with its nodes one column apart, so all levels share one grid and the
+     drawing is symmetric about its middle.
+     Returns { levels: [[nodeIdx...] per level], level: [per node],
+               x: [per node, strictly between 0 and 1],
+               span: width of the drawing in columns (x * span is a column) } */
   function layout(result) {
     var n = result.nodes.length, covers = result.covers, i, k;
     var up = [], down = [];
@@ -210,10 +218,83 @@
       for (k = 1; k <= depth; k++) sweep(k, up);
       for (k = depth - 1; k >= 0; k--) sweep(k, down);
     }
-    return { levels: levels, x: pos, level: level };
+
+    // Columns: every level centred, its nodes one column apart.
+    var col = [];
+    levels.forEach(function (row) {
+      row.forEach(function (node, idx) { col[node] = idx - (row.length - 1) / 2; });
+    });
+    var lo = Infinity, hi = -Infinity;
+    for (i = 0; i < n; i++) { lo = Math.min(lo, col[i]); hi = Math.max(hi, col[i]); }
+    var span = hi - lo + 1;
+    for (i = 0; i < n; i++) pos[i] = (col[i] - lo + 0.5) / span;
+
+    return { levels: levels, x: pos, level: level, span: span };
   }
 
-  var api = { analyze: analyze, layout: layout, transpose: transpose, popcount: popcount, masks: masks };
+  /* The attributes shared by all objects that have every attribute of `set`
+     (the closure of `set`), together with those objects.
+     mk is the result of masks(). Returns { ext, intent }. */
+  function intentClosure(mk, set) {
+    var ext = mk.allG, intent = mk.allM, i;
+    for (i = 0; i < mk.cols.length; i++) if (set & (1 << i)) ext &= mk.cols[i];
+    for (i = 0; i < mk.rows.length; i++) if (ext & (1 << i)) intent &= mk.rows[i];
+    return { ext: ext, intent: intent };
+  }
+
+  /* implications(inc, nG, nM, opts)
+       opts: { limit: max closed sets to walk through (default 5000) }
+     The canonical basis of the table, by Ganter's NextClosure: the sets that
+     are closed under the rules found so far are visited in lectic order, and
+     each one that is not an intent (a "pseudo-intent" P) gives the rule
+     P -> P'' \ P.
+     Returns { tooMany, list: [{ premise, conclusion, support }] } where
+     premise and conclusion are bitmasks over attributes and support is the
+     number of objects that have the whole premise (0 = the attributes of the
+     premise never occur together). */
+  function implications(inc, nG, nM, opts) {
+    var limit = (opts && opts.limit) || 5000;
+    var mk = masks(inc, nG, nM), list = [], steps = 0;
+
+    function close(set) {
+      var changed = true, i, im;
+      while (changed) {
+        changed = false;
+        for (i = 0; i < list.length; i++) {
+          im = list[i];
+          if ((im.premise & set) === im.premise && (im.conclusion & ~set)) {
+            set |= im.conclusion;
+            changed = true;
+          }
+        }
+      }
+      return set;
+    }
+
+    function next(a) {
+      for (var i = nM - 1; i >= 0; i--) {
+        var bit = 1 << i;
+        if (a & bit) {
+          a &= ~bit;
+        } else {
+          var b = close(a | bit);
+          if (((b & ~a) & (bit - 1)) === 0) return b;
+        }
+      }
+      return null;
+    }
+
+    var a = 0;
+    while (a !== null) {
+      if (++steps > limit) return { tooMany: true, list: [] };
+      var c = intentClosure(mk, a);
+      if (c.intent !== a) list.push({ premise: a, conclusion: c.intent & ~a, support: popcount(c.ext) });
+      a = next(a);
+    }
+    return { tooMany: false, list: list };
+  }
+
+  var api = { analyze: analyze, layout: layout, transpose: transpose, popcount: popcount, masks: masks, intentClosure: intentClosure, implications: implications };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.LatticeCore = api;
 })(typeof window !== 'undefined' ? window : this);
