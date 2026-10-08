@@ -1,19 +1,19 @@
 /* Visitor map: records one anonymous visit per browser per day and draws
    the aggregated city-level stats on a world map.
 
-   Everything here fails silently: if the Worker is unreachable, the libraries
-   don't load, or anything else goes wrong, the rest of the page is untouched
-   and the Visitors block shows a short message instead of the map ("No data
-   yet" if the service answered but has no visits, a "couldn't be loaded"
-   notice if it couldn't be reached — e.g. from mainland China, where
-   *.workers.dev is generally blocked). */
+   Everything here fails silently. The Visitors block is hidden in the HTML
+   and is only revealed once the stats have arrived and the map can be drawn:
+   if the Worker is unreachable (e.g. from mainland China, where *.workers.dev
+   is generally blocked), has no visits yet, the libraries don't load, or
+   anything else goes wrong, the block stays hidden and the rest of the page
+   is untouched. */
 (function () {
   'use strict';
 
   // ---- Configuration ------------------------------------------------------
   // After deploying visitor-worker/, paste its URL here (no trailing slash),
   // e.g. 'https://visitor-map.your-subdomain.workers.dev'.
-  // While this is empty the block simply shows "No data yet".
+  // While this is empty the block simply stays hidden.
   var API_BASE = 'https://visitor-map.dank666.workers.dev';
 
   // Visits are only recorded from the real site. Local previews (localhost,
@@ -23,15 +23,11 @@
   var REQUEST_TIMEOUT_MS = 6000;
   var ANTARCTICA_ID = '010';
 
-  var root = document.getElementById('visitorMap');
+  var root = document.getElementById('visitors');
   var canvas = document.getElementById('visitorCanvas');
   if (!root || !canvas) return;
 
   var state = { topo: null, stats: null, width: 0 };
-
-  function setState(name) {
-    root.setAttribute('data-state', name);
-  }
 
   function currentLang() {
     var lang = document.documentElement.getAttribute('data-lang');
@@ -234,7 +230,7 @@
   function start() {
     if (started) return;
     started = true;
-    if (!API_BASE) { setState('empty'); return; }
+    if (!API_BASE) return;
 
     // Wait for our own hit (if any) so it shows up in the numbers below, but
     // not for long: on a network that can't reach the Worker the hit would
@@ -243,26 +239,30 @@
     var stats = hitSettled.then(function () { return fetchJSON(API_BASE + '/stats'); }).then(normalize);
     Promise.all([stats, loadLibs()])
       .then(function (r) {
-        if (!r[0]) { setState('empty'); return; }
+        if (!r[0]) return;
         state.stats = r[0];
         state.topo = r[1];
         showStats(state.stats);
-        setState('ready');
+        // Unhide first: the map is sized from the canvas's laid-out width.
+        root.hidden = false;
         render();
       })
-      .catch(function () { setState('error'); });
+      .catch(function () {});
   }
 
   var hit = recordHit();
 
-  if ('IntersectionObserver' in window) {
+  // Load lazily, once the reader is getting near. A hidden block is never
+  // "in view", so the footer right below it is watched in its place.
+  var marker = document.querySelector('.footer');
+  if (marker && 'IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       if (entries.some(function (e) { return e.isIntersecting; })) {
         io.disconnect();
         start();
       }
     }, { rootMargin: '400px 0px' });
-    io.observe(root);
+    io.observe(marker);
   } else {
     start();
   }

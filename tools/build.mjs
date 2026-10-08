@@ -133,23 +133,39 @@ function renderLinks(links = {}) {
   return `<div class="pub-links" role="group" aria-label="Paper links / 论文链接">\n${indent(buttons.join('\n'), 2)}\n</div>`;
 }
 
+// Papers still being written are kept apart from the main list, under their own
+// small heading. That heading already says what their status is, so their cards
+// carry no status label.
+const IN_PREPARATION = 'in-preparation';
+const MANUSCRIPTS = { en: 'Manuscripts in Preparation', zh: '撰写中的稿件', de: 'Manuskripte in Vorbereitung' };
+
 function renderPublications() {
-  const cards = data.publications.map((p, i) => {
+  const card = (p, i) => {
     need(p.title, `publications[${i}].title`);
     const status = STATUS[p.status];
     if (!status) throw new Error(`publications[${i}].status: expected one of ${Object.keys(STATUS).join(', ')}, got ${JSON.stringify(p.status)}`);
-    const row = [`<span class="status-pill status-${p.status}">${spans(status)}</span>`];
+    const row = p.status === IN_PREPARATION ? [] : [`<span class="status-pill status-${p.status}">${spans(status)}</span>`];
     if (p.meta) row.push(pair('span', 'publication-meta', need(p.meta, `publications[${i}].meta`)));
     const links = renderLinks(p.links);
     return [
       '<div class="publication-item pub-card">',
       indent(pair('div', 'publication-title', p.title), 2),
-      `  <div class="pub-status-row">\n${indent(row.join('\n'), 4)}\n  </div>`,
+      row.length && `  <div class="pub-status-row">\n${indent(row.join('\n'), 4)}\n  </div>`,
       links && indent(links, 2),
       '</div>'
     ].filter(Boolean).join('\n');
-  });
-  return `<div class="list">\n${indent(cards.join('\n'), 2)}\n  <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>\n</div>`;
+  };
+  const cards = data.publications.map((p, i) => ({ html: card(p, i), drafting: p.status === IN_PREPARATION }));
+  const group = (drafting) => cards.filter((c) => c.drafting === drafting).map((c) => c.html);
+  const out = group(false);
+  const drafts = group(true);
+
+  const bibStatus = '  <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>';
+  let html = `<div class="list">\n${out.length ? indent(out.join('\n'), 2) + '\n' : ''}${bibStatus}\n</div>`;
+  if (drafts.length) {
+    html += `\n<h3 class="pub-subhead">${spans(MANUSCRIPTS)}</h3>\n<div class="list">\n${indent(drafts.join('\n'), 2)}\n</div>`;
+  }
+  return html;
 }
 
 // ---- Awards ----------------------------------------------------------------------

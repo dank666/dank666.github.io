@@ -40,12 +40,12 @@ A personal academic homepage for **Tejing Wang (王特警)** — an Artificial I
 
 - **Three languages (EN / 中文 / DE)** — a one-click language toggle; the choice is remembered across pages.
 - **Dark mode** — follows the system setting; a toggle button lets a visitor override it.
-- **Sections** — About, Research Statement, Publications, News, Education, Experience, Projects, Skills, Awards, Contact, Visitors.
+- **Sections** — About, Research Statement, Publications, News, Education, Experience, Projects, Skills, Awards, Contact.
 - **Content in a data file** — News, Publications, Awards and Projects live in `data/content.mjs` as `{ en, zh }` pairs; a small dependency-free script writes them into `index.html` as plain static HTML and refuses to build if either language is missing.
 - **Publication cards** with status tags and PDF / arXiv / Code / BibTeX buttons; **project cards** with schematic figures and screenshot galleries; **folded awards**.
 - **Notes** (`reading.html`) — short notes plus a searchable library of papers I've read.
 - **Concept lattice demo** (`lattice.html`) — enter a formal context and see its classical or three-way concept lattice drawn live. The maths is tested against a brute-force implementation.
-- **Visitor map** — anonymous, city-level visit counts on a world map (Cloudflare Worker + D1; no IPs stored).
+- **Visitor map** — anonymous, city-level visit counts on a world map, in a small block above the footer that only appears when its data loads (Cloudflare Worker + D1; no IPs stored).
 - **Analytics** — privacy-friendly GoatCounter page views, referrers (`?ref=`) and which sections get read.
 - Scroll-spy navigation, responsive down to mobile, skip-to-content link, reduced-motion support, social-preview meta tags, structured data, emails assembled by script (not in the page source).
 
@@ -285,6 +285,7 @@ node tools/build.mjs
 ```
 
 - **`status`** 只能是这四个值之一：`"in-preparation"`（撰写中）、`"under-review"`（审稿中）、`"preprint"`（预印本）、`"published"`（已发表）。写错了构建会报错并列出可选值。
+- **撰写中的稿件单独成组**：`status` 是 `"in-preparation"` 的论文不进主列表，构建时会自动排到主列表下面、一个小标题 **Manuscripts in Preparation（撰写中的稿件）** 之下，不管它在数组里的位置。小标题已经说明了状态，所以这些卡片上不再显示状态标签。投稿之后把 `status` 改成 `"under-review"`，它就回到主列表；没有撰写中的稿件时，小标题也不出现。小标题的文字在 `tools/build.mjs` 里（搜 `MANUSCRIPTS`）。
 - **`meta`** 是状态标签旁边那行小字，可选；没有就删掉这个字段。**期刊或会议名用 `<em>…</em>` 包起来**，它会用衬线斜体显示（中英文两份都包）。只包拉丁字母写的名字；如果是中文刊名就不要包，中文不用斜体。
 - **`links`**：只有填了的链接才会显示成按钮，没填的不显示；四个都没填时，卡片上就没有按钮这一行。
 
@@ -379,7 +380,7 @@ node tools/build.mjs
 - **`tagline`**：标题下面的一行小字（角色、时间、导师、是否完成）。
 - **`figure`**（示意图），三种类型选一种：
   - `type: "flow"`：几个方框加箭头，表示"输入 → 方法 → 输出"（手机上自动竖排）。
-  - `type: "scope"`：一个中心框加几个并列的标签，表示"范围"。写法参考数据文件里"神经符号智能体综述"那一项。标签之间会自动画成树形连接线，**适合 2 到 5 个较短的标签**；手机上标签会换行，连接线会自动隐藏、只显示成一组。`caption`（图注）是可选的，不想要就删掉这个字段。
+  - `type: "scope"`：一个中心框加几个并列的标签，表示"范围"。写法：`{ type: "scope", title: { en: "…", zh: "…" }, items: [{ en: "…", zh: "…" }, …], caption: { en: "…", zh: "…" } }`（目前没有项目用到）。标签之间会自动画成树形连接线，**适合 2 到 5 个较短的标签**；手机上标签会换行，连接线会自动隐藏、只显示成一组。`caption`（图注）是可选的，不想要就删掉这个字段。
   - `type: "image"`：放你自己画的图：`{ type: "image", src: "images/my-figure.webp", alt: "图的文字说明", width: 1200, height: 600, caption: { en: "…", zh: "…" } }`。
 - **`links`**：项目卡下方的一行链接，可以放多个。
 - **`gallery`**：截图画廊。点击缩略图会放大（有灯箱，`Esc` 关闭，左右方向键切换）。
@@ -436,9 +437,16 @@ node tools/build.mjs
 - **名字**：`<h1 data-i18n data-lang-en="Tejing Wang" data-lang-zh="王特警">Tejing Wang</h1>`——改名字要改**两个属性和中间的文字**共三处。紧跟在它后面的 `<span class="hero-latin lang-zh">Tejing Wang</span>` 是**中文模式下**显示在中文名旁边的罗马字名（衬线体、灰色），改名时也要改。名字还出现在很多别的地方（导航栏左上角、网页标题、分享预览、结构化数据、页脚版权、`reading.html` 和 `lattice.html`），改名后在整个仓库里搜 `Tejing Wang` 和 `王特警`，把所有出现的地方一起改。
 - **一句话身份介绍**：`<p class="hero-lede lang-en">` 和 `<p class="hero-lede lang-zh">` 各一份，写"我是谁、在哪里、跟谁读"。身份变了（比如正式入学）要记得改这里。英文那份用衬线体显示、字号更大，中文那份保持正文字体。
 - **研究方向标签**：`<p class="subtitle lang-en">` 和 `<p class="subtitle lang-zh">` 各一份，每个方向包在一个 `<span class="nw">…</span>` 里，显示成一行强调色的文字，方向之间的间隔号 `·` 是样式自动加的。加一个方向就加一个这样的 `<span>`，**不要**自己再写 `·`（自动加的间隔号在换行时不会落在行首或行尾，手写的会）。
-- **联系方式那一行** `class="hero-contact"`：下载简历、学校邮箱、GitHub、ORCID、Google Scholar。下载简历排在最前，是一个加粗带下划线的强调色链接；其余每一项是"小图标 + 名字"（邮箱的写法见 6.6）。
+- **概念格演示的链接** `class="hero-demo"`：研究方向下面那一行带下划线的链接，指向 `lattice.html`。三种语言的文字都在同一个 `<a>` 里。不想要了就删掉这一整段 `<p>`。
+- **联系方式那一行** `class="hero-contact"`：下载简历、学校邮箱、GitHub、ORCID。下载简历排在最前，是一个加粗带下划线的强调色链接，**只有仓库里有 `CV.pdf` 时才显示**（见[第 9 节](#9-简历-cv)）；其余每一项是"小图标 + 名字"（邮箱的写法见 6.6）。
   - 图标是直接写在 HTML 里的 `<svg class="hero-icon">`，颜色跟着文字走（不用品牌色），深色模式和鼠标悬停时会自动变色。**加一项时照着旁边的写法抄一份**，换掉链接、名字和 `<svg>` 里的图形；图标要用**单色**的，尺寸由样式统一成 16px。
-  - **Google Scholar 现在是占位**（灰色、点不了，写在一个 `<span class="hero-soon">` 里）。有了主页之后：把 `<span class="hero-soon" title="…">` 改成 `<a href="你的主页网址" target="_blank" rel="noopener">`，结尾的 `</span>` 改成 `</a>`，里面的图标和文字不动。Contact 板块里还有一处 "Coming soon"，见 6.6。
+  - **Google Scholar 目前没有放上来**（还没有主页，页面上不留"待添加"的占位）。有了主页之后，在 ORCID 那一项后面加上下面这段，Contact 板块里也加一项（见 6.6）：
+
+    ```html
+            <span class="sep" aria-hidden="true">·</span>
+            <a href="你的主页网址" target="_blank" rel="noopener"><svg class="hero-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.242 13.769 0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg>Google Scholar</a>
+    ```
+
 - **"欢迎合作"那句话** `class="hero-open"`：想改措辞或暂时去掉，直接改或删这一整段 `<p>`。Contact 里还有一句同样的 `class="contact-open"`，要一起改。
 
 ### 6.3 About 和 Research
@@ -547,7 +555,7 @@ node tools/build.mjs
 
 > 这只能挡住最简单的爬虫。请注意：Git 历史里早先提交过的明文地址是**删不掉**的，别人仍然能在仓库历史里翻到。
 
-**模板：把 Google Scholar 的"Coming soon"换成真的链接**（找到 `Google Scholar` 那个 `contact-item`，整个替换成下面这样）
+**模板：加上 Google Scholar**（页面上现在没有这一项；有了主页之后，把下面这段加在 ORCID 那个 `contact-item` 的前面）
 
 ```html
         <div class="contact-item">
@@ -556,7 +564,7 @@ node tools/build.mjs
         </div>
 ```
 
-ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、LinkedIn 等）后，顺手把它也加进 [6.8 结构化数据](#68-结构化数据搜索引擎看的)的 `sameAs` 里。
+ORCID、GitHub 是同样的写法。**CV 那一行**带着 `data-cv hidden`：它和首屏的下载简历链接一样，只有仓库里有 `CV.pdf` 时才显示（见[第 9 节](#9-简历-cv)），这两个属性不要删。加了新的个人主页链接（Scholar、LinkedIn 等）后，顺手把它也加进 [6.8 结构化数据](#68-结构化数据搜索引擎看的)的 `sameAs` 里。
 
 ### 6.7 页脚
 
@@ -648,7 +656,7 @@ ORCID、GitHub 是同样的写法。加了新的个人主页链接（Scholar、L
 - **主栏**：`<nav class="nav-links">` 里直接排着的 `<a>`，一直显示。
 - **More 菜单**：`<div class="nav-more-menu" id="navMoreMenu">` 里的 `<a>`，点"More"才出现。
 
-**想把某个链接放进主栏或拿出来，就把那一行 `<a …>…</a>` 剪切粘贴到另一部分。** 主栏放太多会挤（屏幕宽度小于 900px 时，More 菜单会自动展开成一行可以横向滚动的链接，不受影响）。目前的经验是主栏放 6 个以内。
+**想把某个链接放进主栏或拿出来，就把那一行 `<a …>…</a>` 剪切粘贴到另一部分。** 主栏放太多会挤（屏幕宽度小于 900px 时，More 菜单会自动展开成一行可以横向滚动的链接，不受影响；右边还有没露出来的链接时，这一行的右端会渐隐并显示一个小箭头 `›`，提示可以横向滑动，滑到头就消失）。目前的经验是主栏放 6 个以内。
 
 链接可以指向本页板块（`href="#id"`）或别的页面（`href="reading.html"`）。
 
@@ -749,8 +757,8 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 
 ## 9. 简历 CV
 
-- 把 PDF 命名为 **`CV.pdf`** 放在仓库**根目录**。主页首屏和 Contact 里的"下载简历"按钮会自动生效，不用改任何代码。
-- 在 `CV.pdf` 上传之前，点按钮只会提示"简历还没有上传"，不会出现打不开的链接。
+- 把 PDF 命名为 **`CV.pdf`** 放在仓库**根目录**。主页首屏的"下载简历"链接和 Contact 里的 CV 那一行会自动出现，点击直接打开 PDF，不用改任何代码。
+- 在 `CV.pdf` 上传之前，这两处**都不显示**：页面加载时会用一次 HEAD 请求检查 `CV.pdf` 在不在，确认存在才把它们显示出来（在 `index.html` 里它们带着 `data-cv hidden` 两个属性）。所以页面上不会出现打不开的链接，也没有"还没上传"的提示。
 - **更新简历**：用同名的新文件覆盖旧文件，提交推送。浏览器可能缓存旧版本约 10 分钟。
 - 想知道简历被点了几次：在简历 PDF 里写的个人主页链接后面加 `?ref=cv`（见[第 12 节](#12-统计goatcounter)）。
 
@@ -902,14 +910,14 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 
 ## 13. 访客地图（Cloudflare Worker）
 
-页面底部 **Visitors** 区块在世界地图上按城市显示访问量：圆点越大越深，访问越多。只记录**城市级别**的匿名次数（经纬度取整到约 0.1°），**不存 IP，也不存 User-Agent**。
+页脚上方的 **Visitors** 小区块在世界地图上按城市显示访问量：圆点越大越深，访问越多。它不是一个正式板块：没有编号，也不在导航里；**只有数据加载成功时才显示**，加载失败或还没有数据时整块隐藏，不留空框。只记录**城市级别**的匿名次数（经纬度取整到约 0.1°），**不存 IP，也不存 User-Agent**。
 
 ### 13.1 它是怎么工作的
 
-- **前端** `visitors.js`：有人打开主页时，如果这个浏览器今天还没计过数，就向 Worker 发一次 `POST /hit`（`localStorage` 里的 `visitor-last-hit` 记着日期，所以**同一个浏览器每天只算一次**）；滚动到该区块时再 `GET /stats` 取数据画图。任何请求失败都是静默处理，区块显示提示文字，不影响页面其他部分。
+- **前端** `visitors.js`：有人打开主页时，如果这个浏览器今天还没计过数，就向 Worker 发一次 `POST /hit`（`localStorage` 里的 `visitor-last-hit` 记着日期，所以**同一个浏览器每天只算一次**）；滚动到页脚附近时再 `GET /stats` 取数据画图，画好了才把区块显示出来（HTML 里它带着 `hidden`）。任何请求失败都是静默处理，区块保持隐藏，不影响页面其他部分。
 - **后端** `visitor-worker/`（Cloudflare Worker + D1 数据库）：`POST /hit` 只接受来自 `https://dank666.github.io` 的请求；`GET /stats` 另外允许 localhost（本地预览用）。明显的爬虫（User-Agent 里有 bot、curl 等）不计数。
 - **只统计线上访问**：在 localhost 或 `file://` 打开页面**不会**增加计数。
-- **Worker 地址**填在 `visitors.js` 最顶部的 `API_BASE`（留空时区块显示"暂无数据"）。
+- **Worker 地址**填在 `visitors.js` 最顶部的 `API_BASE`（留空时区块不显示）。
 - **总访问数** = 数据库里所有城市的次数之和；**国家或地区数** = 不同的国家代码个数。
 - 这是"尽力而为"的统计：来源检查可以被伪造，别把它当作严格准确的数字。
 
@@ -953,7 +961,7 @@ curl -s https://visitor-map.dank666.workers.dev/stats -H "Origin: https://dank66
 
 ### 13.5 已知限制
 
-**中国大陆的网络通常连不上 `*.workers.dev`。** 大陆访客的访问不会被记录，他们看到的 Visitors 区块是"访客地图暂时无法加载"的提示（数据库里没有数据时才显示"暂无数据"）。所以地图主要反映海外访客。要改善的话，可以给 Worker 绑定自己的域名（Cloudflare 的 Custom Domain），再把 `visitors.js` 里的 `API_BASE` 换成新域名，但这也不保证所有大陆网络都能连上；或者换成国内可访问的后端。
+**中国大陆的网络通常连不上 `*.workers.dev`。** 大陆访客的访问不会被记录，他们也看不到 Visitors 区块（加载失败时整块隐藏）。所以地图主要反映海外访客。要改善的话，可以给 Worker 绑定自己的域名（Cloudflare 的 Custom Domain），再把 `visitors.js` 里的 `API_BASE` 换成新域名，但这也不保证所有大陆网络都能连上；或者换成国内可访问的后端。
 
 ---
 
@@ -1056,7 +1064,7 @@ curl -s https://constellation-log.<你的子域>.workers.dev/checkins -H "Origin
   - `--font-display`（EB Garamond）：**只用于 22px 以上的文字**。现在有四处：每个页面的 `h1`、主页各板块的标题（都是字重 600、字距 `-0.01em`）、首屏那句英文简介（正体）、中文模式下名字旁边的罗马字名。
   - **中文没有对应的衬线字体**，这些地方在中文模式下显示的是系统黑体，所以板块标题的中文字号另外设得小一些（搜 `[data-lang="zh"] .section-title`）。
   - 要换字体：把新的 woff2 放进 `fonts/`，改四个页面里的 `@font-face`、这两个变量，以及 `<head>` 里那行 `<link rel="preload">`。来源、版本和许可见 `fonts/README.md`。
-  - **EB Garamond 的斜体**（另一个文件，只有 500 这一个字重，只在主页和 Notes 页加载）只用在两处：**期刊 / 会议名**（主页上论文卡片、动态、项目副标题里用 `<em>` 包起来的名字，Notes 页是 `.paper-venue`），以及研究陈述里用 `class="statement-quote"` 标出来的那句话（见 [6.3](#63-about-和-research)）。它比旁边的正文放大到 `1.15em`，因为这款字的小写字母本来就比 Inter 矮得多。其他地方的斜体（比如 "Coming soon"）还是 Inter，由浏览器把正体倾斜出来。
+  - **EB Garamond 的斜体**（另一个文件，只有 500 这一个字重，只在主页和 Notes 页加载）只用在两处：**期刊 / 会议名**（主页上论文卡片、动态、项目副标题里用 `<em>` 包起来的名字，Notes 页是 `.paper-venue`），以及研究陈述里用 `class="statement-quote"` 标出来的那句话（见 [6.3](#63-about-和-research)）。它比旁边的正文放大到 `1.15em`，因为这款字的小写字母本来就比 Inter 矮得多。其他地方如果用到斜体，还是 Inter，由浏览器把正体倾斜出来。
   - **中文一律不用斜体**（中文没有斜体，倾斜出来的只是变形的正体）：`.lang-zh { font-style: normal; }` 保证中文不会从外层继承到斜体。所以**不要给中文套 `<em>`**，要强调就用 `<strong>`；`<em>` 只留给拉丁字母写的期刊名这类内容。
 - **字号和行高**：`html { font-size: 106.25% }` 把基准字号定为 17px，页面上所有 `rem` 字号都跟着它等比缩放；`body` 的行高是 `1.65`。
 - **正文宽度**：`--max-width` 变量。主页是 `760px`，Notes 页和概念格演示更宽。改大了正文行就更长、更难读，一般不建议超过 820px。
@@ -1108,10 +1116,9 @@ node tests/lattice-core.test.js
 | **某段文字在一种语言下空白** | 那里只写了 `lang-en` 或 `lang-zh` 其中一份，补上另一份 |
 | **Notes 页的内容全没了 / 某个功能突然失效** | `reading.html` / `lattice.js` 的 JavaScript 数据里有语法错误。打开控制台（`Cmd+Option+J`）看红色报错的行号：多半是**漏逗号**、字符串里的**撇号没转义**（`'I've'` 要写成 `'I\'ve'`）、引号没配对 |
 | **手机上页面横向能滑动** | 某个元素太宽（多半是加了很宽的图或表格）。给图片加 `max-width: 100%`，或用 `images/` 里合适尺寸的图 |
-| **访客地图显示"暂无数据"** | 数据库里确实没有记录（新部署时正常）；如果一直如此，检查 `visitors.js` 的 `API_BASE`，以及用 [13.2](#132-日常维护命令) 里的 `curl` 看 Worker 是否活着 |
-| **访客地图显示"暂时无法加载"** | 访客的网络连不上 Worker（中国大陆网络常见，见 [13.5](#135-已知限制)） |
+| **页脚上方没有访客地图** | 它只在数据加载成功时才显示。① 当前网络连不上 Worker（中国大陆网络常见，见 [13.5](#135-已知限制)）；② 数据库里还没有记录（新部署时正常）；③ 一直如此的话，检查 `visitors.js` 的 `API_BASE`，以及用 [13.2](#132-日常维护命令) 里的 `curl` 看 Worker 是否活着 |
 | **统计后台一直没有数据** | ① 是不是从 localhost 或已排除的浏览器访问的；② 是不是开了 Do Not Track；③ `analytics.js` 里的 `GOATCOUNTER_CODE` 是否为空；④ 大陆网络连不上 |
-| **点"Download CV"提示还没上传** | 仓库根目录没有 `CV.pdf`，见[第 9 节](#9-简历-cv) |
+| **页面上没有"Download CV"** | 仓库根目录没有 `CV.pdf`（文件名大小写要完全一致），见[第 9 节](#9-简历-cv) |
 | **深色模式下有刺眼的白块** | 某处样式写死了颜色。改用 `var(--bg)` 这类变量（[15.3](#153-深色模式)） |
 | **`git push` 被拒绝** | `git pull --rebase` 之后再 `git push` |
 | **我不知道自己现在处在什么状态** | `git status` 看有哪些未提交的改动，`git log --oneline -5` 看最近几次提交 |
@@ -1151,7 +1158,7 @@ node tests/lattice-core.test.js
 │   ├── src/index.js      Worker 代码
 │   ├── schema.sql        数据库表结构
 │   └── wrangler.toml     Worker 配置（数据库 id 不是密钥；ADMIN_TOKEN 是密钥，另外设置）
-├── CV.pdf                （尚未添加）放进来，"下载简历"按钮就自动生效
+├── CV.pdf                （尚未添加）放进来，"下载简历"链接就自动出现
 ├── favicon.svg / favicon.ico / icon-16.png / icon-32.png / apple-touch-icon.png   网站图标
 ├── robots.txt            给搜索引擎的抓取规则（允许全部）
 ├── sitemap.xml           给搜索引擎的页面清单（加新页面时要补一条）

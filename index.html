@@ -20,8 +20,8 @@
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tejing Wang — Neuro-Symbolic AI, Concept Learning, Agents | SNNU</title>
-  <meta name="description" content="Undergraduate in Artificial Intelligence at Shaanxi Normal University (SNNU).Research on neuro-symbolic AI, graph-based concept learning, and intelligent agents." />
+  <title>Tejing Wang — Formal Concept Analysis, Neuro-Symbolic AI, LLM Reliability | SNNU</title>
+  <meta name="description" content="Undergraduate in Artificial Intelligence at Shaanxi Normal University (SNNU). Research on formal concept analysis, neuro-symbolic AI, and the reliability of LLM knowledge." />
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png" />
@@ -32,13 +32,13 @@
   <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Tejing Wang — Neuro-Symbolic AI, Concept Learning, Agents | SNNU" />
-  <meta property="og:description" content="Undergraduate in Artificial Intelligence at Shaanxi Normal University (SNNU).Research on neuro-symbolic AI, graph-based concept learning, and intelligent agents." />
+  <meta property="og:title" content="Tejing Wang — Formal Concept Analysis, Neuro-Symbolic AI, LLM Reliability | SNNU" />
+  <meta property="og:description" content="Undergraduate in Artificial Intelligence at Shaanxi Normal University (SNNU). Research on formal concept analysis, neuro-symbolic AI, and the reliability of LLM knowledge." />
   <meta property="og:url" content="https://dank666.github.io/" />
   <meta property="og:image" content="https://dank666.github.io/images/avatar.jpg" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Tejing Wang — Neuro-Symbolic AI, Concept Learning, Agents | SNNU" />
-  <meta name="twitter:description" content="Undergraduate in Artificial Intelligence at Shaanxi Normal University (SNNU).Research on neuro-symbolic AI, graph-based concept learning, and intelligent agents." />
+  <meta name="twitter:title" content="Tejing Wang — Formal Concept Analysis, Neuro-Symbolic AI, LLM Reliability | SNNU" />
+  <meta name="twitter:description" content="Undergraduate in Artificial Intelligence at Shaanxi Normal University (SNNU). Research on formal concept analysis, neuro-symbolic AI, and the reliability of LLM knowledge." />
   <meta name="twitter:image" content="https://dank666.github.io/images/avatar.jpg" />
 
   <script type="application/ld+json">
@@ -61,10 +61,11 @@
       "url": "https://www.snnu.edu.cn/"
     },
     "knowsAbout": [
+      "Formal Concept Analysis",
       "Neuro-Symbolic AI",
+      "Reliability of LLM Knowledge",
       "Graph-based Concept Learning",
       "Intelligent Agents",
-      "Formal Concept Analysis",
       "Explainable AI",
       "Digital Twins",
       "Embodied Intelligence"
@@ -365,14 +366,23 @@
       flex: 1 1 auto;
     }
 
+    /* Below 901px the links scroll sideways. While there is more to the
+       right, the row fades out under a small chevron, so a clipped label
+       reads as "scroll for more" and not as a word that was cut off. */
     .nav-links-wrap::after {
-      content: "";
+      content: "›";
       position: absolute;
       top: 0;
       right: 0;
       bottom: 0;
-      width: 28px;
-      background: linear-gradient(to right, transparent, var(--bg));
+      width: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      background: linear-gradient(to right, transparent, var(--bg) 70%);
+      color: var(--muted);
+      font-size: 1.15rem;
+      line-height: 1;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.15s ease;
@@ -687,6 +697,24 @@
       color: var(--muted);
     }
 
+    /* Under the research interests: the one thing here a visitor can try.
+       Underlined, so it reads as a link beside the line of interests above
+       it, which is in the same colour but is not one. */
+    .hero-demo {
+      margin: 6px 0 0;
+      font-size: 0.9rem;
+    }
+
+    .hero-demo a {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .hero-demo a:hover {
+      text-decoration-thickness: 2px;
+    }
+
     .hero-contact {
       margin-top: 16px;
       display: flex;
@@ -707,11 +735,16 @@
 
     /* Each item is a small icon plus its name. The icons are drawn in the
        text colour (no brand colours), so they follow the theme and the hover. */
-    .hero-contact a,
-    .hero-soon {
+    .hero-contact a {
       display: inline-flex;
       align-items: center;
       gap: 6px;
+    }
+
+    /* display: inline-flex above would otherwise override the hidden
+       attribute (the CV link carries it until CV.pdf is known to exist). */
+    .hero-contact a[hidden] {
+      display: none;
     }
 
     .hero-icon {
@@ -727,12 +760,6 @@
       stroke-width: 1.75;
       stroke-linecap: round;
       stroke-linejoin: round;
-    }
-
-    /* A profile that does not exist yet: shown, but clearly not a link. */
-    .hero-soon {
-      opacity: 0.5;
-      cursor: default;
     }
 
     .hero-contact .sep {
@@ -1086,6 +1113,11 @@
       align-items: baseline;
     }
 
+    /* display: grid above would otherwise override the hidden attribute. */
+    .contact-item[hidden] {
+      display: none;
+    }
+
     .project-gallery {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1265,22 +1297,45 @@
     }
   </style>
   <style>
-    /* Visitors map. Colours come only from the theme variables above, so it
-       follows light/dark (system or manual toggle) with no JS involved. */
+    /* Visitor map: a small, unnumbered block between the last section and the
+       footer, on the content column like the footer's text. It carries the
+       hidden attribute until visitors.js has data and has drawn the map, so
+       when the stats service can't be reached (or has nothing yet) there is
+       no block at all. Colours come only from the theme variables above, so
+       it follows light/dark (system or manual toggle) with no JS involved. */
+    .visitors {
+      padding: 28px 0 32px calc(var(--label-col) + var(--col-gap));
+      border-top: 1px solid var(--line);
+    }
+
+    .visitors-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4px 24px;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .visitors-title {
+      margin: 0;
+      font-size: inherit;
+      font-weight: 600;
+    }
+
     .visitor-stats {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px 28px;
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 0.96rem;
+      gap: 4px 20px;
+      margin: 0;
     }
 
     .visitor-stats strong {
-      margin-left: 6px;
+      margin-left: 5px;
       color: var(--text);
-      font-size: 1.25rem;
-      font-weight: 700;
+      font-weight: 600;
       font-variant-numeric: tabular-nums;
     }
 
@@ -1288,7 +1343,7 @@
       position: relative;
       background: var(--bg);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius);
       overflow: hidden;
     }
 
@@ -1344,27 +1399,6 @@
       color: var(--muted);
       font-size: 0.86rem;
     }
-
-    .visitor-empty,
-    .visitor-error {
-      display: none;
-      margin: 0;
-      color: var(--muted);
-      font-style: italic;
-    }
-
-    /* States: loading (nothing shown yet) / ready (map) / empty (reachable
-       but no visits recorded) / error (service or libraries couldn't load). */
-    .visitor-map[data-state="empty"] .visitor-empty,
-    .visitor-map[data-state="error"] .visitor-error {
-      display: block;
-    }
-
-    .visitor-map:not([data-state="ready"]) .visitor-stats,
-    .visitor-map:not([data-state="ready"]) .visitor-canvas,
-    .visitor-map:not([data-state="ready"]) .visitor-hint {
-      display: none;
-    }
   </style>
   <style>
     /* Content components: publication cards, project figures, compact skills,
@@ -1386,6 +1420,22 @@
       background: var(--bg);
       border: 1px solid var(--line);
       border-radius: var(--radius);
+    }
+
+    /* "Manuscripts in Preparation": a small heading over the second list. The
+       same spaced-out label as the status of a paper, which it stands in for. */
+    .pub-subhead {
+      margin: 28px 0 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .pub-subhead .lang-zh {
+      font-size: 0.8rem;
     }
 
     .pub-status-row {
@@ -1773,7 +1823,6 @@
                 <a href="#skills"><span class="lang-en">Skills</span><span class="lang-zh">技能</span><span class="lang-de">Kenntnisse</span></a>
                 <a href="#awards"><span class="lang-en">Awards</span><span class="lang-zh">获奖情况</span><span class="lang-de">Auszeichnungen</span></a>
                 <a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系方式</span><span class="lang-de">Kontakt</span></a>
-                <a href="#visitors"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span><span class="lang-de">Besuche</span></a>
                 <a href="reading.html"><span class="lang-en">Notes</span><span class="lang-zh">笔记</span><span class="lang-de">Notizen</span></a>
                 <a href="lattice.html"><span class="lang-en">Concept Lattice Demo</span><span class="lang-zh">概念格演示</span><span class="lang-de">Begriffsverband-Demo</span></a>
                 <a href="constellation.html"><span class="lang-en">Constellation</span><span class="lang-zh">星座</span><span class="lang-de">Konstellation</span></a>
@@ -1814,9 +1863,12 @@
           <p class="hero-lede lang-en">Undergraduate in Artificial Intelligence at Shaanxi Normal University, and an incoming master’s student in Computer Science and Technology advised by <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
           <p class="hero-lede lang-zh">陕西师范大学人工智能专业本科生，将在本校攻读计算机科学与技术学术型硕士，导师为<a href="https://fhaocs.github.io/" target="_blank">郝飞教授</a>。</p>
           <p class="hero-lede lang-de">Ich studiere Künstliche Intelligenz im Bachelor an der Shaanxi Normal University und beginne dort demnächst das Masterstudium in Informatik und Technologie, betreut von <a href="https://fhaocs.github.io/" target="_blank">Prof. Fei Hao</a>.</p>
-          <p class="subtitle lang-en"><span class="nw">Neuro-Symbolic AI</span> <span class="nw">Graph-based Concept Learning</span> <span class="nw">Intelligent Agents</span></p>
-          <p class="subtitle lang-zh"><span class="nw">神经符号人工智能</span> <span class="nw">图概念学习</span> <span class="nw">智能体系统</span></p>
-          <p class="subtitle lang-de"><span class="nw">Neurosymbolische KI</span> <span class="nw">Graphbasiertes Begriffslernen</span> <span class="nw">Intelligente Agenten</span></p>
+          <p class="subtitle lang-en"><span class="nw">Formal Concept Analysis</span> <span class="nw">Neuro-Symbolic AI</span> <span class="nw">Reliability of LLM Knowledge</span></p>
+          <p class="subtitle lang-zh"><span class="nw">形式概念分析</span> <span class="nw">神经符号人工智能</span> <span class="nw">大语言模型知识的可靠性</span></p>
+          <p class="subtitle lang-de"><span class="nw">Formale Begriffsanalyse</span> <span class="nw">Neurosymbolische KI</span> <span class="nw">Verlässlichkeit von LLM-Wissen</span></p>
+          <p class="hero-demo">
+            <a href="lattice.html"><span class="lang-en">Try the interactive concept lattice demo →</span><span class="lang-zh">试试概念格交互演示 →</span><span class="lang-de">Zur interaktiven Begriffsverband-Demo →</span></a>
+          </p>
           <div class="hero-contact">
             <a class="email-link" href="#contact" data-u="42312205" data-d="snnu.edu.cn"><svg class="hero-icon is-stroke" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7.5 8.5 6 8.5-6"/></svg><span class="email-text">42312205 [at] snnu [dot] edu [dot] cn</span></a>
             <span class="sep" aria-hidden="true">·</span>
@@ -1824,20 +1876,16 @@
             <span class="sep" aria-hidden="true">·</span>
             <a href="https://orcid.org/0009-0004-8206-5867" target="_blank" rel="noopener"><svg class="hero-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/></svg>ORCID</a>
             <span class="sep" aria-hidden="true">·</span>
-            <!-- Placeholder until the profile exists. To turn it into a link, replace
-                 this span with <a href="…" target="_blank" rel="noopener"> and keep the icon. -->
-            <span class="hero-soon" title="Coming soon / 待添加"><svg class="hero-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.242 13.769 0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg>Google Scholar</span>
-            <span class="sep" aria-hidden="true">·</span>
-            <a href="CV.pdf" id="cvDownload" class="cv-link">
+            <a href="CV.pdf" id="cvDownload" class="cv-link" target="_blank" rel="noopener" data-cv hidden>
               <span class="lang-en">Download CV</span>
               <span class="lang-zh">下载简历</span>
               <span class="lang-de">Lebenslauf herunterladen</span>
             </a>
           </div>
           <p class="hero-open">
-            <span class="lang-en">Open to remote collaboration and research internships on neuro-symbolic agents and concept learning.</span>
-            <span class="lang-zh">欢迎围绕神经符号智能体、概念学习的远程合作或科研实习。</span>
-            <span class="lang-de">Offen für Remote-Zusammenarbeit und Forschungspraktika zu neurosymbolischen Agenten und Begriffslernen.</span>
+            <span class="lang-en">Open to remote collaboration and research internships on formal concept analysis, neuro-symbolic AI, and the reliability of LLM knowledge.</span>
+            <span class="lang-zh">欢迎围绕形式概念分析、神经符号人工智能与大语言模型知识可靠性的远程合作或科研实习。</span>
+            <span class="lang-de">Offen für Remote-Zusammenarbeit und Forschungspraktika zu Formaler Begriffsanalyse, neurosymbolischer KI und der Verlässlichkeit von LLM-Wissen.</span>
           </p>
         </div>
       </div>
@@ -1862,15 +1910,15 @@
             Ich studiere Künstliche Intelligenz an der <a href="https://www.snnu.edu.cn/" target="_blank">Shaanxi Normal University</a> und setze mein Studium dort im forschungsorientierten Masterstudiengang an der <a href="https://ccs.snnu.edu.cn/" target="_blank">Fakultät für Künstliche Intelligenz und Informatik</a> fort, betreut von Prof. Fei Hao.
           </p>
           <p class="lang-en">
-            My research interests center on neuro-symbolic intelligence and graph-based concept
-            cognition learning, alongside formal concept analysis, explainable AI, LLM-empowered
-            education, digital twins, and embodied intelligence.
+            My research interests center on formal concept analysis, neuro-symbolic AI, and the
+            reliability of what large language models know, alongside graph-based concept cognition
+            learning, explainable AI, LLM-empowered education, digital twins, and embodied intelligence.
           </p>
           <p class="lang-zh">
-            我的研究兴趣集中在神经符号智能与图概念认知学习，同时也关注形式概念分析、可解释人工智能、大语言模型赋能教育、数字孪生与具身智能。
+            我的研究兴趣集中在形式概念分析、神经符号人工智能，以及大语言模型知识的可靠性，同时也关注图概念认知学习、可解释人工智能、大语言模型赋能教育、数字孪生与具身智能。
           </p>
           <p class="lang-de">
-            Meine Forschungsinteressen liegen vor allem in der neurosymbolischen Intelligenz und im graphbasierten kognitiven Begriffslernen, daneben in der Formalen Begriffsanalyse, erklärbarer KI, LLM-gestützter Bildung, digitalen Zwillingen und verkörperter Intelligenz.
+            Meine Forschungsinteressen liegen vor allem in der Formalen Begriffsanalyse, der neurosymbolischen KI und der Verlässlichkeit des Wissens großer Sprachmodelle, daneben im graphbasierten kognitiven Begriffslernen, in erklärbarer KI, LLM-gestützter Bildung, digitalen Zwillingen und verkörperter Intelligenz.
           </p>
           <p class="lang-en">
             My long-term goal is to pursue a Ph.D. in Artificial Intelligence abroad after my master’s.
@@ -1910,26 +1958,27 @@
             agentic AI, organized around planning, memory, and safety/verification, and a longer-term
             interest of mine in graph-based concept cognition learning — using graph structures to
             represent and reason over concepts, in the same spirit as how three-way concept analysis
-            represents formal contexts. Separately, a six-month research assistantship on digital
-            twins and embodied systems broadened my domain knowledge and introduced me to new tools
-            such as Unity.
+            represents formal contexts.
           </p>
           <p class="lang-zh">
-            这种对“结构”的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。此外，我还曾用半年时间在数字孪生与具身系统方向担任科研助理，这段经历拓宽了我的领域知识，也让我接触并用上了 Unity 等新工具。
+            这种对“结构”的关注延续到了我目前的工作中：一篇聚焦规划、记忆与安全/验证的神经符号智能体综述，以及我更长期的兴趣方向——图概念认知学习，即用图结构来表示和推理概念，其思路与三支概念分析表示形式背景的方式一脉相承。
           </p>
           <p class="lang-de">
-            Dieses Interesse an Struktur prägt auch meine aktuelle Arbeit: einen Übersichtsartikel zu neurosymbolischer agentischer KI, gegliedert nach Planung, Gedächtnis sowie Sicherheit/Verifikation, und mein längerfristiges Interesse am graphbasierten kognitiven Begriffslernen – Graphstrukturen zu nutzen, um Begriffe darzustellen und über sie zu schließen, im selben Geist, in dem die Drei-Wege-Begriffsanalyse formale Kontexte darstellt. Daneben hat eine sechsmonatige Tätigkeit als Forschungshilfskraft zu digitalen Zwillingen und verkörperten Systemen mein Fachwissen erweitert und mich mit neuen Werkzeugen wie Unity vertraut gemacht.
+            Dieses Interesse an Struktur prägt auch meine aktuelle Arbeit: einen Übersichtsartikel zu neurosymbolischer agentischer KI, gegliedert nach Planung, Gedächtnis sowie Sicherheit/Verifikation, und mein längerfristiges Interesse am graphbasierten kognitiven Begriffslernen – Graphstrukturen zu nutzen, um Begriffe darzustellen und über sie zu schließen, im selben Geist, in dem die Drei-Wege-Begriffsanalyse formale Kontexte darstellt.
           </p>
           <p class="lang-en">
-            Going forward, I want to bring these threads together in a Ph.D.: building agentic systems
-            whose reasoning is not just performant but legible — where structured knowledge constrains
-            and explains what a model does, rather than being bolted on after the fact.
+            Going forward, I want to use formal concept structures to audit and repair what large
+            language models know about concepts. A concept lattice states exactly which objects fall
+            under a concept, which attributes define it, and how concepts are ordered — a precise
+            reference against which a model’s answers can be checked, so that the gaps and
+            contradictions in its conceptual knowledge can be located and then corrected, not just
+            observed. This is the question I want to work on through my master’s and on into a Ph.D.
           </p>
           <p class="lang-zh">
-            接下来，我希望在博士阶段把这几条线索汇合起来：构建不仅性能好、而且推理过程可读的智能体系统——让结构化知识去约束和解释模型的行为，而不是事后再补一层解释。
+            接下来，我希望用形式化的概念结构去审计和修正大语言模型的概念知识。概念格明确给出了一个概念包含哪些对象、由哪些属性定义，以及概念之间的层次关系——它可以作为一个精确的参照，用来检验模型的回答，从而定位模型概念知识中的缺失与矛盾，并进一步加以修正，而不只是指出问题。这是我希望在硕士阶段展开、并延续到博士阶段的问题。
           </p>
           <p class="lang-de">
-            Künftig möchte ich diese Fäden in einer Promotion zusammenführen: agentische Systeme bauen, deren Schlussfolgerungen nicht nur leistungsfähig, sondern auch nachvollziehbar sind – in denen strukturiertes Wissen das Verhalten eines Modells begrenzt und erklärt, statt nachträglich aufgesetzt zu werden.
+            Künftig möchte ich formale Begriffsstrukturen nutzen, um das begriffliche Wissen großer Sprachmodelle zu prüfen und zu korrigieren. Ein Begriffsverband legt genau fest, welche Gegenstände unter einen Begriff fallen, welche Merkmale ihn bestimmen und wie die Begriffe geordnet sind – eine präzise Referenz, an der sich die Antworten eines Modells messen lassen, sodass Lücken und Widersprüche in seinem Begriffswissen gefunden und anschließend behoben werden können, statt sie nur festzustellen. Dieser Frage möchte ich im Masterstudium und darüber hinaus in einer Promotion nachgehen.
           </p>
           <p class="lang-en">
             You can find the papers behind this work, organized by project with my own reading notes,
@@ -1940,17 +1989,6 @@
           </p>
           <p class="lang-de">
             Die Artikel hinter dieser Arbeit, nach Projekten geordnet und mit meinen eigenen Lesenotizen versehen, finden Sie in meinen <a href="reading.html">Notizen</a>.
-          </p>
-          <p class="lang-en">
-            If you would like to see the kind of structure I work with, there is also a small
-            <a href="lattice.html">interactive concept lattice demo</a>: enter a table of objects and attributes and
-            it draws the classical and three-way concept lattices live.
-          </p>
-          <p class="lang-zh">
-            如果想直观地看看我所研究的这类结构，还有一个小的<a href="lattice.html">概念格交互演示</a>：输入一个对象与属性的表格，它会实时画出经典概念格和三支概念格。
-          </p>
-          <p class="lang-de">
-            Wer die Art von Struktur sehen möchte, mit der ich arbeite, findet außerdem eine kleine <a href="lattice.html">interaktive Begriffsverband-Demo</a>: Geben Sie eine Tabelle aus Gegenständen und Merkmalen ein, und sie zeichnet den klassischen und den Drei-Wege-Begriffsverband live.
           </p>
         </div>
       </div>
@@ -1964,14 +2002,6 @@
       <!-- BEGIN GENERATED: publications — edit data/content.mjs, then run "node tools/build.mjs" -->
       <div class="list">
         <div class="publication-item pub-card">
-          <div class="publication-title lang-en">A Survey of Neuro-Symbolic Agents</div>
-          <div class="publication-title lang-zh">神经符号智能体综述</div>
-          <div class="publication-title lang-de">A Survey of Neuro-Symbolic Agents</div>
-          <div class="pub-status-row">
-            <span class="status-pill status-in-preparation"><span class="lang-en">In Preparation</span><span class="lang-zh">撰写中</span><span class="lang-de">In Vorbereitung</span></span>
-          </div>
-        </div>
-        <div class="publication-item pub-card">
           <div class="publication-title lang-en">Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering</div>
           <div class="publication-title lang-zh">融合大语言模型与三支概念分析的地理多选题自动解答</div>
           <div class="publication-title lang-de">Leveraging Large Language Models and Three-Way Concept Analysis for Automated Geography Multiple-Choice Question Answering</div>
@@ -1983,6 +2013,14 @@
           </div>
         </div>
         <span class="sr-only" id="bibStatus" role="status" aria-live="polite"></span>
+      </div>
+      <h3 class="pub-subhead"><span class="lang-en">Manuscripts in Preparation</span><span class="lang-zh">撰写中的稿件</span><span class="lang-de">Manuskripte in Vorbereitung</span></h3>
+      <div class="list">
+        <div class="publication-item pub-card">
+          <div class="publication-title lang-en">A Survey of Neuro-Symbolic Agents</div>
+          <div class="publication-title lang-zh">神经符号智能体综述</div>
+          <div class="publication-title lang-de">A Survey of Neuro-Symbolic Agents</div>
+        </div>
       </div>
       <!-- END GENERATED: publications -->
     </section>
@@ -1998,9 +2036,9 @@
           <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
           <div class="timeline-meta lang-zh"><span>2026 年 9 月</span></div>
           <div class="timeline-meta lang-de"><span>Sept. 2026</span></div>
-          <p class="lang-en">Continuing as an academic master’s student at Shaanxi Normal University, now advised by Prof. Fei Hao.</p>
-          <p class="lang-zh">确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。</p>
-          <p class="lang-de">Ich setze mein Studium an der Shaanxi Normal University im forschungsorientierten Masterstudiengang fort, nun betreut von Prof. Fei Hao.</p>
+          <p class="lang-en">Admitted to the academic master’s program at Shaanxi Normal University (starting Sep 2027), advised by Prof. Fei Hao.</p>
+          <p class="lang-zh">获得陕西师范大学学术型硕士录取资格，2027 年 9 月入学，导师为郝飞教授。</p>
+          <p class="lang-de">Zulassung zum forschungsorientierten Masterstudiengang an der Shaanxi Normal University (Beginn: Sept. 2027), betreut von Prof. Fei Hao.</p>
         </div>
         <div class="timeline-item">
           <div class="timeline-meta lang-en"><span>Sep 2026</span></div>
@@ -2171,9 +2209,9 @@
             Studentische Forschungshilfskraft · Betreut von
             <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a>
           </p>
-          <p class="lang-en">Explored digital twins and embodied cells — how physical entities and virtual models can be linked through sensing, mapping, and interaction. The work was exploratory; what I gained was mainly broader domain knowledge and hands-on experience with new tools such as Unity.</p>
-          <p class="lang-zh">接触数字孪生与具身细胞方向：了解物理实体与虚拟模型之间如何通过感知、映射与交互建立联系。这段工作以探索为主，我的收获主要是拓宽了领域知识，并实际用到了 Unity 等新工具。</p>
-          <p class="lang-de">Beschäftigung mit digitalen Zwillingen und Embodied Cells – damit, wie sich physische Objekte und virtuelle Modelle durch Sensorik, Abbildung und Interaktion verknüpfen lassen. Die Arbeit war explorativ; gewonnen habe ich vor allem breiteres Fachwissen und praktische Erfahrung mit neuen Werkzeugen wie Unity.</p>
+          <p class="lang-en">Explored digital twins and embodied cells — how physical entities and virtual models can be linked through sensing, mapping, and interaction.</p>
+          <p class="lang-zh">接触数字孪生与具身细胞方向：了解物理实体与虚拟模型之间如何通过感知、映射与交互建立联系。</p>
+          <p class="lang-de">Beschäftigung mit digitalen Zwillingen und Embodied Cells – damit, wie sich physische Objekte und virtuelle Modelle durch Sensorik, Abbildung und Interaktion verknüpfen lassen.</p>
         </div>
       </div>
     </section>
@@ -2214,17 +2252,6 @@
           </figure>
         </div>
         <div class="card">
-          <h3 class="lang-en">A Survey of Neuro-Symbolic Agents</h3>
-          <h3 class="lang-zh">神经符号智能体综述</h3>
-          <h3 class="lang-de">Übersichtsartikel zu neurosymbolischen Agenten</h3>
-          <p class="project-tagline lang-en">In preparation</p>
-          <p class="project-tagline lang-zh">撰写中</p>
-          <p class="project-tagline lang-de">In Vorbereitung</p>
-          <p class="lang-en">A survey of neuro-symbolic agentic AI, organized around planning, memory, and safety/verification. To position it, I am reviewing the existing surveys to map what the literature already covers.</p>
-          <p class="lang-zh">一篇神经符号智能体综述，围绕规划、记忆与安全/验证三部分展开。为了确定它的定位，我正在梳理已有的综述，看清这个领域已经覆盖了什么。</p>
-          <p class="lang-de">Ein Übersichtsartikel zu neurosymbolischer agentischer KI, gegliedert nach Planung, Gedächtnis sowie Sicherheit/Verifikation. Um ihn einzuordnen, sichte ich die bestehenden Übersichtsarbeiten und erfasse, was die Literatur bereits abdeckt.</p>
-        </div>
-        <div class="card">
           <h3 class="lang-en">NextScience — AI Research Platform for Early-Career Scientists</h3>
           <h3 class="lang-zh">NextScience —— 面向早期科研人员的 AI 研究平台</h3>
           <h3 class="lang-de">NextScience – KI-Forschungsplattform für Nachwuchsforschende</h3>
@@ -2234,8 +2261,6 @@
           <div class="project-gallery">
             <img src="images/nextscience-home-feed.webp" alt="NextScience home feed" width="1280" height="690" loading="lazy" decoding="async">
             <img src="images/nextscience-literature-map.webp" alt="NextScience literature map" width="1280" height="693" loading="lazy" decoding="async">
-            <img src="images/nextscience-ai-reader.webp" alt="NextScience AI paper reader" width="1280" height="695" loading="lazy" decoding="async">
-            <img src="images/nextscience-nova-mentor.webp" alt="NextScience Nova research mentor" width="1280" height="695" loading="lazy" decoding="async">
           </div>
         </div>
         <div class="card">
@@ -2245,15 +2270,9 @@
           <p class="project-tagline lang-en">Research assistantship at Xidian University · Mar – Sep 2026 · Advisor: <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a></p>
           <p class="project-tagline lang-zh">西安电子科技大学科研助理 · 2026 年 3 月至 9 月 · 导师：<a href="http://lvzhihan.com" target="_blank">吕智涵教授</a></p>
           <p class="project-tagline lang-de">Forschungshilfskraft an der Xidian University · März – Sept. 2026 · Betreuung: <a href="http://lvzhihan.com" target="_blank">Prof. Zhihan Lyu</a></p>
-          <p class="lang-en">An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in it for about six months during my research assistantship, and what I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from my time on the project.</p>
-          <p class="lang-zh">一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我在科研助理期间参与了它大约半年，从中得到的主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是我参与期间的一些记录。</p>
-          <p class="lang-de">Ein exploratives Projekt zu verkörperten Systemen, die auf ihre Umgebung reagieren. Es verband einen physischen Prototyp auf ESP32-Basis (Licht-, Kraft- und Time-of-Flight-Sensoren steuern RGBW-LEDs; die Struktur wurde in Onshape modelliert) mit einer Digital-Twin-Simulation von Pilzhyphen-Netzwerken und synthetischen Zellen in Unity. Ich habe während meiner Zeit als Forschungshilfskraft etwa sechs Monate daran mitgearbeitet; mitgenommen habe ich vor allem breiteres Fachwissen über digitale Zwillinge und verkörperte Systeme sowie praktische Erfahrung mit neuen Werkzeugen wie Unity und Onshape. Die folgenden Bilder sind Momentaufnahmen aus meiner Zeit im Projekt.</p>
-          <div class="project-gallery">
-            <img src="images/embodied-cell-top-view.webp" alt="Embodied cell prototype, top view" width="1400" height="1050" loading="lazy" decoding="async">
-            <img src="images/embodied-cell-side-view.webp" alt="Embodied cell prototype, side view" width="1400" height="793" loading="lazy" decoding="async">
-            <img src="images/digital-twin-close-view.webp" alt="Digital twin simulation, close view" width="1400" height="791" loading="lazy" decoding="async">
-            <img src="images/digital-twin-top-down.webp" alt="Digital twin simulation, top-down view" width="1400" height="792" loading="lazy" decoding="async">
-          </div>
+          <p class="lang-en">An exploratory project on embodied, environment-reactive systems: an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs), paired with a Unity digital-twin simulation of fungal hyphal networks and synthetic cells.</p>
+          <p class="lang-zh">一个关于具身、能对环境作出反应的系统的探索性项目：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带），配合用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。</p>
+          <p class="lang-de">Ein exploratives Projekt zu verkörperten, umgebungsreaktiven Systemen: ein ESP32-Prototyp (Licht-, Kraft- und Time-of-Flight-Sensoren steuern RGBW-LEDs) und ein digitaler Zwilling in Unity, der Pilzhyphen-Netzwerke und synthetische Zellen simuliert.</p>
         </div>
       </div>
       <!-- END GENERATED: projects -->
@@ -2283,7 +2302,7 @@
         </div>
         <div class="skill-row">
           <dt><span class="lang-en">Languages</span><span class="lang-zh">语言</span><span class="lang-de">Sprachen</span></dt>
-          <dd><span class="lang-en">Mandarin Chinese (native); English — IELTS score to be added</span><span class="lang-zh">中文（母语）；英语——雅思成绩待补充</span><span class="lang-de">Chinesisch (Mandarin, Muttersprache); Englisch – IELTS-Ergebnis wird nachgetragen</span></dd>
+          <dd><span class="lang-en">Mandarin Chinese (native); English — working proficiency</span><span class="lang-zh">中文（母语）；英语——可用于科研阅读与写作</span><span class="lang-de">Chinesisch (Mandarin, Muttersprache); Englisch – gute Arbeitskenntnisse</span></dd>
         </div>
         <div class="skill-row">
           <dt><span class="lang-en">LLM tools</span><span class="lang-zh">大模型工具</span><span class="lang-de">LLM-Werkzeuge</span></dt>
@@ -2370,9 +2389,9 @@
       </div>
 
       <p class="contact-open">
-        <span class="lang-en">Open to remote collaboration and research internships on neuro-symbolic agents and concept learning — feel free to get in touch.</span>
-        <span class="lang-zh">欢迎围绕神经符号智能体、概念学习的远程合作或科研实习，欢迎随时联系。</span>
-        <span class="lang-de">Offen für Remote-Zusammenarbeit und Forschungspraktika zu neurosymbolischen Agenten und Begriffslernen – schreiben Sie mir gern.</span>
+        <span class="lang-en">Open to remote collaboration and research internships on formal concept analysis, neuro-symbolic AI, and the reliability of LLM knowledge — feel free to get in touch.</span>
+        <span class="lang-zh">欢迎围绕形式概念分析、神经符号人工智能与大语言模型知识可靠性的远程合作或科研实习，欢迎随时联系。</span>
+        <span class="lang-de">Offen für Remote-Zusammenarbeit und Forschungspraktika zu Formaler Begriffsanalyse, neurosymbolischer KI und der Verlässlichkeit von LLM-Wissen – schreiben Sie mir gern.</span>
       </p>
 
       <div class="contact-list">
@@ -2389,10 +2408,10 @@
             </div>
           </div>
         </div>
-        <div class="contact-item">
+        <div class="contact-item" data-cv hidden>
           <div class="contact-label"><span class="lang-en">CV</span><span class="lang-zh">简历</span><span class="lang-de">Lebenslauf</span></div>
           <div class="contact-value">
-            <a href="CV.pdf" id="cvDownloadContact" class="cv-link">
+            <a href="CV.pdf" id="cvDownloadContact" class="cv-link" target="_blank" rel="noopener">
               <span class="lang-en">Download PDF</span>
               <span class="lang-zh">下载 PDF</span>
               <span class="lang-de">PDF herunterladen</span>
@@ -2404,26 +2423,17 @@
           <div class="contact-value"><a href="https://github.com/dank666" target="_blank">github.com/dank666</a></div>
         </div>
         <div class="contact-item">
-          <div class="contact-label">Google Scholar</div>
-          <div class="contact-value">
-            <span class="lang-en" style="font-style: italic;">Coming soon</span>
-            <span class="lang-zh">待添加</span>
-            <span class="lang-de" style="font-style: italic;">Demnächst</span>
-          </div>
-        </div>
-        <div class="contact-item">
           <div class="contact-label">ORCID</div>
           <div class="contact-value"><a href="https://orcid.org/0009-0004-8206-5867" target="_blank" rel="noopener">orcid.org/0009-0004-8206-5867</a></div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="visitors">
-      <div class="section-header">
-        <h2 class="section-title"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span><span class="lang-de">Besuche</span></h2>
-      </div>
-
-      <div class="visitor-map" id="visitorMap" data-state="loading">
+    <!-- Not a numbered section, and not in the nav: shown by visitors.js only
+         once the map has data (see the .visitors rules in the styles). -->
+    <aside class="visitors" id="visitors" aria-labelledby="visitorsTitle" hidden>
+      <div class="visitors-head">
+        <h2 class="visitors-title" id="visitorsTitle"><span class="lang-en">Visitors</span><span class="lang-zh">访客</span><span class="lang-de">Besuche</span></h2>
         <p class="visitor-stats">
           <span>
             <span class="lang-en">Total visits</span><span class="lang-zh">总访问数</span><span class="lang-de">Besuche insgesamt</span>
@@ -2434,24 +2444,14 @@
             <strong id="visitorCountries">–</strong>
           </span>
         </p>
-        <div class="visitor-canvas" id="visitorCanvas"></div>
-        <p class="visitor-hint">
-          <span class="lang-en">Each dot is a city — bigger and darker means more visits.</span>
-          <span class="lang-zh">每个圆点代表一座城市，圆点越大、颜色越深，访问越多。</span>
-          <span class="lang-de">Jeder Punkt steht für eine Stadt – je größer und dunkler, desto mehr Besuche.</span>
-        </p>
-        <p class="visitor-empty">
-          <span class="lang-en">No data yet</span>
-          <span class="lang-zh">暂无数据</span>
-          <span class="lang-de">Noch keine Daten</span>
-        </p>
-        <p class="visitor-error">
-          <span class="lang-en">The visitor map couldn’t be loaded — the stats service may not be reachable from your network.</span>
-          <span class="lang-zh">访客地图暂时无法加载，当前网络可能无法访问统计服务。</span>
-          <span class="lang-de">Die Besucherkarte konnte nicht geladen werden – der Statistikdienst ist aus Ihrem Netzwerk möglicherweise nicht erreichbar.</span>
-        </p>
       </div>
-    </section>
+      <div class="visitor-canvas" id="visitorCanvas"></div>
+      <p class="visitor-hint">
+        <span class="lang-en">Each dot is a city — bigger and darker means more visits.</span>
+        <span class="lang-zh">每个圆点代表一座城市，圆点越大、颜色越深，访问越多。</span>
+        <span class="lang-de">Jeder Punkt steht für eine Stadt – je größer und dunkler, desto mehr Besuche.</span>
+      </p>
+    </aside>
 
     <footer class="footer">
       <p>
@@ -2698,32 +2698,16 @@
       }).catch(function () {});
     } catch (err) {}
 
-    // CV download: the button always points at CV.pdf. Until that file is
-    // actually added to the repo, clicking it shows a friendly notice
-    // instead of a broken-link 404. Once CV.pdf exists at the repo root,
-    // this starts working automatically — no code changes needed.
-    document.querySelectorAll('.cv-link').forEach(function (link) {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        var cvUrl = link.getAttribute('href');
-        fetch(cvUrl, { method: 'HEAD' })
-          .then(function (res) {
-            if (res.ok) {
-              window.open(cvUrl, '_blank');
-            } else {
-              throw new Error('CV not found');
-            }
-          })
-          .catch(function () {
-            var lang = document.documentElement.getAttribute('data-lang');
-            alert(lang === 'zh'
-              ? '简历还没有上传，敬请期待。'
-              : lang === 'de'
-                ? 'Der Lebenslauf ist noch nicht hochgeladen – bitte schauen Sie bald wieder vorbei.'
-                : "The CV isn't uploaded yet — check back soon.");
-          });
-      });
-    });
+    // CV: the hero link and the Contact row (both marked data-cv) start out
+    // hidden and are shown only once a HEAD request finds CV.pdf. Until that
+    // file is added at the repo root the page simply has no CV link; once it
+    // is there, both appear and open the PDF directly — no code changes needed.
+    try {
+      fetch('CV.pdf', { method: 'HEAD', cache: 'no-cache' }).then(function (res) {
+        if (!res.ok) return;
+        document.querySelectorAll('[data-cv]').forEach(function (el) { el.hidden = false; });
+      }).catch(function () {});
+    } catch (err) {}
 
     // Project image galleries: click a thumbnail to open it in a lightbox.
     // Esc closes it; Left/Right arrow keys step through the same gallery.

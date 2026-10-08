@@ -22,9 +22,9 @@ export const news = [
   {
     date: "2026-09",
     text: {
-      en: "Continuing as an academic master’s student at Shaanxi Normal University, now advised by Prof. Fei Hao.",
-      zh: "确定继续在陕西师范大学攻读学术型硕士，导师为郝飞教授。",
-      de: "Ich setze mein Studium an der Shaanxi Normal University im forschungsorientierten Masterstudiengang fort, nun betreut von Prof. Fei Hao."
+      en: "Admitted to the academic master’s program at Shaanxi Normal University (starting Sep 2027), advised by Prof. Fei Hao.",
+      zh: "获得陕西师范大学学术型硕士录取资格，2027 年 9 月入学，导师为郝飞教授。",
+      de: "Zulassung zum forschungsorientierten Masterstudiengang an der Shaanxi Normal University (Beginn: Sept. 2027), betreut von Prof. Fei Hao."
     }
   },
   {
@@ -72,6 +72,9 @@ export const news = [
 // ---- Publications -------------------------------------------------------
 // One card per paper. `status` is one of:
 //   'in-preparation' | 'under-review' | 'preprint' | 'published'
+// Papers that are 'in-preparation' are not part of the main list: the build
+// puts them below it, under their own small heading "Manuscripts in
+// Preparation" (wherever they sit in this array).
 // `meta` (optional) is the short line next to the status, e.g. role and venue.
 // Wrap the journal or conference name in <em>…</em> (see the top of this file).
 //
@@ -216,23 +219,6 @@ export const projects = [
   },
   {
     title: {
-      en: "A Survey of Neuro-Symbolic Agents",
-      zh: "神经符号智能体综述",
-      de: "Übersichtsartikel zu neurosymbolischen Agenten"
-    },
-    tagline: {
-      en: "In preparation",
-      zh: "撰写中",
-      de: "In Vorbereitung"
-    },
-    description: {
-      en: "A survey of neuro-symbolic agentic AI, organized around planning, memory, and safety/verification. To position it, I am reviewing the existing surveys to map what the literature already covers.",
-      zh: "一篇神经符号智能体综述，围绕规划、记忆与安全/验证三部分展开。为了确定它的定位，我正在梳理已有的综述，看清这个领域已经覆盖了什么。",
-      de: "Ein Übersichtsartikel zu neurosymbolischer agentischer KI, gegliedert nach Planung, Gedächtnis sowie Sicherheit/Verifikation. Um ihn einzuordnen, sichte ich die bestehenden Übersichtsarbeiten und erfasse, was die Literatur bereits abdeckt."
-    }
-  },
-  {
-    title: {
       en: "NextScience — AI Research Platform for Early-Career Scientists",
       zh: "NextScience —— 面向早期科研人员的 AI 研究平台",
       de: "NextScience – KI-Forschungsplattform für Nachwuchsforschende"
@@ -245,8 +231,6 @@ export const projects = [
     gallery: [
       { src: "images/nextscience-home-feed.webp", width: 1280, height: 690, alt: "NextScience home feed" },
       { src: "images/nextscience-literature-map.webp", width: 1280, height: 693, alt: "NextScience literature map" },
-      { src: "images/nextscience-ai-reader.webp", width: 1280, height: 695, alt: "NextScience AI paper reader" },
-      { src: "images/nextscience-nova-mentor.webp", width: 1280, height: 695, alt: "NextScience Nova research mentor" },
     ]
   },
   {
@@ -261,15 +245,9 @@ export const projects = [
       de: "Forschungshilfskraft an der Xidian University · März – Sept. 2026 · Betreuung: <a href=\"http://lvzhihan.com\" target=\"_blank\">Prof. Zhihan Lyu</a>"
     },
     description: {
-      en: "An exploratory project on embodied, environment-reactive systems. It combined an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs, with the structure modeled in Onshape) and a Unity digital-twin simulation of fungal hyphal networks and synthetic cells. I took part in it for about six months during my research assistantship, and what I took from it was mainly broader domain knowledge in digital twins and embodied systems, and hands-on practice with new tools such as Unity and Onshape. The images below are snapshots from my time on the project.",
-      zh: "一个关于具身、能对环境作出反应的系统的探索性项目。它包含两部分：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带，结构用 Onshape 建模），以及用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。我在科研助理期间参与了它大约半年，从中得到的主要是对数字孪生与具身系统这一领域的更多了解，以及 Unity、Onshape 等新工具的实际使用经验。下面的图片是我参与期间的一些记录。",
-      de: "Ein exploratives Projekt zu verkörperten Systemen, die auf ihre Umgebung reagieren. Es verband einen physischen Prototyp auf ESP32-Basis (Licht-, Kraft- und Time-of-Flight-Sensoren steuern RGBW-LEDs; die Struktur wurde in Onshape modelliert) mit einer Digital-Twin-Simulation von Pilzhyphen-Netzwerken und synthetischen Zellen in Unity. Ich habe während meiner Zeit als Forschungshilfskraft etwa sechs Monate daran mitgearbeitet; mitgenommen habe ich vor allem breiteres Fachwissen über digitale Zwillinge und verkörperte Systeme sowie praktische Erfahrung mit neuen Werkzeugen wie Unity und Onshape. Die folgenden Bilder sind Momentaufnahmen aus meiner Zeit im Projekt."
-    },
-    gallery: [
-      { src: "images/embodied-cell-top-view.webp", width: 1400, height: 1050, alt: "Embodied cell prototype, top view" },
-      { src: "images/embodied-cell-side-view.webp", width: 1400, height: 793, alt: "Embodied cell prototype, side view" },
-      { src: "images/digital-twin-close-view.webp", width: 1400, height: 791, alt: "Digital twin simulation, close view" },
-      { src: "images/digital-twin-top-down.webp", width: 1400, height: 792, alt: "Digital twin simulation, top-down view" },
-    ]
+      en: "An exploratory project on embodied, environment-reactive systems: an ESP32-based physical prototype (light, force and time-of-flight sensors driving RGBW LEDs), paired with a Unity digital-twin simulation of fungal hyphal networks and synthetic cells.",
+      zh: "一个关于具身、能对环境作出反应的系统的探索性项目：基于 ESP32 的实体原型（光敏、压力和飞行时间传感器驱动 RGBW LED 灯带），配合用 Unity 搭建的数字孪生仿真（模拟真菌菌丝网络与合成细胞）。",
+      de: "Ein exploratives Projekt zu verkörperten, umgebungsreaktiven Systemen: ein ESP32-Prototyp (Licht-, Kraft- und Time-of-Flight-Sensoren steuern RGBW-LEDs) und ein digitaler Zwilling in Unity, der Pilzhyphen-Netzwerke und synthetische Zellen simuliert."
+    }
   },
 ];
