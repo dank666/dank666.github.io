@@ -536,6 +536,34 @@
       font-variant-numeric: tabular-nums;
     }
 
+    /* "All projects": under each project's name, its categories in one quiet
+       line (each opens the project at that category), and after its latest
+       entries a button to the rest. */
+    .project-cats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 18px;
+      margin: -8px 0 22px;
+    }
+
+    .project-cat {
+      font: inherit;
+      font-size: 0.86rem;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .project-cat:hover {
+      color: var(--accent);
+    }
+
+    .see-all {
+      margin: 2px 0 8px;
+    }
+
     /* Entries are listed by year: the year once in the margin (it stays in
        view while its entries scroll past), the entries beside it, and a
        hairline where the year changes. */
@@ -633,7 +661,6 @@
       text-decoration: underline;
     }
 
-    .paper-tag.project-tag,
     .paper-tag[aria-pressed="true"] {
       font-weight: 600;
     }
@@ -863,6 +890,18 @@
         { id: 'memory', label_en: 'Memory', label_zh: '记忆', label_de: 'Gedächtnis' },
         { id: 'verification', label_en: 'Verification', label_zh: '验证', label_de: 'Verifikation' },
         { id: 'competing-survey', label_en: 'Existing surveys', label_zh: '已有综述', label_de: 'Bestehende Übersichtsarbeiten' }
+      ]
+    },
+    {
+      id: 'cuelattice',
+      label_en: 'CueLattice',
+      label_zh: '线索格',
+      label_de: 'CueLattice',
+      groups: [
+        { id: 'triadic', label_en: 'Triadic concepts', label_zh: '三元概念', label_de: 'Triadische Begriffe' },
+        { id: 'three-way', label_en: 'Three-way concepts', label_zh: '三支概念', label_de: 'Drei-Wege-Begriffe' },
+        { id: 'incomplete', label_en: 'Incomplete contexts', label_zh: '不完备背景', label_de: 'Unvollständige Kontexte' },
+        { id: 'probabilistic', label_en: 'Probabilistic contexts', label_zh: '概率背景', label_de: 'Probabilistische Kontexte' }
       ]
     }
   ];
@@ -3329,6 +3368,143 @@
       note_en: 'This paper improves LLM-written PDDL by checking consistency during generation. GPT-4 first writes a textual plan with actions, preconditions, effects and constraints, then produces domain and problem together as JSON in the style of function signatures, which avoids most PDDL syntax errors and is compiled to PDDL later. A collection of checks finds wrong or undeclared parameters, type mismatches, missing or duplicated predicates and initial or goal predicates that no action can use or produce, and each error is sent back with a description and suggested fixes for up to 15 correction rounds. A final reachability analysis with Fast Downward reports unreachable goals and unused actions to the human. On Gripper, Pizza and Logistics all runs reach plans, while Household and especially Tyreworld remain error-prone, with four of five Tyreworld runs unreachable. The checks ensure well-formed and often solvable models but not semantic correctness, which still needs a human.',
       note_zh: '这篇论文通过在生成过程中检查一致性，来改进 LLM 所写的 PDDL。GPT-4 先写出一份文字计划，列出动作、前提条件、效果和约束，然后以函数签名的风格把领域和问题一起生成为 JSON，这样可以避免大多数 PDDL 语法错误，之后再编译为 PDDL。一组检查会找出错误或未声明的参数、类型不匹配、缺失或重复的谓词，以及没有任何动作能使用或产生的初始谓词和目标谓词；每个错误都连同描述和修改建议一起发回，最多进行 15 轮修正。最后，用 Fast Downward 做一次可达性分析，把不可达的目标和未被使用的动作报告给人。在 Gripper、Pizza 和 Logistics 上，所有运行都得到了计划，而 Household，尤其是 Tyreworld，仍然容易出错，Tyreworld 的五次运行中有四次目标不可达。这些检查能确保模型格式良好、通常也可解，但不能确保语义正确，后者仍然需要人来把关。',
       note_de: 'Diese Arbeit verbessert vom LLM geschriebenes PDDL, indem sie während der Generierung die Konsistenz prüft. GPT-4 schreibt zunächst einen textuellen Plan mit Aktionen, Vorbedingungen, Effekten und Constraints und erzeugt dann Domäne und Problem gemeinsam als JSON im Stil von Funktionssignaturen, was die meisten PDDL-Syntaxfehler vermeidet und später nach PDDL kompiliert wird. Eine Sammlung von Prüfungen findet falsche oder nicht deklarierte Parameter, Typkonflikte, fehlende oder doppelte Prädikate sowie Anfangs- oder Zielprädikate, die keine Aktion nutzen oder erzeugen kann, und jeder Fehler wird mit einer Beschreibung und Korrekturvorschlägen zurückgeschickt, für bis zu 15 Korrekturrunden. Eine abschließende Erreichbarkeitsanalyse mit Fast Downward meldet unerreichbare Ziele und ungenutzte Aktionen an den Menschen. Bei Gripper, Pizza und Logistics erreichen alle Läufe Pläne, während Household und vor allem Tyreworld fehleranfällig bleiben; vier von fünf Tyreworld-Läufen sind unerreichbar. Die Prüfungen sichern wohlgeformte und oft lösbare Modelle, aber keine semantische Korrektheit, die weiterhin einen Menschen braucht.'
+    },
+    // CueLattice: three-way concepts in incomplete and probabilistic triadic
+    // contexts. The literature of the project, by group.
+    {
+      title_en: 'A Triadic Approach to Formal Concept Analysis',
+      authors: 'Fritz Lehmann, Rudolf Wille',
+      year: 1995,
+      venue: 'Proceedings of the International Conference on Conceptual Structures (ICCS)',
+      link: 'https://doi.org/10.1007/3-540-60161-9_27',
+      project: 'cuelattice',
+      topics: ['triadic']
+    },
+    {
+      title_en: 'On the Modal Understanding of Triadic Contexts',
+      authors: 'Frithjof Dau, Rudolf Wille',
+      year: 2000,
+      venue: 'Proceedings of the Annual Conference of the Gesellschaft für Klassifikation (GfKl)',
+      link: 'https://doi.org/10.1007/978-3-642-57280-7_9',
+      project: 'cuelattice',
+      topics: ['triadic']
+    },
+    {
+      title_en: 'A research summary about triadic concept analysis',
+      authors: 'Ling Wei, Ting Qian, Qing Wan, Jianjun Qi',
+      year: 2018,
+      venue: 'International Journal of Machine Learning and Cybernetics',
+      link: 'https://doi.org/10.1007/s13042-016-0599-7',
+      project: 'cuelattice',
+      topics: ['triadic']
+    },
+    {
+      title_en: 'Three-Way Formal Concept Analysis',
+      authors: 'Jianjun Qi, Ling Wei, Yiyu Yao',
+      year: 2014,
+      venue: 'Proceedings of the International Conference on Rough Sets and Knowledge Technology (RSKT)',
+      link: 'https://doi.org/10.1007/978-3-319-11740-9_67',
+      project: 'cuelattice',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'A generalized framework to consider positive and negative attributes in formal concept analysis',
+      authors: 'José Manuel Rodríguez-Jiménez, Pablo Cordero, Manuel Enciso, Ángel Mora',
+      year: 2014,
+      venue: 'Proceedings of the International Conference on Concept Lattices and Their Applications (CLA)',
+      link: 'https://ceur-ws.org/Vol-1252/cla2014_submission_33.pdf',
+      project: 'cuelattice',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'Role based access control design using three-way formal concept analysis',
+      authors: 'Chandra Mouliswaran Subramanian, Aswani Kumar Cherukuri, Chandrasekar Chelliah',
+      year: 2018,
+      venue: 'International Journal of Machine Learning and Cybernetics',
+      link: 'https://doi.org/10.1007/s13042-018-0840-7',
+      project: 'cuelattice',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'On the Treatment of Incomplete Knowledge in Formal Concept Analysis',
+      authors: 'Peter Burmeister, Richard Holzer',
+      year: 2000,
+      venue: 'Proceedings of the International Conference on Conceptual Structures (ICCS)',
+      link: 'https://doi.org/10.1007/10722280_27',
+      project: 'cuelattice',
+      topics: ['incomplete']
+    },
+    {
+      title_en: 'Methoden der formalen Begriffsanalyse bei der Behandlung unvollständigen Wissens',
+      authors: 'Richard Holzer',
+      year: 2001,
+      venue: 'PhD thesis, Technische Universität Darmstadt',
+      link: '',
+      project: 'cuelattice',
+      topics: ['incomplete']
+    },
+    {
+      title_en: 'Three-Way Concept Analysis for Incomplete Formal Contexts',
+      authors: 'Huilai Zhi, Hao Chao',
+      year: 2018,
+      venue: 'Mathematical Problems in Engineering',
+      link: 'https://doi.org/10.1155/2018/9546846',
+      project: 'cuelattice',
+      topics: ['incomplete']
+    },
+    {
+      title_en: 'Conflict analysis under one-vote veto based on approximate three-way concept lattice',
+      authors: 'Huilai Zhi, Jianjun Qi, Ting Qian, Ruisi Ren',
+      year: 2020,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2019.12.065',
+      project: 'cuelattice',
+      topics: ['incomplete']
+    },
+    {
+      title_en: 'Rough maximal cliques enumeration in incomplete graphs based on partially-known concept learning',
+      authors: 'Fei Hao, Yifei Sun, Yaguang Lin',
+      year: 2022,
+      venue: 'Neurocomputing',
+      link: 'https://doi.org/10.1016/j.neucom.2021.08.160',
+      project: 'cuelattice',
+      topics: ['incomplete']
+    },
+    {
+      title_en: 'Three-way conceptual knowledge updating in incomplete contexts',
+      authors: 'Ruisi Ren, Ling Wei, Jianjun Qi, Xiaosong Wei',
+      year: 2024,
+      venue: 'International Journal of Approximate Reasoning',
+      link: 'https://doi.org/10.1016/j.ijar.2024.109299',
+      project: 'cuelattice',
+      topics: ['incomplete']
+    },
+    {
+      title_en: 'A further understanding for four types of concepts in incomplete contexts based on their connections',
+      authors: 'Xue Tian, Ruisi Ren, Ling Wei, Yanhong She',
+      year: 2026,
+      venue: 'Applied Intelligence',
+      link: 'https://doi.org/10.1007/s10489-026-07311-0',
+      project: 'cuelattice',
+      topics: ['incomplete']
+    },
+    {
+      title_en: 'Probabilistic Concepts in Formal Contexts',
+      authors: 'Alexander Demin, Denis Ponomaryov, Evgeny Vityaev',
+      year: 2012,
+      venue: 'Proceedings of the Andrei Ershov Memorial Conference on Perspectives of System Informatics (PSI)',
+      link: 'https://doi.org/10.1007/978-3-642-29709-0_33',
+      project: 'cuelattice',
+      topics: ['probabilistic']
+    },
+    {
+      title_en: 'On formal concepts of random formal contexts',
+      authors: 'Taro Sakurai',
+      year: 2021,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2021.07.065',
+      project: 'cuelattice',
+      topics: ['probabilistic']
     }
   ];
 
@@ -3349,6 +3525,9 @@
   // ---- State --------------------------------------------------------------
   // notesOnly: show only the entries that carry a note of mine.
   var state = { type: 'all', project: 'all', topic: null, query: '', notesOnly: false };
+
+  // How many of its latest entries a project shows in the "All projects" overview.
+  var PREVIEW_COUNT = 3;
 
   // ---- Helpers ------------------------------------------------------------
   function currentLang() {
@@ -3428,6 +3607,18 @@
   }
 
   // ---- Filters -------------------------------------------------------------
+  // From the overview into one project (and one of its categories), brought
+  // back up to the buttons so it is clear what changed.
+  function openProject(id, topic) {
+    state.project = id;
+    state.topic = topic || null;
+    render();
+    var row = document.getElementById('projectFilters');
+    var navbar = document.querySelector('.navbar');
+    var top = row.getBoundingClientRect().top + window.scrollY - (navbar ? navbar.offsetHeight : 0) - 16;
+    if (top < window.scrollY) window.scrollTo({ top: top });
+  }
+
   function renderProjectFilters() {
     var wrap = document.getElementById('projectFilters');
     wrap.innerHTML = '';
@@ -3458,14 +3649,19 @@
   function updateProjectFilterLabels() {
     var lang = currentLang();
     var wrap = document.getElementById('projectFilters');
+    // As on the category buttons, the number is what clicking would show.
+    var pool = allEntries().filter(function (e) { return matches(e, 'project'); });
     wrap.querySelectorAll('.filter-btn').forEach(function (b) {
-      if (b.dataset.project === 'all') {
-        b.textContent = say(lang, 'All', '全部', 'Alle');
-      } else {
-        var p = projectOf(b.dataset.project);
-        b.textContent = pick(p, 'label', lang);
-      }
-      b.setAttribute('aria-pressed', String(b.dataset.project === state.project));
+      var id = b.dataset.project;
+      // Not just "All": the category row below has an "All" of its own.
+      b.textContent = id === 'all'
+        ? say(lang, 'All projects', '全部项目', 'Alle Projekte')
+        : pick(projectOf(id), 'label', lang);
+      var c = document.createElement('span');
+      c.className = 'filter-count';
+      c.textContent = id === 'all' ? pool.length : pool.filter(function (e) { return e.data.project === id; }).length;
+      b.appendChild(c);
+      b.setAttribute('aria-pressed', String(id === state.project));
     });
   }
 
@@ -3572,11 +3768,12 @@
 
   // `except` leaves one filter out ('topic' or 'notes'): that is how the
   // number on a button says what clicking it would show.
+  // 'project' leaves out the topic as well, since picking a project clears it.
   function matches(entry, except) {
     var d = entry.data;
     if (NOTES.length && state.type !== 'all' && entry.kind !== state.type) return false;
-    if (state.project !== 'all' && d.project !== state.project) return false;
-    if (except !== 'topic' && state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
+    if (except !== 'project' && state.project !== 'all' && d.project !== state.project) return false;
+    if (except !== 'topic' && except !== 'project' && state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
     if (except !== 'notes' && state.notesOnly && !hasNote(entry)) return false;
     if (state.query) {
       var q = state.query.toLowerCase();
@@ -3615,23 +3812,11 @@
     var tags = document.createElement('div');
     tags.className = 'paper-tags';
 
-    // The project pill only says something when there is more than one project.
-    var proj = projectOf(d.project);
-    if (proj && PROJECTS.length > 1) {
-      var projTag = document.createElement('button');
-      projTag.className = 'paper-tag project-tag';
-      projTag.type = 'button';
-      projTag.textContent = pick(proj, 'label', lang);
-      projTag.addEventListener('click', function () {
-        state.project = proj.id;
-        state.topic = null;
-        render();
-      });
-      tags.appendChild(projTag);
-    }
-
-    // Group topics are already shown as the section heading / filter button.
-    var groupIds = groupsOf(activeProject()).map(function (g) { return g.id; });
+    // No project name on the entry: the list is always either one project or
+    // split into one section per project. The entry's categories are left out
+    // too: they are the section headings and the buttons, and "planning" under
+    // every title would only repeat them.
+    var groupIds = groupsOf(projectOf(d.project)).map(function (g) { return g.id; });
     (d.topics || []).forEach(function (t) {
       if (groupIds.indexOf(t) !== -1) return;
       var tag = document.createElement('button');
@@ -3806,17 +3991,9 @@
       });
     }
 
-    // With a category picked (or no groups to split by) it is one flat list;
-    // otherwise one section per group, in the order the project lists them.
-    var project = activeProject();
-    var groups = state.topic ? [] : groupsOf(project);
-    if (!groups.length) {
-      addItems(list, filtered);
-      return;
-    }
-
-    function addSection(label, items) {
-      if (!items.length) return;
+    // `total` is the number in the heading when only some of the items are listed.
+    function addSection(label, items, total) {
+      if (!items.length) return null;
       var section = document.createElement('section');
       section.className = 'paper-group';
       var heading = document.createElement('h2');
@@ -3824,11 +4001,72 @@
       heading.appendChild(document.createTextNode(label));
       var count = document.createElement('span');
       count.className = 'group-count';
-      count.textContent = items.length;
+      count.textContent = total == null ? items.length : total;
       heading.appendChild(count);
       section.appendChild(heading);
       addItems(section, items);
       list.appendChild(section);
+      return section;
+    }
+
+    var other = say(lang, 'Other', '其他', 'Sonstige');
+    var project = activeProject();
+
+    // "All projects": one section per project. Left as it is, the page is an
+    // overview: each project names its categories and shows its latest few
+    // entries, with a button to the rest. With a search or a filter on,
+    // every match is listed instead.
+    if (!project && PROJECTS.length > 1) {
+      var browsing = !state.query && !state.topic && !state.notesOnly;
+      PROJECTS.forEach(function (p) {
+        var mine = filtered.filter(function (e) { return e.data.project === p.id; });
+        var shown = browsing ? mine.slice(0, PREVIEW_COUNT) : mine;
+        var section = addSection(pick(p, 'label', lang), shown, mine.length);
+        if (!section || !browsing) return;
+
+        var groups = groupsOf(p);
+        if (groups.length) {
+          var cats = document.createElement('p');
+          cats.className = 'project-cats';
+          groups.forEach(function (g) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'project-cat';
+            b.appendChild(document.createTextNode(pick(g, 'label', lang)));
+            var n = document.createElement('span');
+            n.className = 'filter-count';
+            n.textContent = mine.filter(function (e) { return inGroup(e, p, g); }).length;
+            b.appendChild(n);
+            b.addEventListener('click', function () { openProject(p.id, g.id); });
+            cats.appendChild(b);
+          });
+          section.insertBefore(cats, section.children[1]);
+        }
+
+        if (mine.length > shown.length) {
+          var more = document.createElement('button');
+          more.type = 'button';
+          more.className = 'filter-btn see-all';
+          more.textContent = say(lang,
+            'See all ' + mine.length + ' papers →',
+            '查看全部 ' + mine.length + ' 篇 →',
+            'Alle ' + mine.length + ' Artikel ansehen →');
+          more.addEventListener('click', function () { openProject(p.id, null); });
+          // In the entry column, under the last entry shown.
+          var holders = section.querySelectorAll('.year-items');
+          holders[holders.length - 1].appendChild(more);
+        }
+      });
+      addSection(other, filtered.filter(function (e) { return !projectOf(e.data.project); }));
+      return;
+    }
+
+    // With a category picked (or no groups to split by) it is one flat list;
+    // otherwise one section per group, in the order the project lists them.
+    var groups = state.topic ? [] : groupsOf(project);
+    if (!groups.length) {
+      addItems(list, filtered);
+      return;
     }
 
     var rest = filtered;
