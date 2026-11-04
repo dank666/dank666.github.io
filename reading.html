@@ -903,6 +903,18 @@
         { id: 'incomplete', label_en: 'Incomplete contexts', label_zh: '不完备背景', label_de: 'Unvollständige Kontexte' },
         { id: 'probabilistic', label_en: 'Probabilistic contexts', label_zh: '概率背景', label_de: 'Probabilistische Kontexte' }
       ]
+    },
+    {
+      id: 'geomcq',
+      label_en: 'GeoMCQ',
+      label_zh: 'GeoMCQ',
+      label_de: 'GeoMCQ',
+      groups: [
+        { id: 'problem-solving', label_en: 'Automated problem solving', label_zh: '自动解题', label_de: 'Automatisches Problemlösen' },
+        { id: 'llm', label_en: 'Large language models', label_zh: '大语言模型', label_de: 'Große Sprachmodelle' },
+        { id: 'fca', label_en: 'Formal concept analysis', label_zh: '形式概念分析', label_de: 'Formale Begriffsanalyse' },
+        { id: 'three-way', label_en: 'Three-way decisions', label_zh: '三支决策', label_de: 'Drei-Wege-Entscheidungen' }
+      ]
     }
   ];
 
@@ -3404,7 +3416,7 @@
       year: 2014,
       venue: 'Proceedings of the International Conference on Rough Sets and Knowledge Technology (RSKT)',
       link: 'https://doi.org/10.1007/978-3-319-11740-9_67',
-      project: 'cuelattice',
+      project: ['cuelattice', 'geomcq'],
       topics: ['three-way']
     },
     {
@@ -3505,6 +3517,414 @@
       link: 'https://doi.org/10.1016/j.ins.2021.07.065',
       project: 'cuelattice',
       topics: ['probabilistic']
+    },
+    // GeoMCQ: geography multiple-choice questions answered with an LLM and
+    // three-way concept analysis. The works cited in the paper, by group.
+    // Qi, Wei & Yao 2014 is listed once, under CueLattice, with both projects.
+    {
+      title_en: 'GeoSQA: A Benchmark for Scenario-based Question Answering in the Geography Domain at High School Level',
+      authors: 'Zixian Huang, Yulin Shen, Xiao Li, Yu\'ang Wei, Gong Cheng, Lin Zhou, Xinyu Dai, Yuzhong Qu',
+      year: 2019,
+      venue: 'Proceedings of the Conference on Empirical Methods in Natural Language Processing and the International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)',
+      link: 'https://doi.org/10.18653/v1/D19-1597',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Geographic Question Answering: Challenges, Uniqueness, Classification, and Future Directions',
+      authors: 'Gengchen Mai, Krzysztof Janowicz, Rui Zhu, Ling Cai, Ni Lao',
+      year: 2021,
+      venue: 'AGILE: GIScience Series',
+      link: 'https://doi.org/10.5194/agile-giss-2-8-2021',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'MathGraph: A Knowledge Graph for Automatically Solving Mathematical Exercises',
+      authors: 'Tianyu Zhao, Yan Huang, Songfan Yang, Yuyu Luo, Jianhua Feng, Yong Wang, Haitao Yuan, Kang Pan, Kaiyu Li, Haoda Li, Fu Zhu',
+      year: 2019,
+      venue: 'Proceedings of the International Conference on Database Systems for Advanced Applications (DASFAA)',
+      link: 'https://doi.org/10.1007/978-3-030-18576-3_45',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Translating a Math Word Problem to a Expression Tree',
+      authors: 'Lei Wang, Yan Wang, Deng Cai, Dongxiang Zhang, Xiaojiang Liu',
+      year: 2018,
+      venue: 'Proceedings of the Conference on Empirical Methods in Natural Language Processing (EMNLP)',
+      link: 'https://doi.org/10.18653/v1/D18-1132',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'MathDQN: Solving Arithmetic Word Problems via Deep Reinforcement Learning',
+      authors: 'Lei Wang, Dongxiang Zhang, Lianli Gao, Jingkuan Song, Long Guo, Heng Tao Shen',
+      year: 2018,
+      venue: 'Proceedings of the AAAI Conference on Artificial Intelligence',
+      link: 'https://doi.org/10.1609/aaai.v32i1.11981',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'A generation model of math word problem solution via kernel mean dynamic aggregation and dual-decoder synergy fusion',
+      authors: 'Pengpeng Jian, Tianhao Sun, Bin He',
+      year: 2026,
+      venue: 'Information Fusion',
+      link: 'https://doi.org/10.1016/j.inffus.2025.103826',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Towards robust automated math problem solving: a survey of statistical and deep learning approaches',
+      authors: 'Amrutesh Saraf, Pooja Kamat, Shilpa Gite, Satish Kumar, Ketan Kotecha',
+      year: 2024,
+      venue: 'Evolutionary Intelligence',
+      link: 'https://doi.org/10.1007/s12065-024-00957-0',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Leveraging Knowledge Graph for Open-Domain Question Answering',
+      authors: 'Jose Ortiz Costa, Anagha Kulkarni',
+      year: 2018,
+      venue: 'Proceedings of the IEEE/WIC/ACM International Conference on Web Intelligence (WI)',
+      link: 'https://doi.org/10.1109/WI.2018.00-63',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Improving Multi-hop Question Answering over Knowledge Graphs using Knowledge Base Embeddings',
+      authors: 'Apoorv Saxena, Aditay Tripathi, Partha Talukdar',
+      year: 2020,
+      venue: 'Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)',
+      link: 'https://doi.org/10.18653/v1/2020.acl-main.412',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'ReaRev: Adaptive Reasoning for Question Answering over Knowledge Graphs',
+      authors: 'Costas Mavromatis, George Karypis',
+      year: 2022,
+      venue: 'Findings of the Association for Computational Linguistics',
+      link: 'https://doi.org/10.18653/v1/2022.findings-emnlp.181',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Semantic Structure based Query Graph Prediction for Question Answering over Knowledge Graph',
+      authors: 'Mingchen Li, Shihao Ji',
+      year: 2022,
+      venue: 'Proceedings of the International Conference on Computational Linguistics (COLING)',
+      link: 'https://arxiv.org/abs/2204.10194',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Enhancing Complex Reasoning in Knowledge Graph Question Answering through Query Graph Approximation',
+      authors: 'Hongjun Jeong, Minji Kim, Heesoo Jung, Ko Keun Kim, Hogun Park',
+      year: 2025,
+      venue: 'Findings of the Association for Computational Linguistics',
+      link: 'https://doi.org/10.18653/v1/2025.findings-acl.1387',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Cooperative Reasoning on Knowledge Graph and Corpus: A Multi-agent Reinforcement Learning Approach',
+      authors: 'Yunan Zhang, Xiang Cheng, Heting Gao, Chengxiang Zhai',
+      year: 2019,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/1912.02206',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Improving embedded knowledge graph multi-hop question answering by introducing relational chain reasoning',
+      authors: 'Weiqiang Jin, Biao Zhao, Hang Yu, Xi Tao, Ruiping Yin, Guizhong Liu',
+      year: 2023,
+      venue: 'Data Mining and Knowledge Discovery',
+      link: 'https://doi.org/10.1007/s10618-022-00891-8',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'AGIEval: A Human-Centric Benchmark for Evaluating Foundation Models',
+      authors: 'Wanjun Zhong, Ruixiang Cui, Yiduo Guo, Yaobo Liang, Shuai Lu, Yanlin Wang, Amin Saied, Weizhu Chen, Nan Duan',
+      year: 2024,
+      venue: 'Findings of the Association for Computational Linguistics',
+      link: 'https://doi.org/10.18653/v1/2024.findings-naacl.149',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Evaluating the Performance of Large Language Models on GAOKAO Benchmark',
+      authors: 'Xiaotian Zhang, Chunyang Li, Yi Zong, Zhengyu Ying, Liang He, Xipeng Qiu',
+      year: 2023,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2305.12474',
+      project: 'geomcq',
+      topics: ['problem-solving']
+    },
+    {
+      title_en: 'Practical and ethical challenges of large language models in education: A systematic scoping review',
+      authors: 'Lixiang Yan, Lele Sha, Linxuan Zhao, Yuheng Li, Roberto Martinez-Maldonado, Guanliang Chen, Xinyu Li, Yueqiao Jin, Dragan Gašević',
+      year: 2024,
+      venue: 'British Journal of Educational Technology',
+      link: 'https://doi.org/10.1111/bjet.13370',
+      project: 'geomcq',
+      topics: ['llm']
+    },
+    {
+      title_en: 'Leveraging LLMs for Automated Extraction and Structuring of Educational Concepts and Relationships',
+      authors: 'Tianyuan Yang, Baofeng Ren, Chenghao Gu, Tianjia He, Boxuan Ma, Shin\'ichi Konomi',
+      year: 2025,
+      venue: 'Machine Learning and Knowledge Extraction',
+      link: 'https://doi.org/10.3390/make7030103',
+      project: 'geomcq',
+      topics: ['llm']
+    },
+    {
+      title_en: 'Empowering Large Language Models to Leverage Domain-Specific Knowledge in E-Learning',
+      authors: 'Ruei-Shan Lu, Ching-Chang Lin, Hsiu-Yuan Tsao',
+      year: 2024,
+      venue: 'Applied Sciences',
+      link: 'https://doi.org/10.3390/app14125264',
+      project: 'geomcq',
+      topics: ['llm']
+    },
+    {
+      title_en: 'Large Language Models: A Structured Taxonomy and Review of Challenges, Limitations, Solutions, and Future Directions',
+      authors: 'Pejman Peykani, Fatemeh Ramezanlou, Cristina Tanasescu, Sanly Ghanidel',
+      year: 2025,
+      venue: 'Applied Sciences',
+      link: 'https://doi.org/10.3390/app15148103',
+      project: 'geomcq',
+      topics: ['llm']
+    },
+    {
+      title_en: 'Explainable Anomaly Detection in Cloud-Native Systems via RAG-Enhanced Vector Retrieval',
+      authors: 'Vishnupriya S. Devarajulu, Sunitha Kanipakam, Tulasi Kavarakuntla',
+      year: 2025,
+      venue: 'Proceedings of the International Conference on Information Science, Parallel and Distributed Systems (ISPDS)',
+      link: 'https://doi.org/10.1109/ISPDS67367.2025.11391017',
+      project: 'geomcq',
+      topics: ['llm']
+    },
+    {
+      title_en: 'Language Models Don\'t Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting',
+      authors: 'Miles Turpin, Julian Michael, Ethan Perez, Samuel R. Bowman',
+      year: 2023,
+      venue: 'Advances in Neural Information Processing Systems (NeurIPS)',
+      link: 'https://arxiv.org/abs/2305.04388',
+      project: 'geomcq',
+      topics: ['llm']
+    },
+    {
+      title_en: 'Towards Faithfully Interpretable NLP Systems: How Should We Define and Evaluate Faithfulness?',
+      authors: 'Alon Jacovi, Yoav Goldberg',
+      year: 2020,
+      venue: 'Proceedings of the Annual Meeting of the Association for Computational Linguistics (ACL)',
+      link: 'https://doi.org/10.18653/v1/2020.acl-main.386',
+      project: 'geomcq',
+      topics: ['llm']
+    },
+    {
+      title_en: 'Formal Concept Analysis: Mathematical Foundations',
+      authors: 'Bernhard Ganter, Rudolf Wille',
+      year: 1999,
+      venue: 'Springer',
+      link: 'https://doi.org/10.1007/978-3-642-59830-2',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'Formal Concept Analysis in Knowledge Discovery: A Survey',
+      authors: 'Jonas Poelmans, Paul Elzinga, Stijn Viaene, Guido Dedene',
+      year: 2010,
+      venue: 'Proceedings of the International Conference on Conceptual Structures (ICCS)',
+      link: 'https://doi.org/10.1007/978-3-642-14197-3_15',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'A comprehensive survey on formal concept analysis, its research trends and applications',
+      authors: 'Prem Kumar Singh, Cherukuri Aswani Kumar, Abdullah Gani',
+      year: 2016,
+      venue: 'International Journal of Applied Mathematics and Computer Science',
+      link: 'https://doi.org/10.1515/amcs-2016-0035',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'A Categorical View on Algebraic Lattices in Formal Concept Analysis',
+      authors: 'Pascal Hitzler, Markus Krötzsch, Guo-Qiang Zhang',
+      year: 2006,
+      venue: 'Fundamenta Informaticae',
+      link: 'https://doi.org/10.3233/FUN-2006-742-306',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'A Comparative Study of Formal Concept Analysis and Rough Set Theory in Data Analysis',
+      authors: 'Yiyu Yao',
+      year: 2004,
+      venue: 'Proceedings of the International Conference on Rough Sets and Current Trends in Computing (RSCTC)',
+      link: 'https://doi.org/10.1007/978-3-540-25929-9_6',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'Treating Incomplete Knowledge in Formal Concept Analysis',
+      authors: 'Peter Burmeister, Richard Holzer',
+      year: 2005,
+      venue: 'Formal Concept Analysis: Foundations and Applications',
+      link: 'https://doi.org/10.1007/11528784_6',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'Incomplete decision contexts: Approximate concept construction, rule acquisition and knowledge reduction',
+      authors: 'Jinhai Li, Changlin Mei, Yuejin Lv',
+      year: 2013,
+      venue: 'International Journal of Approximate Reasoning',
+      link: 'https://doi.org/10.1016/j.ijar.2012.07.005',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'On heterogeneous formal contexts',
+      authors: 'Lubomír Antoni, Stanislav Krajči, Ondrej Krídlo, Bohuslav Macek, Lenka Pisková',
+      year: 2014,
+      venue: 'Fuzzy Sets and Systems',
+      link: 'https://doi.org/10.1016/j.fss.2013.04.008',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'Mining Triadic Association Rules',
+      authors: 'Sid Ali Selmane, Rokia Missaoui, Omar Boussaid, Fadila Bentayeb',
+      year: 2013,
+      venue: 'Proceedings of the International Conference on Advanced Information Technologies and Applications (ICAITA)',
+      link: 'https://doi.org/10.5121/csit.2013.3825',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'Querying Triadic Concepts through Partial or Complete Matching of Triples',
+      authors: 'Pedro Henrique B. Ruas, Rokia Missaoui, Mohamed Hamza Ibrahim',
+      year: 2024,
+      venue: 'arXiv',
+      link: 'https://arxiv.org/abs/2401.10271',
+      project: 'geomcq',
+      topics: ['fca']
+    },
+    {
+      title_en: 'Three-way decisions with probabilistic rough sets',
+      authors: 'Yiyu Yao',
+      year: 2010,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2009.09.021',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'Three-way decisions space and three-way decisions',
+      authors: 'Bao Qing Hu',
+      year: 2014,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2014.05.015',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'The connections between three-way and classical concept lattices',
+      authors: 'Jianjun Qi, Ting Qian, Ling Wei',
+      year: 2016,
+      venue: 'Knowledge-Based Systems',
+      link: 'https://doi.org/10.1016/j.knosys.2015.08.006',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'The attribute reductions of three-way concept lattices',
+      authors: 'Ruisi Ren, Ling Wei',
+      year: 2016,
+      venue: 'Knowledge-Based Systems',
+      link: 'https://doi.org/10.1016/j.knosys.2016.01.045',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'Three-way cognitive concept learning via multi-granularity',
+      authors: 'Jinhai Li, Chenchen Huang, Jianjun Qi, Yuhua Qian, Wenqi Liu',
+      year: 2017,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2016.04.051',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'A novel interval three-way concept lattice model with its application in medical diagnosis',
+      authors: 'Junhua Hu, Dan Chen, Pei Liang',
+      year: 2019,
+      venue: 'Mathematics',
+      link: 'https://doi.org/10.3390/math7010103',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'Constructing three-way concept lattice based on the composite of classical lattices',
+      authors: 'Sichun Yang, Yunan Lu, Xiuyi Jia, Weiwei Li',
+      year: 2020,
+      venue: 'International Journal of Approximate Reasoning',
+      link: 'https://doi.org/10.1016/j.ijar.2020.03.007',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'On relationship between three-way concept lattices',
+      authors: 'Xuerong Zhao, Duoqian Miao, Bao Qing Hu',
+      year: 2020,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2020.06.007',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'Incremental construction of three-way concept lattice for knowledge discovery in social networks',
+      authors: 'Fei Hao, Yixuan Yang, Geyong Min, Vincenzo Loia',
+      year: 2021,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2021.07.031',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'Automatically Solving Geographical Examination Questions Based on the Analysis of Three Concepts',
+      authors: 'Qihang Hong, Sichun Yang',
+      year: 2022,
+      venue: 'Journal of Nanjing Institute of Technology (Natural Science Edition)',
+      link: '',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: 'Network rule extraction under the network formal context based on three-way decision',
+      authors: 'Min Fan, Shan Luo, Jinhai Li',
+      year: 2023,
+      venue: 'Applied Intelligence',
+      link: 'https://doi.org/10.1007/s10489-022-03672-4',
+      project: 'geomcq',
+      topics: ['three-way']
+    },
+    {
+      title_en: '3WD-DRT: A Three-Way Decision Enhanced Dynamic Routing Transformer for Cost-Sensitive Multimodal Sentiment Analysis',
+      authors: 'Haoyu Jiang, Xiaoliang Chen, Duoqian Miao, Hongyun Zhang, Xin Qin, Shouyang Du, Peng Lu',
+      year: 2026,
+      venue: 'Information Sciences',
+      link: 'https://doi.org/10.1016/j.ins.2025.122704',
+      project: 'geomcq',
+      topics: ['three-way']
     }
   ];
 
@@ -3602,8 +4022,17 @@
     return (project && project.groups) || [];
   }
 
+  // `project` is one id, or a list of ids for a paper that belongs to more than one.
+  function projectIds(d) {
+    return d.project == null ? [] : [].concat(d.project);
+  }
+
+  function inProject(entry, id) {
+    return projectIds(entry.data).indexOf(id) !== -1;
+  }
+
   function inGroup(entry, project, group) {
-    return entry.data.project === project.id && (entry.data.topics || []).indexOf(group.id) !== -1;
+    return inProject(entry, project.id) && (entry.data.topics || []).indexOf(group.id) !== -1;
   }
 
   // ---- Filters -------------------------------------------------------------
@@ -3659,7 +4088,7 @@
         : pick(projectOf(id), 'label', lang);
       var c = document.createElement('span');
       c.className = 'filter-count';
-      c.textContent = id === 'all' ? pool.length : pool.filter(function (e) { return e.data.project === id; }).length;
+      c.textContent = id === 'all' ? pool.length : pool.filter(function (e) { return inProject(e, id); }).length;
       b.appendChild(c);
       b.setAttribute('aria-pressed', String(id === state.project));
     });
@@ -3772,7 +4201,7 @@
   function matches(entry, except) {
     var d = entry.data;
     if (NOTES.length && state.type !== 'all' && entry.kind !== state.type) return false;
-    if (except !== 'project' && state.project !== 'all' && d.project !== state.project) return false;
+    if (except !== 'project' && state.project !== 'all' && !inProject(entry, state.project)) return false;
     if (except !== 'topic' && except !== 'project' && state.topic && (d.topics || []).indexOf(state.topic) === -1) return false;
     if (except !== 'notes' && state.notesOnly && !hasNote(entry)) return false;
     if (state.query) {
@@ -3816,7 +4245,10 @@
     // split into one section per project. The entry's categories are left out
     // too: they are the section headings and the buttons, and "planning" under
     // every title would only repeat them.
-    var groupIds = groupsOf(projectOf(d.project)).map(function (g) { return g.id; });
+    var groupIds = [];
+    projectIds(d).forEach(function (id) {
+      groupsOf(projectOf(id)).forEach(function (g) { groupIds.push(g.id); });
+    });
     (d.topics || []).forEach(function (t) {
       if (groupIds.indexOf(t) !== -1) return;
       var tag = document.createElement('button');
@@ -3965,7 +4397,7 @@
 
     var total = entries.filter(function (e) {
       return !(NOTES.length && state.type !== 'all' && e.kind !== state.type) &&
-        (state.project === 'all' || e.data.project === state.project);
+        (state.project === 'all' || inProject(e, state.project));
     }).length;
     document.getElementById('resultCount').textContent = countText(filtered.length, total, lang);
 
@@ -4019,7 +4451,7 @@
     if (!project && PROJECTS.length > 1) {
       var browsing = !state.query && !state.topic && !state.notesOnly;
       PROJECTS.forEach(function (p) {
-        var mine = filtered.filter(function (e) { return e.data.project === p.id; });
+        var mine = filtered.filter(function (e) { return inProject(e, p.id); });
         var shown = browsing ? mine.slice(0, PREVIEW_COUNT) : mine;
         var section = addSection(pick(p, 'label', lang), shown, mine.length);
         if (!section || !browsing) return;
@@ -4057,7 +4489,7 @@
           holders[holders.length - 1].appendChild(more);
         }
       });
-      addSection(other, filtered.filter(function (e) { return !projectOf(e.data.project); }));
+      addSection(other, filtered.filter(function (e) { return !projectIds(e.data).some(projectOf); }));
       return;
     }
 
