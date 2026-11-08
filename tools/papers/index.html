@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="api-token" content="{{TOKEN}}" />
+  <title>论文库</title>
+  <link rel="icon" type="image/svg+xml" href="/site/favicon.svg" />
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">论文库</div>
+    <div class="bar-actions">
+      <span class="sync" id="sync"></span>
+      <a class="btn" id="preview" href="/site/reading.html" target="_blank" rel="noopener">预览网页</a>
+      <button class="btn primary" id="publish" type="button" disabled>发布</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side" aria-label="论文列表">
+      <div class="side-head">
+        <div class="search-row">
+          <input class="input search" id="q" type="search" placeholder="搜索标题、作者、期刊" autocomplete="off" />
+          <button class="btn primary" id="new" type="button">新增</button>
+        </div>
+        <div class="chips" id="projectFilter"></div>
+        <div class="result-row">
+          <span id="resultCount"></span>
+          <span class="flags" id="flagFilter"></span>
+        </div>
+      </div>
+      <div class="list" id="list"></div>
+    </aside>
+
+    <main class="editor">
+      <div class="editor-scroll" id="editorScroll">
+        <div class="editor-inner">
+          <p class="eyebrow" id="eyebrow"></p>
+          <h1 class="head-title" id="headTitle"></h1>
+
+          <section class="lookup" id="lookup">
+            <div class="lookup-row">
+              <input class="input" id="lookupInput" type="text" placeholder="粘贴 DOI、arXiv 编号、论文网址或标题" autocomplete="off" />
+              <button class="btn" id="lookupBtn" type="button">查找</button>
+            </div>
+            <p class="hint" id="lookupHint">自动填写标题、作者、年份、期刊和链接，填完还可以改。</p>
+            <div class="candidates" id="candidates"></div>
+          </section>
+          <button class="link-btn lookup-open" id="lookupOpen" type="button" hidden>用 DOI、arXiv 或标题重新查找</button>
+
+          <form id="form" autocomplete="off" novalidate>
+            <div class="field">
+              <div class="label-row"><label for="f-title_en">标题</label><button class="link-btn" id="addZhTitle" type="button">加中文标题</button></div>
+              <textarea class="input grow" id="f-title_en" rows="1" spellcheck="false"></textarea>
+              <div class="dup" id="dup" hidden></div>
+            </div>
+            <div class="field" id="zhTitleField" hidden>
+              <label for="f-title_zh">中文标题<span class="opt">论文有正式中文标题时才填</span></label>
+              <input class="input" id="f-title_zh" type="text" />
+            </div>
+            <div class="field">
+              <label for="f-authors">作者</label>
+              <textarea class="input grow" id="f-authors" rows="1" spellcheck="false"></textarea>
+              <p class="hint">用英文逗号分隔。超过 4 位时，网页上只显示前 3 位加 et al.</p>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="f-year">年份</label>
+                <input class="input" id="f-year" type="text" inputmode="numeric" maxlength="4" />
+              </div>
+              <div class="field">
+                <label for="f-venue">期刊 / 会议</label>
+                <input class="input" id="f-venue" type="text" list="venues" spellcheck="false" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-link">链接</label>
+              <div class="with-action">
+                <input class="input" id="f-link" type="url" spellcheck="false" />
+                <a class="link-btn" id="openLink" target="_blank" rel="noopener" hidden>打开</a>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="label" id="projectsLabel">项目</span>
+              <div class="chips" id="f-projects" role="group" aria-labelledby="projectsLabel"></div>
+            </div>
+            <div class="field" id="groupsField">
+              <span class="label">分类</span>
+              <div id="f-groups"></div>
+            </div>
+            <div class="field">
+              <label for="f-tags">其他标签<span class="opt">可选，英文小写加短横线，逗号分隔</span></label>
+              <input class="input" id="f-tags" type="text" spellcheck="false" />
+              <div class="suggest" id="tagSuggest"></div>
+            </div>
+
+            <div class="notes">
+              <h2 class="section-label">阅读笔记<span class="opt">可选</span></h2>
+              <div class="note">
+                <div class="note-head"><label for="f-note_en">English</label><button class="link-btn" type="button" data-translate="en" hidden></button></div>
+                <textarea class="input grow note-text" id="f-note_en" rows="3" lang="en"></textarea>
+              </div>
+              <div class="note">
+                <div class="note-head"><label for="f-note_zh">中文</label><span class="note-tools"><a class="link-btn" data-google="zh" target="_blank" rel="noopener" hidden>Google 翻译</a><button class="link-btn" type="button" data-translate="zh" hidden></button></span></div>
+                <textarea class="input grow note-text" id="f-note_zh" rows="3" lang="zh"></textarea>
+              </div>
+              <div class="note">
+                <div class="note-head"><label for="f-note_de">Deutsch</label><span class="note-tools"><a class="link-btn" data-google="de" target="_blank" rel="noopener" hidden>Google 翻译</a><button class="link-btn" type="button" data-translate="de" hidden></button></span></div>
+                <textarea class="input grow note-text" id="f-note_de" rows="3" lang="de"></textarea>
+              </div>
+              <p class="hint" id="mtHint"></p>
+            </div>
+          </form>
+
+          <ul class="issues" id="issues"></ul>
+        </div>
+      </div>
+
+      <footer class="actions">
+        <div class="actions-inner">
+          <button class="btn quiet danger" id="delete" type="button">删除这篇</button>
+          <span class="spacer"></span>
+          <span class="dirty" id="dirty"></span>
+          <button class="btn" id="revert" type="button">放弃修改</button>
+          <button class="btn primary" id="save" type="button">保存<kbd>⌘S</kbd></button>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <datalist id="venues"></datalist>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="confirmDialog">
+    <form method="dialog" class="dlg">
+      <h2 id="confirmTitle"></h2>
+      <p class="dlg-text" id="confirmText"></p>
+      <div class="dlg-foot">
+        <button class="btn" value="cancel" id="confirmCancel">取消</button>
+        <button class="btn primary" value="ok" id="confirmOk">确定</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="publishDialog">
+    <form method="dialog" class="dlg" id="publishForm">
+      <h2>发布到网站</h2>
+      <p class="dlg-text" id="publishSummary"></p>
+      <ul class="change-list" id="changeList"></ul>
+      <label class="label" for="commitMsg">提交说明</label>
+      <input class="input" id="commitMsg" type="text" spellcheck="false" />
+      <p class="hint" id="publishNote"></p>
+      <p class="dlg-error" id="publishError" hidden></p>
+      <div class="dlg-foot">
+        <button class="btn" value="cancel" id="publishCancel">取消</button>
+        <button class="btn primary" type="button" id="publishGo">提交并推送</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/app.js"></script>
+</body>
+</html>

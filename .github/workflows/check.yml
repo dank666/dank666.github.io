@@ -18,3 +18,5 @@ jobs:
         run: node tools/build.mjs --check
       - name: Concept lattice maths
         run: node tests/lattice-core.test.js
+      - name: reading.html scripts compile and the paper tool reads and writes PAPERS correctly
+        run: node tests/papers-store.test.mjs

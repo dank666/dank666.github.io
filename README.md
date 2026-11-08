@@ -768,6 +768,21 @@ sips -g pixelWidth -g pixelHeight images/avatar.jpg     # 看一下实际尺寸
 
 `reading.html`（页面显示名称是 **Notes / 笔记**）里有两种条目：**论文**（读过的论文，可以附上自己的阅读笔记）和**短文笔记**（自己写的短文）。它们的数据都在文件里的 JavaScript 数组中，不用碰 HTML。
 
+### 10.0 用论文库工具增删改（推荐）
+
+不用手改 `reading.html`，在 Finder 里双击 **`tools/papers/start.command`**（或在终端运行 `node tools/papers/server.mjs`），浏览器会打开一个本地页面"论文库"：
+
+- **新增**：在最上面的框里粘贴 DOI、arXiv 编号、论文网址或标题，点"查找"，标题、作者、年份、期刊、链接会自动填好（来源 Crossref / arXiv；年份按首次公开算，链接优先用 DOI，和 10.2 的约定一致）。再选项目和分类，写阅读笔记，保存。
+- **修改 / 删除**：左边列表点一篇（可以搜索、按项目筛选，"未发布 / 没有笔记 / 缺译文"三个快捷筛选在篇数那一行右边）。
+- **笔记翻译**：中文、德文框上面有两个链接。"Google 翻译"会带着英文原文打开谷歌翻译，把译文贴回来就行；"从英文翻译"调用硅基流动的免费模型（Qwen3-8B，限流时换 GLM-4-9B）直接填进去，只能当初稿，⌘Z 可以撤回。
+- **保存**只改 `reading.html` 里这一篇的那几行，其余内容（注释、顺序、别的条目）一个字节都不动；保存前会检查页面脚本能不能正常运行，有问题就不写入。新论文放在同一项目的最后一篇后面。
+- **发布**：右上角"发布"会列出这次新增、修改、删除的论文，确认后提交 `reading.html` 并推送到 GitHub（只提交这一个文件，别的改动不受影响）。GitHub 上有本地没有的提交时会停下来，提示先 `git pull`。
+- **预览网页**：打开本地的 Notes 页，看保存后的效果。
+
+翻译用的 API key 放在仓库**外面**的 `~/.config/personal-website/llm.env`（仓库是公开的，key 不能放进来），格式是 `LLM_BASE_URL=`、`LLM_API_KEY=`、`LLM_MODEL=`、`LLM_FALLBACK=` 四行；任何兼容 OpenAI 接口的服务都能用，改完不用重启。没有这个文件也没关系，"Google 翻译"照样能用。
+
+工具只监听本机（127.0.0.1），关掉终端窗口就停止。代码在 `tools/papers/`（`store.mjs` 负责读写 `PAPERS`，有测试 `tests/papers-store.test.mjs`）。下面 10.1–10.6 是手改时的说明，用工具时可以不看。
+
 ### 10.1 结构
 
 在文件里搜这三个：
@@ -1158,9 +1173,11 @@ node tests/lattice-core.test.js
 ├── data/
 │   └── content.mjs       News、Publications、Awards、Projects 的内容——日常最常改的文件
 ├── tools/
-│   └── build.mjs         把 data/content.mjs 写进 index.html（node tools/build.mjs）
+│   ├── build.mjs         把 data/content.mjs 写进 index.html（node tools/build.mjs）
+│   └── papers/           论文库工具：本地页面，增删改 reading.html 里的论文并一键发布（双击 start.command，见 10.0）
 ├── tests/
-│   └── lattice-core.test.js   概念格算法的测试
+│   ├── lattice-core.test.js   概念格算法的测试
+│   └── papers-store.test.mjs  论文库工具读写 reading.html 的测试（也检查 reading.html 的脚本能否运行）
 ├── .github/workflows/
 │   └── check.yml         GitHub 上的自动检查（不部署）
 ├── images/               头像、项目截图（WebP；头像另有 JPG 备用）
