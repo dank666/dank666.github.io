@@ -10,126 +10,142 @@
 </head>
 <body>
   <header class="bar">
-    <div class="brand">论文库</div>
+    <div class="bar-left">
+      <button class="btn list-toggle" id="listToggle" type="button" aria-controls="drawer" aria-expanded="false" title="论文列表（/）">
+        <span class="burger" aria-hidden="true"></span>列表
+      </button>
+      <span class="brand">论文库</span>
+    </div>
     <div class="bar-actions">
       <span class="sync" id="sync"></span>
+      <button class="btn" id="newTop" type="button">新增论文</button>
+      <button class="btn" id="projectsBtn" type="button">项目</button>
       <a class="btn" id="preview" href="/site/reading.html" target="_blank" rel="noopener">预览网页</a>
       <button class="btn primary" id="publish" type="button" disabled>发布</button>
     </div>
   </header>
 
-  <div class="layout">
-    <aside class="side" aria-label="论文列表">
-      <div class="side-head">
-        <div class="search-row">
-          <input class="input search" id="q" type="search" placeholder="搜索标题、作者、期刊" autocomplete="off" />
-          <button class="btn primary" id="new" type="button">新增</button>
-        </div>
-        <div class="chips" id="projectFilter"></div>
-        <div class="result-row">
-          <span id="resultCount"></span>
-          <span class="flags" id="flagFilter"></span>
-        </div>
+  <!-- The paper list: a drawer over the editor, closed while editing. -->
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" aria-label="论文列表" aria-hidden="true">
+    <div class="side-head">
+      <div class="search-row">
+        <input class="input search" id="q" type="search" placeholder="搜索标题、作者、期刊" autocomplete="off" />
+        <button class="btn primary" id="new" type="button">新增</button>
       </div>
-      <div class="list" id="list"></div>
-    </aside>
+      <div class="chips" id="projectFilter"></div>
+      <div class="result-row">
+        <span id="resultCount"></span>
+        <span class="flags" id="flagFilter"></span>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </aside>
 
-    <main class="editor">
-      <div class="editor-scroll" id="editorScroll">
-        <div class="editor-inner">
-          <p class="eyebrow" id="eyebrow"></p>
-          <h1 class="head-title" id="headTitle"></h1>
+  <main class="editor">
+    <div class="editor-scroll" id="editorScroll">
+      <div class="editor-inner">
+        <p class="eyebrow" id="eyebrow"></p>
+        <h1 class="head-title" id="headTitle"></h1>
 
-          <section class="lookup" id="lookup">
+        <form id="form" class="form-grid" autocomplete="off" novalidate>
+          <div class="fl" id="lookupLabel">自动填写</div>
+          <div class="fc" id="lookup">
             <div class="lookup-row">
               <input class="input" id="lookupInput" type="text" placeholder="粘贴 DOI、arXiv 编号、论文网址或标题" autocomplete="off" />
               <button class="btn" id="lookupBtn" type="button">查找</button>
             </div>
-            <p class="hint" id="lookupHint">自动填写标题、作者、年份、期刊和链接，填完还可以改。</p>
+            <p class="hint" id="lookupHint">填好标题、作者、年份、期刊和链接，填完还可以改。</p>
             <div class="candidates" id="candidates"></div>
-          </section>
-          <button class="link-btn lookup-open" id="lookupOpen" type="button" hidden>用 DOI、arXiv 或标题重新查找</button>
+          </div>
 
-          <form id="form" autocomplete="off" novalidate>
-            <div class="field">
-              <div class="label-row"><label for="f-title_en">标题</label><button class="link-btn" id="addZhTitle" type="button">加中文标题</button></div>
-              <textarea class="input grow" id="f-title_en" rows="1" spellcheck="false"></textarea>
-              <div class="dup" id="dup" hidden></div>
-            </div>
-            <div class="field" id="zhTitleField" hidden>
-              <label for="f-title_zh">中文标题<span class="opt">论文有正式中文标题时才填</span></label>
-              <input class="input" id="f-title_zh" type="text" />
-            </div>
-            <div class="field">
-              <label for="f-authors">作者</label>
-              <textarea class="input grow" id="f-authors" rows="1" spellcheck="false"></textarea>
-              <p class="hint">用英文逗号分隔。超过 4 位时，网页上只显示前 3 位加 et al.</p>
-            </div>
-            <div class="row">
-              <div class="field">
-                <label for="f-year">年份</label>
-                <input class="input" id="f-year" type="text" inputmode="numeric" maxlength="4" />
-              </div>
-              <div class="field">
-                <label for="f-venue">期刊 / 会议</label>
-                <input class="input" id="f-venue" type="text" list="venues" spellcheck="false" />
-              </div>
-            </div>
-            <div class="field">
-              <label for="f-link">链接</label>
-              <div class="with-action">
-                <input class="input" id="f-link" type="url" spellcheck="false" />
-                <a class="link-btn" id="openLink" target="_blank" rel="noopener" hidden>打开</a>
-              </div>
-            </div>
+          <div class="fl">
+            <label for="f-title_en">标题</label>
+            <button class="link-btn small" id="addZhTitle" type="button">加中文标题</button>
+          </div>
+          <div class="fc">
+            <textarea class="input grow" id="f-title_en" rows="1" spellcheck="false"></textarea>
+            <div class="dup" id="dup" hidden></div>
+            <button class="link-btn small lookup-open" id="lookupOpen" type="button" hidden>用 DOI、arXiv 或标题重新填写</button>
+          </div>
 
-            <div class="field">
-              <span class="label" id="projectsLabel">项目</span>
-              <div class="chips" id="f-projects" role="group" aria-labelledby="projectsLabel"></div>
-            </div>
-            <div class="field" id="groupsField">
-              <span class="label">分类</span>
-              <div id="f-groups"></div>
-            </div>
-            <div class="field">
-              <label for="f-tags">其他标签<span class="opt">可选，英文小写加短横线，逗号分隔</span></label>
-              <input class="input" id="f-tags" type="text" spellcheck="false" />
-              <div class="suggest" id="tagSuggest"></div>
-            </div>
+          <div class="fl" id="zhTitleLabel" hidden><label for="f-title_zh">中文标题</label></div>
+          <div class="fc" id="zhTitleField" hidden>
+            <input class="input" id="f-title_zh" type="text" placeholder="论文有正式中文标题时才填" />
+          </div>
 
-            <div class="notes">
-              <h2 class="section-label">阅读笔记<span class="opt">可选</span></h2>
-              <div class="note">
-                <div class="note-head"><label for="f-note_en">English</label><button class="link-btn" type="button" data-translate="en" hidden></button></div>
-                <textarea class="input grow note-text" id="f-note_en" rows="3" lang="en"></textarea>
-              </div>
-              <div class="note">
-                <div class="note-head"><label for="f-note_zh">中文</label><span class="note-tools"><a class="link-btn" data-google="zh" target="_blank" rel="noopener" hidden>Google 翻译</a><button class="link-btn" type="button" data-translate="zh" hidden></button></span></div>
-                <textarea class="input grow note-text" id="f-note_zh" rows="3" lang="zh"></textarea>
-              </div>
-              <div class="note">
-                <div class="note-head"><label for="f-note_de">Deutsch</label><span class="note-tools"><a class="link-btn" data-google="de" target="_blank" rel="noopener" hidden>Google 翻译</a><button class="link-btn" type="button" data-translate="de" hidden></button></span></div>
-                <textarea class="input grow note-text" id="f-note_de" rows="3" lang="de"></textarea>
-              </div>
-              <p class="hint" id="mtHint"></p>
-            </div>
-          </form>
+          <div class="fl"><label for="f-authors">作者</label></div>
+          <div class="fc">
+            <textarea class="input grow" id="f-authors" rows="1" spellcheck="false" placeholder="用英文逗号分隔"></textarea>
+          </div>
 
-          <ul class="issues" id="issues"></ul>
-        </div>
+          <div class="fl"><label for="f-year">年份</label></div>
+          <div class="fc year-venue">
+            <input class="input year" id="f-year" type="text" inputmode="numeric" maxlength="4" />
+            <label class="inline-label" for="f-venue">期刊 / 会议</label>
+            <input class="input" id="f-venue" type="text" list="venues" spellcheck="false" />
+          </div>
+
+          <div class="fl"><label for="f-link">链接</label></div>
+          <div class="fc with-action">
+            <input class="input" id="f-link" type="url" spellcheck="false" />
+            <a class="link-btn" id="openLink" target="_blank" rel="noopener" hidden>打开</a>
+          </div>
+
+          <div class="fl chip-row" id="projectsLabel">项目</div>
+          <div class="fc">
+            <div class="chips" id="f-projects" role="group" aria-labelledby="projectsLabel"></div>
+          </div>
+
+          <div class="fl chip-row" id="groupsLabel">分类</div>
+          <div class="fc" id="groupsField"><div id="f-groups"></div></div>
+
+          <div class="fl"><label for="f-tags">标签</label></div>
+          <div class="fc">
+            <input class="input" id="f-tags" type="text" spellcheck="false" placeholder="可选，英文小写加短横线，逗号分隔" />
+            <div class="suggest" id="tagSuggest"></div>
+          </div>
+
+          <div class="rule" aria-hidden="true"></div>
+
+          <div class="fl"><label for="f-note_en">English</label><span class="fl-sub">阅读笔记</span></div>
+          <div class="fc"><textarea class="input grow note-text" id="f-note_en" rows="3" lang="en"></textarea></div>
+
+          <div class="fl">
+            <label for="f-note_zh">中文</label>
+            <span class="note-tools">
+              <a class="link-btn small" data-google="zh" target="_blank" rel="noopener" hidden>Google 翻译</a>
+              <button class="link-btn small" type="button" data-translate="zh" hidden></button>
+            </span>
+          </div>
+          <div class="fc"><textarea class="input grow note-text" id="f-note_zh" rows="3" lang="zh"></textarea></div>
+
+          <div class="fl">
+            <label for="f-note_de">Deutsch</label>
+            <span class="note-tools">
+              <a class="link-btn small" data-google="de" target="_blank" rel="noopener" hidden>Google 翻译</a>
+              <button class="link-btn small" type="button" data-translate="de" hidden></button>
+            </span>
+          </div>
+          <div class="fc">
+            <textarea class="input grow note-text" id="f-note_de" rows="3" lang="de"></textarea>
+            <p class="hint" id="mtHint"></p>
+            <ul class="issues" id="issues"></ul>
+          </div>
+        </form>
       </div>
+    </div>
 
-      <footer class="actions">
-        <div class="actions-inner">
-          <button class="btn quiet danger" id="delete" type="button">删除这篇</button>
-          <span class="spacer"></span>
-          <span class="dirty" id="dirty"></span>
-          <button class="btn" id="revert" type="button">放弃修改</button>
-          <button class="btn primary" id="save" type="button">保存<kbd>⌘S</kbd></button>
-        </div>
-      </footer>
-    </main>
-  </div>
+    <footer class="actions">
+      <div class="actions-inner">
+        <button class="btn quiet danger" id="delete" type="button">删除这篇</button>
+        <span class="spacer"></span>
+        <span class="dirty" id="dirty"></span>
+        <button class="btn" id="revert" type="button">放弃修改</button>
+        <button class="btn primary" id="save" type="button">保存<kbd>⌘S</kbd></button>
+      </div>
+    </footer>
+  </main>
 
   <datalist id="venues"></datalist>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -157,6 +173,39 @@
       <div class="dlg-foot">
         <button class="btn" value="cancel" id="publishCancel">取消</button>
         <button class="btn primary" type="button" id="publishGo">提交并推送</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Projects: create one, rename, add or remove categories. -->
+  <dialog id="projectDialog" class="wide">
+    <form method="dialog" class="dlg" id="projectForm" autocomplete="off">
+      <h2>项目</h2>
+      <div class="chips project-pick" id="projectPick"></div>
+
+      <div class="pj-grid">
+        <label class="pj-l" for="pj-zh">中文名</label>
+        <input class="input" id="pj-zh" type="text" />
+        <label class="pj-l" for="pj-en">英文名</label>
+        <input class="input" id="pj-en" type="text" spellcheck="false" />
+        <label class="pj-l" for="pj-de">德文名</label>
+        <input class="input" id="pj-de" type="text" spellcheck="false" placeholder="可选，空着就显示英文名" />
+      </div>
+      <p class="hint" id="pjId"></p>
+
+      <div class="pj-groups-head">
+        <span class="label">分类</span>
+        <span class="hint">可选。网页上项目下面的那排按钮，论文按分类分段。</span>
+      </div>
+      <div class="pj-groups" id="pjGroups"></div>
+      <button class="link-btn" id="pjAddGroup" type="button">＋ 添加分类</button>
+
+      <p class="dlg-error" id="pjError" hidden></p>
+      <div class="dlg-foot">
+        <button class="btn quiet danger" id="pjDelete" type="button">删除项目</button>
+        <span class="spacer"></span>
+        <button class="btn" value="cancel" id="pjCancel">取消</button>
+        <button class="btn primary" type="button" id="pjSave">保存项目</button>
       </div>
     </form>
   </dialog>

@@ -224,6 +224,51 @@ export function apply(src, op) {
   return { src: out, index: at };
 }
 
+// ---- Projects -------------------------------------------------------------
+
+const PROJECT_ORDER = ['id', 'label_en', 'label_zh', 'label_de'];
+
+function orderedPairs(obj, order) {
+  const keys = order.filter(k => k in obj).concat(Object.keys(obj).filter(k => !order.includes(k) && k !== 'groups'));
+  return keys.filter(k => !isEmpty(obj[k])).map(k => [k, obj[k]]);
+}
+
+// The whole PROJECTS array, laid out like the one in the file: one field per
+// line for a project, one line per category.
+export function serializeProjects(projects) {
+  const blocks = projects.map(p => {
+    const lines = orderedPairs(p, PROJECT_ORDER).map(([k, v]) => FIELD_INDENT + key(k) + ': ' + literal(v));
+    if (p.groups && p.groups.length) {
+      const groups = p.groups.map(g => FIELD_INDENT + '  { ' + orderedPairs(g, PROJECT_ORDER).map(([k, v]) => key(k) + ': ' + literal(v)).join(', ') + ' }');
+      lines.push(FIELD_INDENT + 'groups: [\n' + groups.join(',\n') + '\n' + FIELD_INDENT + ']');
+    }
+    return ENTRY_INDENT + '{\n' + lines.join(',\n') + '\n' + ENTRY_INDENT + '}';
+  });
+  return '[\n' + blocks.join(',\n') + '\n  ]';
+}
+
+// A project as it reads back from the file: empty fields and empty group lists left out.
+function normalizeProject(p) {
+  const out = Object.fromEntries(orderedPairs(p, PROJECT_ORDER));
+  if (p.groups && p.groups.length) out.groups = p.groups.map(g => Object.fromEntries(orderedPairs(g, PROJECT_ORDER)));
+  return out;
+}
+
+// Replaces PROJECTS. Throws (changing nothing) unless the file reads back to
+// exactly these projects, the papers are untouched and every script compiles.
+export function setProjects(src, projects) {
+  const before = parse(src);
+  const arr = locateArray(src, 'PROJECTS');
+  const out = src.slice(0, arr.open) + serializeProjects(projects) + src.slice(arr.close + 1);
+  const after = parse(out);
+  const clean = projects.map(normalizeProject);
+  if (!same(after.projects, clean) || !same(after.papers.map(p => p.value), before.papers.map(p => p.value))) {
+    throw new Error('The edited file does not read back as intended; nothing was saved.');
+  }
+  checkScripts(out);
+  return out;
+}
+
 // ---- Comparing with the last commit ---------------------------------------
 
 const norm = s => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();

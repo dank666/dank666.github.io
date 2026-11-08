@@ -8,6 +8,7 @@
 //    list, and every byte outside the touched entry must be unchanged.
 // 3. Strings that would break the page (apostrophes, backslashes, newlines,
 //    "</script>") come out escaped.
+// 4. Comparing with the last commit; 5. rewriting PROJECTS.
 // Exits with a non-zero code on failure.
 
 import fs from 'node:fs';
@@ -104,6 +105,24 @@ const cur = [{ ...base[0], note_en: 'changed' }, base[1], base[3], base[4], samp
 const cmp = S.compare(base, cur);
 ok(JSON.stringify(cmp.status) === JSON.stringify(['changed', '', '', '', 'new']), 'compare status ' + JSON.stringify(cmp.status));
 ok(cmp.removed.length === 1 && cmp.removed[0] === base[2].title_en, 'compare removed ' + JSON.stringify(cmp.removed));
+
+// ---- 5. projects --------------------------------------------------------------------
+// Writing PROJECTS back unchanged must not change a byte.
+ok(S.setProjects(html, projects) === html, 'rewriting PROJECTS unchanged altered the file');
+const kg = { id: 'kg-test', label_en: "Graphs: it's \\ </script>", label_zh: '图', label_de: '',
+  groups: [{ id: 'g-one', label_en: 'One', label_zh: '一' }, { id: 'g-two', label_en: 'Two', label_zh: '二', label_de: 'Zwei' }] };
+const withKg = S.setProjects(html, [...projects, kg]);
+const kgBack = S.parse(withKg).projects;
+ok(kgBack.length === projects.length + 1, 'new project not added');
+ok(kgBack[kgBack.length - 1].label_en === kg.label_en, 'project label did not survive: ' + JSON.stringify(kgBack[kgBack.length - 1].label_en));
+ok(!('label_de' in kgBack[kgBack.length - 1]), 'empty label_de was written');
+ok(kgBack[kgBack.length - 1].groups[1].label_de === 'Zwei', 'group label_de lost');
+ok(JSON.stringify(S.parse(withKg).papers.map(p => p.value)) === JSON.stringify(papers.map(p => p.value)), 'papers changed when PROJECTS changed');
+// Only the PROJECTS array may change.
+const pa = S.locateArray(html, 'PROJECTS');
+ok(withKg.startsWith(html.slice(0, pa.open)) && withKg.endsWith(html.slice(pa.close + 1)), 'bytes outside PROJECTS changed');
+// Removing it again gives back the original file.
+ok(S.setProjects(withKg, projects) === html, 'removing the new project did not restore the file');
 
 console.log(`${checks - fails}/${checks} checks passed (${papers.length} papers)`);
 process.exit(fails ? 1 : 0);

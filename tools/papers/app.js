@@ -193,7 +193,7 @@
   // ---- Bar --------------------------------------------------------------------
 
   function pendingCount() {
-    return S.status.filter(Boolean).length + S.removed.length;
+    return S.status.filter(Boolean).length + S.removed.length + S.projectChanges.length;
   }
 
   function renderBar() {
@@ -258,11 +258,12 @@
         }
       }, proj.label_zh || proj.label_en));
     });
+    pw.appendChild(h('button', { class: 'chip add', type: 'button', onclick: function () { openProjects(null, true); } }, '＋ 新项目'));
 
     var gw = F('groups');
     gw.textContent = '';
     var withGroups = sel.projects.filter(function (id) { return groupsOf(id).length; });
-    $('groupsField').hidden = !withGroups.length;
+    $('groupsField').hidden = $('groupsLabel').hidden = !withGroups.length;
     // With several projects, a grid: project names in one column, their
     // categories beside them, so the rows of chips line up.
     gw.className = withGroups.length > 1 ? 'group-grid' : '';
@@ -372,7 +373,7 @@
     $('headTitle').textContent = t || (isNew ? '新增论文' : '（没有标题）');
     $('headTitle').className = 'head-title' + (t || isNew ? '' : ' placeholder');
 
-    $('lookup').hidden = !isNew && !$('lookup').dataset.open;
+    $('lookup').hidden = $('lookupLabel').hidden = !isNew && !$('lookup').dataset.open;
     $('lookupOpen').hidden = isNew || !!$('lookup').dataset.open;
 
     var link = F('link').value.trim();
@@ -380,7 +381,7 @@
     if (!$('openLink').hidden) $('openLink').href = link;
 
     var zh = !!F('title_zh').value.trim() || !!$('zhTitleField').dataset.open;
-    $('zhTitleField').hidden = !zh;
+    $('zhTitleField').hidden = $('zhTitleLabel').hidden = !zh;
     $('addZhTitle').hidden = zh;
 
     renderDuplicate();
@@ -545,6 +546,7 @@
   }
 
   function open(i) {
+    closeDrawer();
     if (i === cur.index) return;
     leaveOk().then(function (ok) {
       if (!ok) return;
@@ -565,8 +567,28 @@
       $('editorScroll').scrollTop = 0;
       $('lookupInput').focus();
     };
+    closeDrawer();
     if (force) return go();
     leaveOk().then(function (ok) { if (ok) go(); });
+  }
+
+  // ---- The list drawer ---------------------------------------------------------------
+
+  function openDrawer() {
+    $('drawer').classList.add('open');
+    $('drawer').setAttribute('aria-hidden', 'false');
+    $('scrim').hidden = false;
+    $('listToggle').setAttribute('aria-expanded', 'true');
+    scrollToItem(cur.index);
+    setTimeout(function () { $('q').focus(); }, 60);
+  }
+
+  function closeDrawer() {
+    if (!$('drawer').classList.contains('open')) return;
+    $('drawer').classList.remove('open');
+    $('drawer').setAttribute('aria-hidden', 'true');
+    $('scrim').hidden = true;
+    $('listToggle').setAttribute('aria-expanded', 'false');
   }
 
   function setState(next) {
@@ -645,8 +667,19 @@
 
   // ---- Publishing -----------------------------------------------------------------
 
-  function commitMessage(a, c, d) {
+  function commitMessage(a, c, d, pc) {
     var n = function (k) { return k + ' paper' + (k === 1 ? '' : 's'); };
+    var newProjects = (pc || []).filter(function (x) { return x.kind === 'new'; });
+    var projectPart = newProjects.length === (pc || []).length && newProjects.length
+      ? 'add project' + (newProjects.length > 1 ? 's ' : ' ') + newProjects.map(function (x) { return x.label; }).join(', ')
+      : (pc || []).length ? 'update projects' : '';
+    var paperPart = commitPapers(a, c, d, n);
+    if (!projectPart) return paperPart;
+    if (!a && !c && !d) return projectPart.charAt(0).toUpperCase() + projectPart.slice(1) + ' in Notes';
+    return paperPart + '; ' + projectPart;
+  }
+
+  function commitPapers(a, c, d, n) {
     var parts = [];
     if (a) parts.push('add ' + n(a));
     if (c) parts.push('update ' + (a ? c : n(c)));
@@ -662,11 +695,13 @@
     var added = [], changed = [];
     S.status.forEach(function (st, i) { if (st === 'new') added.push(i); else if (st === 'changed') changed.push(i); });
     var removed = S.removed;
+    var pc = S.projectChanges;
 
     var parts = [];
     if (added.length) parts.push('新增 ' + added.length + ' 篇');
     if (changed.length) parts.push('修改 ' + changed.length + ' 篇');
     if (removed.length) parts.push('删除 ' + removed.length + ' 篇');
+    if (pc.length) parts.push('项目改动 ' + pc.length + ' 处');
     $('publishSummary').textContent = parts.length
       ? parts.join('，') + '。会提交 reading.html，并推送到 GitHub。'
       : (S.git.dirty ? 'reading.html 有改动（不涉及论文条目），会提交并推送到 GitHub。' : '没有新的修改，只推送已经提交的内容。');
@@ -677,9 +712,10 @@
     added.forEach(function (i) { row('新增', '', S.papers[i].title_en); });
     changed.forEach(function (i) { row('修改', '', S.papers[i].title_en); });
     removed.forEach(function (t) { row('删除', 'removed', t); });
+    pc.forEach(function (c) { row(c.kind === 'new' ? '新项目' : c.kind === 'removed' ? '删项目' : '改项目', c.kind === 'removed' ? 'removed' : '', c.label); });
     ul.hidden = !ul.childNodes.length;
 
-    $('commitMsg').value = commitMessage(added.length, changed.length, removed.length);
+    $('commitMsg').value = commitMessage(added.length, changed.length, removed.length, pc);
     var notes = [];
     if (S.git.ahead) notes.push('另有 ' + S.git.ahead + ' 个已经提交、还没推送的提交，会一起推送。');
     if (S.git.others.length) notes.push('其他有改动的文件（' + S.git.others.slice(0, 3).join('、') + (S.git.others.length > 3 ? ' 等 ' + S.git.others.length + ' 个' : '') + '）不在这次发布里。');
@@ -721,12 +757,207 @@
     });
   }
 
+  // ---- Projects ---------------------------------------------------------------------
+
+  var pj = { list: [], index: -1, fromForm: false };   // working copy, project being edited
+
+  function slug(s) {
+    return String(s || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  }
+
+  function uniqueSlug(base, taken, fallback) {
+    var s0 = base || fallback, s1 = s0, k = 2;
+    while (taken.indexOf(s1) >= 0) s1 = s0 + '-' + k++;
+    return s1;
+  }
+
+  function papersIn(id) { return S.papers.filter(function (p) { return projectsOf(p).indexOf(id) >= 0; }).length; }
+  function papersWithTopic(projectId, topic) {
+    return S.papers.filter(function (p) { return projectsOf(p).indexOf(projectId) >= 0 && (p.topics || []).indexOf(topic) >= 0; }).length;
+  }
+
+  // index: which project to show first (null: the one chosen in the form);
+  // create: start with a new, empty project.
+  function openProjects(index, create) {
+    pj.list = JSON.parse(JSON.stringify(S.projects));
+    pj.list.forEach(function (p) { p._saved = true; (p.groups || []).forEach(function (g) { g._saved = true; }); });
+    pj.fromForm = !!create;
+    if (create) addProject();
+    else pj.index = index !== null ? index : Math.max(0, pj.list.findIndex(function (p) { return p.id === sel.projects[0]; }));
+    $('pjError').hidden = true;
+    renderProjectDialog();
+    $('projectDialog').showModal();
+    if (create) $('pj-zh').focus();
+  }
+
+  function addProject() {
+    pj.list.push({ id: '', label_zh: '', label_en: '', label_de: '', groups: [] });
+    pj.index = pj.list.length - 1;
+  }
+
+  function current() { return pj.list[pj.index]; }
+
+  function renderProjectDialog() {
+    var pick = $('projectPick');
+    pick.textContent = '';
+    pj.list.forEach(function (p, i) {
+      pick.appendChild(h('button', {
+        class: 'chip', type: 'button', 'aria-pressed': String(i === pj.index),
+        onclick: function () { pj.index = i; renderProjectDialog(); }
+      }, p.label_zh || p.label_en || '新项目'));
+    });
+    if (pj.list.every(function (p) { return p._saved; })) {
+      pick.appendChild(h('button', { class: 'chip add', type: 'button', onclick: function () { addProject(); renderProjectDialog(); $('pj-zh').focus(); } }, '＋ 新建项目'));
+    }
+
+    var p = current();
+    $('pj-zh').value = p.label_zh || '';
+    $('pj-en').value = p.label_en || '';
+    $('pj-de').value = p.label_de || '';
+    renderProjectId();
+
+    var box = $('pjGroups');
+    box.textContent = '';
+    (p.groups || []).forEach(function (g, gi) {
+      var row = h('div', { class: 'pj-group' });
+      [['label_zh', '中文名'], ['label_en', '英文名'], ['label_de', '德文名（可选）']].forEach(function (f) {
+        var input = h('input', { class: 'input', type: 'text', placeholder: f[1], spellcheck: 'false' });
+        input.value = g[f[0]] || '';
+        input.addEventListener('input', function () {
+          g[f[0]] = input.value;
+          if (!g._saved && f[0] === 'label_en') { g.id = ''; renderGroupMeta(row, g, p); }
+        });
+        row.appendChild(input);
+      });
+      row.appendChild(h('button', {
+        class: 'icon-btn', type: 'button', title: '删除这个分类', 'aria-label': '删除这个分类', text: '×',
+        onclick: function () { removeGroup(gi); }
+      }));
+      renderGroupMeta(row, g, p);
+      box.appendChild(row);
+    });
+
+    var n = p._saved ? papersIn(p.id) : 0;
+    $('pjDelete').hidden = !p._saved || n > 0 || pj.list.length < 2;
+    $('pjDelete').title = n ? '这个项目下还有论文' : '';
+  }
+
+  function renderGroupMeta(row, g, p) {
+    var meta = row.querySelector('.pj-group-meta') || row.appendChild(h('div', { class: 'pj-group-meta' }));
+    var n = g._saved ? papersWithTopic(p.id, g.id) : 0;
+    meta.textContent = g._saved ? '编号 ' + g.id + (n ? ' · ' + n + ' 篇论文' : '') : (slug(g.label_en) ? '编号 ' + slug(g.label_en) : '编号按英文名生成');
+  }
+
+  function renderProjectId() {
+    var p = current();
+    $('pjId').textContent = p._saved
+      ? '编号 ' + p.id + ' · ' + papersIn(p.id) + ' 篇论文' + (papersIn(p.id) ? '（有论文的项目不能删除）' : '')
+      : '编号：' + (slug($('pj-en').value) || '按英文名生成') + '（保存后不能改）';
+  }
+
+  function removeGroup(gi) {
+    var p = current();
+    var g = p.groups[gi];
+    var n = g._saved ? papersWithTopic(p.id, g.id) : 0;
+    var go = function () { p.groups.splice(gi, 1); renderProjectDialog(); };
+    if (!n) return go();
+    confirmBox('删除分类“' + (g.label_zh || g.label_en) + '”？', '有 ' + n + ' 篇论文在这个分类里。删除后这些论文会排到“其他”里，原来的分类在网页上会显示成一个普通标签。', '删除', true)
+      .then(function (ok) { if (ok) go(); });
+  }
+
+  function saveProjectsNow() {
+    var p = current();
+    p.label_zh = $('pj-zh').value.trim();
+    p.label_en = $('pj-en').value.trim();
+    p.label_de = $('pj-de').value.trim();
+    var err = function (msg) { $('pjError').textContent = msg; $('pjError').hidden = false; };
+    if (!p.label_zh || !p.label_en) return err('项目要有中文名和英文名。');
+    for (var i = 0; i < (p.groups || []).length; i++) {
+      var g = p.groups[i];
+      if (!(g.label_zh || '').trim() || !(g.label_en || '').trim()) return err('每个分类都要有中文名和英文名。');
+    }
+    var ids = pj.list.filter(function (x) { return x !== p; }).map(function (x) { return x.id; });
+    if (!p._saved) p.id = uniqueSlug(slug(p.label_en), ids, 'project');
+    var gids = [];
+    (p.groups || []).forEach(function (g) {
+      if (!g._saved) g.id = uniqueSlug(slug(g.label_en), gids, 'group');
+      gids.push(g.id);
+    });
+    // Unsaved new projects other than this one are dropped.
+    var list = pj.list.filter(function (x) { return x._saved || x === p; }).map(function (x) {
+      return {
+        id: x.id, label_en: x.label_en, label_zh: x.label_zh, label_de: x.label_de,
+        groups: (x.groups || []).map(function (g) { return { id: g.id, label_en: (g.label_en || '').trim(), label_zh: (g.label_zh || '').trim(), label_de: (g.label_de || '').trim() }; })
+      };
+    });
+    var newId = p.id, wasNew = !p._saved;
+    $('pjSave').disabled = true;
+    api('projects', { projects: list, original: S.projects }).then(function (res) {
+      setState(res.state);
+      $('projectDialog').close();
+      // A project created from the paper form is chosen for the paper right away.
+      if (wasNew && pj.fromForm && sel.projects.indexOf(newId) < 0) {
+        sel.projects = cur.index === null && !isDirty() ? [newId] : sel.projects.concat(newId);
+      }
+      sel.projects = sel.projects.filter(function (id) { return project(id); });
+      if (!sel.projects.length) sel.projects = [S.projects[0].id];
+      renderChoices();
+      refreshForm();
+      toast(wasNew ? '已新建项目“' + p.label_zh + '”' : '项目已保存');
+    }).catch(function (e) {
+      err(e.message);
+      if (e.status === 409) api('state').then(function (st) { setState(st); });
+    }).then(function () { $('pjSave').disabled = false; });
+  }
+
+  function deleteProjectNow() {
+    var p = current();
+    confirmBox('删除项目“' + (p.label_zh || p.label_en) + '”？', '这个项目下没有论文，删除后它的按钮会从网页上消失。', '删除', true).then(function (ok) {
+      if (!ok) return;
+      pj.list.splice(pj.index, 1);
+      var list = pj.list.filter(function (x) { return x._saved; }).map(function (x) {
+        return { id: x.id, label_en: x.label_en, label_zh: x.label_zh, label_de: x.label_de, groups: (x.groups || []).map(function (g) { return { id: g.id, label_en: g.label_en, label_zh: g.label_zh, label_de: g.label_de }; }) };
+      });
+      api('projects', { projects: list, original: S.projects }).then(function (res) {
+        setState(res.state);
+        $('projectDialog').close();
+        sel.projects = sel.projects.filter(function (id) { return project(id); });
+        if (!sel.projects.length) sel.projects = [S.projects[0].id];
+        renderChoices();
+        refreshForm();
+        toast('已删除项目');
+      }).catch(function (e) { $('pjError').textContent = e.message; $('pjError').hidden = false; });
+    });
+  }
+
   // ---- Wiring -----------------------------------------------------------------------
 
   function wire() {
     $('q').addEventListener('input', function () { view.q = this.value; renderFilters(); renderList(); });
-    $('q').addEventListener('keydown', function (e) { if (e.key === 'Escape') { this.value = ''; view.q = ''; renderFilters(); renderList(); } });
+    // Esc in the search box clears it first; a second Esc closes the drawer.
+    $('q').addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && this.value) { e.stopPropagation(); this.value = ''; view.q = ''; renderFilters(); renderList(); }
+    });
     $('new').addEventListener('click', function () { newPaper(); });
+    $('newTop').addEventListener('click', function () { newPaper(); });
+    $('listToggle').addEventListener('click', function () {
+      if ($('drawer').classList.contains('open')) closeDrawer(); else openDrawer();
+    });
+    $('scrim').addEventListener('click', closeDrawer);
+    $('projectsBtn').addEventListener('click', function () { openProjects(null, false); });
+    $('pj-zh').addEventListener('input', function () { current().label_zh = this.value; });
+    $('pj-en').addEventListener('input', function () { current().label_en = this.value; renderProjectId(); });
+    $('pj-de').addEventListener('input', function () { current().label_de = this.value; });
+    $('pjAddGroup').addEventListener('click', function () {
+      var p = current();
+      (p.groups = p.groups || []).push({ id: '', label_zh: '', label_en: '', label_de: '' });
+      renderProjectDialog();
+      var rows = $('pjGroups').querySelectorAll('.pj-group');
+      rows[rows.length - 1].querySelector('input').focus();
+    });
+    $('pjSave').addEventListener('click', saveProjectsNow);
+    $('pjDelete').addEventListener('click', deleteProjectNow);
     $('save').addEventListener('click', save);
     $('revert').addEventListener('click', function () {
       if (cur.index === null) newPaper(true); else fill(cur.original);
@@ -768,7 +999,8 @@
     document.addEventListener('keydown', function (e) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); }
       var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
-      if (e.key === '/' && !typing && !document.querySelector('dialog[open]')) { e.preventDefault(); $('q').focus(); }
+      if (e.key === '/' && !typing && !document.querySelector('dialog[open]')) { e.preventDefault(); openDrawer(); }
+      if (e.key === 'Escape' && $('drawer').classList.contains('open') && !document.querySelector('dialog[open]')) closeDrawer();
     });
     window.addEventListener('beforeunload', function (e) { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
 

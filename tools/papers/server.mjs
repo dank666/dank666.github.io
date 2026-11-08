@@ -40,15 +40,33 @@ function git(args, timeout = 30000) {
   });
 }
 
-let headCache = { sha: null, papers: [] };
-async function papersAtHead() {
+let headCache = { sha: null, papers: [], projects: [] };
+async function atHead() {
   const sha = (await git(['rev-parse', 'HEAD'])).stdout.trim();
-  if (sha && sha === headCache.sha) return headCache.papers;
+  if (sha && sha === headCache.sha) return headCache;
   const show = await git(['show', 'HEAD:' + REL]);
-  let papers = [];
-  try { papers = show.code === 0 ? store.parse(show.stdout).papers.map(p => p.value) : []; } catch { /* unreadable old version */ }
-  headCache = { sha, papers };
-  return papers;
+  let papers = [], projects = [];
+  try {
+    if (show.code === 0) {
+      const parsed = store.parse(show.stdout);
+      papers = parsed.papers.map(p => p.value);
+      projects = parsed.projects;
+    }
+  } catch { /* unreadable old version */ }
+  headCache = { sha, papers, projects };
+  return headCache;
+}
+
+// Projects added, changed or removed since the last commit (by id).
+function compareProjects(base, current) {
+  const out = [];
+  for (const p of current) {
+    const b = base.find(x => x.id === p.id);
+    if (!b) out.push({ kind: 'new', label: p.label_zh || p.label_en });
+    else if (!store.same(b, p)) out.push({ kind: 'changed', label: p.label_zh || p.label_en });
+  }
+  for (const b of base) if (!current.some(p => p.id === b.id)) out.push({ kind: 'removed', label: b.label_zh || b.label_en });
+  return out;
 }
 
 async function gitState() {
@@ -94,11 +112,11 @@ function writeAtomic(text) {
 async function state() {
   const { papers, projects } = store.parse(read());
   const values = papers.map(p => p.value);
-  const [base, g, url] = await Promise.all([papersAtHead(), gitState(), siteUrl()]);
-  const { status, removed } = store.compare(base, values);
+  const [head, g, url] = await Promise.all([atHead(), gitState(), siteUrl()]);
+  const { status, removed } = store.compare(head.papers, values);
   const cfg = loadConfig();
   return {
-    projects, papers: values, status, removed, git: g, site: url,
+    projects, papers: values, status, removed, projectChanges: compareProjects(head.projects, projects), git: g, site: url,
     llm: { model: cfg.model, ready: !!cfg.apiKey, configFile: CONFIG_FILE }
   };
 }
@@ -188,6 +206,46 @@ async function remove({ index, original }) {
   return { state: await state() };
 }
 
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function cleanProjects(list) {
+  if (!Array.isArray(list) || !list.length) throw new HttpError(400, '至少要有一个项目');
+  const ids = new Set();
+  return list.map(p => {
+    const out = { id: line(p.id).toLowerCase(), label_en: straight(line(p.label_en)), label_zh: line(p.label_zh), label_de: line(p.label_de) };
+    if (!SLUG.test(out.id)) throw new HttpError(400, '项目编号只能用英文小写字母、数字和短横线：' + (out.id || '（空）'));
+    if (ids.has(out.id)) throw new HttpError(400, '项目编号重复：' + out.id);
+    ids.add(out.id);
+    if (!out.label_zh || !out.label_en) throw new HttpError(400, '项目要有中文名和英文名');
+    const gids = new Set();
+    out.groups = (Array.isArray(p.groups) ? p.groups : []).map(g => {
+      const go = { id: line(g.id).toLowerCase(), label_en: straight(line(g.label_en)), label_zh: line(g.label_zh), label_de: line(g.label_de) };
+      if (!SLUG.test(go.id)) throw new HttpError(400, '分类编号只能用英文小写字母、数字和短横线：' + (go.id || '（空）'));
+      if (gids.has(go.id)) throw new HttpError(400, '“' + out.label_zh + '”里的分类编号重复：' + go.id);
+      gids.add(go.id);
+      if (!go.label_zh || !go.label_en) throw new HttpError(400, '每个分类都要有中文名和英文名（“' + out.label_zh + '”）');
+      return go;
+    });
+    return out;
+  });
+}
+
+async function saveProjects({ projects, original }) {
+  const src = read();
+  const parsed = store.parse(src);
+  if (!store.same(parsed.projects, original)) {
+    throw new HttpError(409, '项目在别处被改动过，页面已重新载入。请再改一次。');
+  }
+  const clean = cleanProjects(projects);
+  for (const old of parsed.projects) {
+    if (clean.some(p => p.id === old.id)) continue;
+    const n = parsed.papers.filter(e => [].concat(e.value.project).includes(old.id)).length;
+    if (n) throw new HttpError(400, '“' + (old.label_zh || old.label_en) + '”下还有 ' + n + ' 篇论文，不能删除这个项目。');
+  }
+  writeAtomic(store.setProjects(src, clean));
+  return { state: await state() };
+}
+
 async function publish({ message }) {
   const msg = String(message || '').trim();
   if (!msg) throw new HttpError(400, '提交说明不能为空');
@@ -258,6 +316,7 @@ const ROUTES = {
   'POST save': b => serial(() => save(b)),
   'POST delete': b => serial(() => remove(b)),
   'POST publish': b => serial(() => publish(b)),
+  'POST projects': b => serial(() => saveProjects(b)),
   'POST lookup': async b => ({ results: await lookup(b.q) }),
   'POST translate': async b => {
     const { papers, projects } = store.parse(read());
